@@ -40,6 +40,9 @@ echo ""
 fetch_skill "vercel-labs/agent-skills" "skills/web-design-guidelines" "$VENDOR_DIR/vercel-labs/web-design-guidelines"
 fetch_skill "vercel-labs/agent-skills" "skills/react-best-practices" "$VENDOR_DIR/vercel-labs/vercel-react-best-practices"
 
+# Vercel Labs - agent-browser
+fetch_skill "vercel-labs/agent-browser" "skills/agent-browser" "$VENDOR_DIR/vercel-labs/agent-browser"
+
 # Vercel - AI SDK
 fetch_skill "vercel/ai" "skills/use-ai-sdk" "$VENDOR_DIR/vercel/ai-sdk"
 

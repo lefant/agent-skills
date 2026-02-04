@@ -21,6 +21,7 @@ git diff vendor/
 | Vendor Directory | Source Repository | Skills |
 |-----------------|-------------------|--------|
 | `vercel-labs/` | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | web-design-guidelines, vercel-react-best-practices |
+| `vercel-labs/` | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | agent-browser |
 | `vercel/` | [vercel/ai](https://github.com/vercel/ai) | ai-sdk |
 | `anthropics/` | [anthropics/skills](https://github.com/anthropics/skills) | frontend-design, skill-creator |
 | `remotion-dev/` | [remotion-dev/skills](https://github.com/remotion-dev/skills) | remotion-best-practices |
