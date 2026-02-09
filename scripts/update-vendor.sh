@@ -66,5 +66,8 @@ fetch_skill "intellectronica/agent-skills" "skills/context7" "$VENDOR_DIR/intell
 # Tmux
 fetch_skill "mitsuhiko/agent-stuff" "skills/tmux" "$VENDOR_DIR/mitsuhiko/tmux"
 
+# Obsidian (vendored as subtree, update with: git subtree pull --prefix=vendor/kepano/obsidian-skills https://github.com/kepano/obsidian-skills.git main --squash)
+# Skills are at vendor/kepano/obsidian-skills/skills/{json-canvas,obsidian-bases,obsidian-markdown}
+
 echo ""
 echo "Done. Review changes with: git diff vendor/"

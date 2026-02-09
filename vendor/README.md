@@ -29,6 +29,7 @@ git diff vendor/
 | `obra/` | [obra/superpowers](https://github.com/obra/superpowers) | brainstorming, using-superpowers |
 | `intellectronica/` | [intellectronica/agent-skills](https://github.com/intellectronica/agent-skills) | context7 |
 | `mitsuhiko/` | [mitsuhiko/agent-stuff](https://github.com/mitsuhiko/agent-stuff) | tmux |
+| `kepano/obsidian-skills/` | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (subtree) | json-canvas, obsidian-bases, obsidian-markdown |
 
 ## Security Review
 
