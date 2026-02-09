@@ -38,6 +38,7 @@ Then review changes before committing.
 | `mermaid-diagrams` | Create hierarchical Mermaid diagrams |
 | `test-analyzer` | Analyze CTRF test reports with jq |
 | `youtube-transcript` | Fetch YouTube video transcripts |
+| `tasknotes` | Create and manage Obsidian tasks via TaskNotes (direct file creation) |
 
 ### Vendored Skills (`vendor/`)
 
