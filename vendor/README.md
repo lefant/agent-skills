@@ -31,6 +31,7 @@ git diff vendor/
 | `mitsuhiko/` | [mitsuhiko/agent-stuff](https://github.com/mitsuhiko/agent-stuff) | tmux |
 | `kepano/obsidian-skills/` | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (subtree) | json-canvas, obsidian-bases, obsidian-markdown |
 | `ArtemXTech/` | [ArtemXTech/personal-os-skills](https://github.com/ArtemXTech/personal-os-skills) | tasknotes |
+| `ast-grep/` | [ast-grep/agent-skill](https://github.com/ast-grep/agent-skill) | ast-grep |
 
 ## Security Review
 

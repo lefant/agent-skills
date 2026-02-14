@@ -69,6 +69,9 @@ fetch_skill "mitsuhiko/agent-stuff" "skills/tmux" "$VENDOR_DIR/mitsuhiko/tmux"
 # ArtemXTech - TaskNotes
 fetch_skill "ArtemXTech/personal-os-skills" "skills/tasknotes" "$VENDOR_DIR/ArtemXTech/tasknotes"
 
+# ast-grep
+fetch_skill "ast-grep/agent-skill" "ast-grep/skills/ast-grep" "$VENDOR_DIR/ast-grep/ast-grep"
+
 # Obsidian (vendored as subtree, update with: git subtree pull --prefix=vendor/kepano/obsidian-skills https://github.com/kepano/obsidian-skills.git main --squash)
 # Skills are at vendor/kepano/obsidian-skills/skills/{json-canvas,obsidian-bases,obsidian-markdown}
 
