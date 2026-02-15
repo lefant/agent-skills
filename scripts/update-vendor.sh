@@ -72,6 +72,13 @@ fetch_skill "ArtemXTech/personal-os-skills" "skills/tasknotes" "$VENDOR_DIR/Arte
 # ast-grep
 fetch_skill "ast-grep/agent-skill" "ast-grep/skills/ast-grep" "$VENDOR_DIR/ast-grep/ast-grep"
 
+# openclaw - tavily-search
+fetch_skill "openclaw/skills" "skills/arun-8687/tavily-search" "$VENDOR_DIR/openclaw/tavily-search"
+
+# steipete - agent-scripts
+fetch_skill "steipete/agent-scripts" "skills/video-transcript-downloader" "$VENDOR_DIR/steipete/video-transcript-downloader"
+fetch_skill "steipete/agent-scripts" "skills/markdown-converter" "$VENDOR_DIR/steipete/markdown-converter"
+
 # Obsidian (vendored as subtree, update with: git subtree pull --prefix=vendor/kepano/obsidian-skills https://github.com/kepano/obsidian-skills.git main --squash)
 # Skills are at vendor/kepano/obsidian-skills/skills/{json-canvas,obsidian-bases,obsidian-markdown}
 
