@@ -34,6 +34,8 @@ git diff vendor/
 | `ast-grep/` | [ast-grep/agent-skill](https://github.com/ast-grep/agent-skill) | ast-grep |
 | `steipete/` | [steipete/agent-scripts](https://github.com/steipete/agent-scripts) | video-transcript-downloader, markdown-converter |
 | `openclaw/` | [openclaw/skills](https://github.com/openclaw/skills) | tavily-search |
+| `andrewyng/` | [andrewyng/context-hub](https://github.com/andrewyng/context-hub) | get-api-docs |
+| `boldsoftware/` | [boldsoftware/exe.dev](https://github.com/boldsoftware/exe.dev) | using-exe-dev |
 
 ## Security Review
 
