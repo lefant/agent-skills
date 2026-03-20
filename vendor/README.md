@@ -34,6 +34,7 @@ git diff vendor/
 | `ast-grep/` | [ast-grep/agent-skill](https://github.com/ast-grep/agent-skill) | ast-grep |
 | `steipete/` | [steipete/agent-scripts](https://github.com/steipete/agent-scripts) | video-transcript-downloader, markdown-converter |
 | `openclaw/` | [openclaw/skills](https://github.com/openclaw/skills) | tavily-search |
+| `dz0ny/` | [dz0ny/devenv-claude](https://github.com/dz0ny/devenv-claude) | devenv |
 | `andrewyng/` | [andrewyng/context-hub](https://github.com/andrewyng/context-hub) | get-api-docs |
 | `boldsoftware/` | [boldsoftware/exe.dev](https://github.com/boldsoftware/exe.dev) | using-exe-dev |
 
@@ -45,6 +46,8 @@ All vendored skills should be reviewed before committing:
 2. Verify skill descriptions match actual behavior
 3. Look for hardcoded credentials or sensitive data
 4. Review any scripts included with the skill
+
+Note: `vendor/dz0ny/devenv` includes `.mcp.json` pointing to `https://mcp.devenv.sh`. Treat that as part of the review surface when updating the vendored skill.
 
 ## Version Pinning
 

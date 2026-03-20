@@ -1,0 +1,40 @@
+# devenv.yaml - Nix inputs configuration
+#
+# This file specifies which Nix package sources (nixpkgs channels) to use.
+# devenv will generate devenv.lock with pinned versions for reproducibility.
+#
+# Copy to your project root as devenv.yaml and customize as needed.
+
+# Nix inputs (package sources)
+inputs:
+  # Primary nixpkgs source
+  # Options:
+  #   - nixos-unstable: Latest packages (recommended for development)
+  #   - nixos-24.11: Stable release (more conservative)
+  #   - nixos-24.05: Older stable release
+  nixpkgs:
+    url: github:NixOS/nixpkgs/nixos-unstable
+
+  # Optional: Additional channels for specific packages
+  # Uncomment if you need packages from multiple channels:
+
+  # nixpkgs-stable:
+  #   url: github:NixOS/nixpkgs/nixos-24.11
+
+# After editing, update the lock file:
+#   devenv update
+#
+# This will update devenv.lock with the latest commits from specified channels.
+
+# Using multiple channels in devenv.nix:
+#
+# { pkgs, inputs, ... }:
+# {
+#   # Use default nixpkgs (unstable)
+#   packages = [ pkgs.myPackage ];
+#
+#   # Use stable channel for specific package
+#   packages = [
+#     inputs.nixpkgs-stable.legacyPackages.${pkgs.system}.stablePackage
+#   ];
+# }

@@ -1,0 +1,6 @@
+{
+  "devenv": {
+    "type": "http",
+    "url": "https://mcp.devenv.sh"
+  }
+}
