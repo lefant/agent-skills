@@ -7,6 +7,8 @@ description: Create and manage Architecture Decision Records (ADRs) to document 
 
 Use this skill when creating or working with Architecture Decision Records (ADRs). ADRs capture significant architectural decisions as they emerge during development.
 
+This skill is the replacement for the old `adr_create` command.
+
 ## Purpose
 
 ADRs document the "why" behind architectural choices. They provide context for future developers (including yourself) about decisions made and their tradeoffs. ADRs are meant to be lightweight - capture decisions as they happen, not as ceremony.
@@ -31,6 +33,18 @@ Skip ADRs for:
 
 ADRs are stored in `./docs/decisions/` at the project root. Create this directory on demand when writing the first ADR.
 
+## Default Workflow
+
+When the user wants to create or update an ADR:
+1. Determine the decision title from the user request or recent conversation
+2. Create `./docs/decisions/` if it does not exist
+3. Generate the filename using the `Europe/Stockholm` calendar date and a short kebab-case summary
+4. Draft the ADR from the current conversation and repository context
+5. Ask focused follow-up questions only if Context, Decision, or Consequences are unclear
+6. Write the ADR using `template.md`
+
+Default status is `proposed` unless the user clearly indicates the decision is already approved.
+
 ## File Naming Convention
 
 `YYYY-MM-DD_short-dash-description.md`
@@ -39,6 +53,8 @@ Examples:
 - `2026-01-14_use-postgres-for-persistence.md`
 - `2026-01-14_adopt-event-sourcing.md`
 - `2026-01-15_api-versioning-strategy.md`
+
+Use 3-5 lowercase words for the slug when possible.
 
 ## Template
 
@@ -76,8 +92,6 @@ This skill activates when:
 - Debating significant design tradeoffs
 - Implementing something that contradicts an existing ADR (prompt to supersede)
 
-When activated, suggest running `/adr_create` to capture the decision.
-
 ## Cross-Referencing
 
 Reference ADRs from other documentation:
@@ -101,7 +115,9 @@ grep "^## Status" docs/decisions/*.md
 
 ## Creating an ADR
 
-Use the `/adr_create` command:
-```
-/adr_create "Use PostgreSQL for persistence"
-```
+Treat requests like these as direct triggers for this skill:
+- "Create an ADR for using PostgreSQL"
+- "Document this architecture decision"
+- "Write down this tradeoff in docs/decisions"
+
+When the user gives only a rough topic, propose a concrete ADR title and proceed.

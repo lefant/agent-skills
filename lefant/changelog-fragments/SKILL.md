@@ -7,6 +7,8 @@ description: Create and manage changelog fragments to track changes without merg
 
 Use this skill when creating or working with CHANGELOG fragments. Fragments are permanent records of changes, stored in `./docs/changelog/`.
 
+This skill is the replacement for the old `changelog_create` command.
+
 ## Purpose
 
 Changelog fragments prevent merge conflicts when multiple branches are developed in parallel. Each change gets its own file that stays as permanent documentation.
@@ -14,6 +16,24 @@ Changelog fragments prevent merge conflicts when multiple branches are developed
 ## Directory Layout
 
 Fragments are stored in `./docs/changelog/` at the project root. Create this directory on demand when writing the first fragment.
+
+## Default Workflow
+
+When the user wants to record a completed change:
+1. Determine the description from the request or the current session
+2. Create `./docs/changelog/` if it does not exist
+3. Generate the filename using the `Europe/Stockholm` calendar date and a short kebab-case summary
+4. Classify the fragment as `feature`, `fix`, `chore`, `docs`, `refactor`, `test`, or `perf`
+5. Gather related references from local docs when available:
+   - `docs/decisions/`
+   - `docs/specs/`
+   - `thoughts/shared/devlog/`
+   - `thoughts/shared/plans/`
+   - `thoughts/shared/research/`
+   - GitHub issues, PRs, or beads IDs
+6. Write the fragment using `template.md`
+
+Ask the user for missing metadata only when it cannot be inferred confidently.
 
 ## File Naming Convention
 
@@ -100,14 +120,14 @@ grep "^type: feature" docs/changelog/*.md
 
 ## Creating a Fragment
 
-Use the `/changelog_create` command:
-```
-/changelog_create "OAuth token refresh implementation"
-```
+Treat requests like these as direct triggers for this skill:
+- "Create a changelog fragment for this work"
+- "Document this completed change"
+- "Add a changelog entry for OAuth token refresh"
 
 ## Skill Activation
 
 This skill activates when:
 - Completing implementation work
-- User runs `/devlog` (prompt to create fragment)
+- Writing session documentation for completed work
 - Landing changes that should be documented

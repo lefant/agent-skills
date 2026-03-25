@@ -7,6 +7,8 @@ description: Create and manage feature specifications that capture WHAT a featur
 
 Use this skill when creating or working with feature specifications. Feature specs capture intent (WHAT and WHY) before implementation begins.
 
+This skill is the replacement for the old `spec_create` command.
+
 ## Purpose
 
 Feature specs define what a feature should do and why it matters, without prescribing how to implement it. They serve as contracts between stakeholders and developers, and as living documentation that evolves with the product.
@@ -27,6 +29,22 @@ Skip specs for:
 ## Directory Layout
 
 Specs are stored in `./docs/specs/` at the project root. Create this directory on demand when writing the first spec.
+
+## Default Workflow
+
+When the user wants a new spec or wants an existing spec refined:
+1. Determine the feature name and target filename
+2. Create `./docs/specs/` if it does not exist
+3. Clarify the user intent before drafting
+4. Explore 1-2 realistic alternatives if they materially affect scope or behavior
+5. Draft the spec in small sections:
+   - Purpose
+   - Requirements
+   - Open Questions
+6. Validate the draft with the user when the task is interactive
+7. Write or update the spec using `template.md`
+
+This skill should capture WHAT and WHY, not implementation details.
 
 ## File Naming Convention
 
@@ -121,11 +139,9 @@ This skill activates when:
 - Clarifying requirements or expected behavior
 - User asks "what should this do?" or "how should this behave?"
 
-When activated, suggest running `/spec_create` to capture requirements.
-
 ## Creating a Spec
 
-Use the `/spec_create` command:
-```
-/spec_create "user authentication"
-```
+Treat requests like these as direct triggers for this skill:
+- "Write a spec for user authentication"
+- "Document the requirements for CSV export"
+- "Create docs/specs/rate-limiting.md"
