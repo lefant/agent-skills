@@ -1,9 +1,9 @@
 ---
-name: github-pr-review-context
-description: Gather pull request review feedback and combine it with recent local project context so reviewer comments can be addressed efficiently. Use when fetching PR comments or review context.
+name: github_get_pr_comments
+description: Gather pull request review feedback and combine it with recent local project context so reviewer comments can be addressed efficiently.
 ---
 
-# GitHub PR Review Context
+# GitHub Get PR Comments
 
 Use this skill when the user wants reviewer feedback collected and organized before responding to or addressing a pull request review.
 
@@ -13,7 +13,7 @@ This skill is the replacement for the old `github_get_pr_comments` command.
 
 This skill depends on:
 - `github-access` for GitHub API or `gh` usage
-- `session-compaction` patterns for recent local documentation context
+- `recent_context_from_git` patterns for recent local documentation context
 
 ## Workflow
 

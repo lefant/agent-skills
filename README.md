@@ -35,12 +35,14 @@ Then review changes before committing.
 | `architecture-decision-records` | Create and manage ADRs |
 | `changelog-fragments` | Maintain changelog fragments for conflict-free history |
 | `feature-specs` | Document feature requirements and scenarios |
-| `github-pr-review-context` | Gather PR comments and combine them with local project context |
-| `implementation-landing` | Close out implementation work and update surrounding docs/tracking |
-| `merge-conflict-resolution` | Resolve git merge conflicts safely using local context |
+| `atomically_land` | Close out implementation work and update surrounding docs/tracking |
+| `devlog` | Write implementation devlogs for current session state |
+| `github_get_pr_comments` | Gather PR comments and combine them with local project context |
+| `git_resolve_merge_conflicts` | Resolve git merge conflicts safely using local context |
 | `mermaid-diagrams` | Create hierarchical Mermaid diagrams |
+| `handover` | Generate a concise resume prompt for the next session |
 | `rpi` | Preserve the create_plan, implement_plan, and research_codebase workflows |
-| `session-compaction` | Summarize recent work, write devlogs, and generate handover prompts |
+| `recent_context_from_git` | Summarize recent local docs and work context from git history |
 | `test-analyzer` | Analyze CTRF test reports with jq |
 | `youtube-transcript` | Fetch YouTube video transcripts |
 | `tasknotes` | Create and manage Obsidian tasks via TaskNotes (direct file creation) |

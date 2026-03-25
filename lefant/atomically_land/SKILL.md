@@ -1,15 +1,17 @@
 ---
-name: implementation-landing
+name: atomically_land
 description: Land a finished implementation cleanly by updating plans and issues, reviewing specs and ADRs, writing session docs, creating changelog fragments when appropriate, and preparing handover context.
 ---
 
-# Implementation Landing
+# Atomically Land
 
 Use this skill when the user wants to wrap up a feature, fix, or refactor and make sure the surrounding documentation and tracking are in order.
 
+This skill is the replacement for the old `atomically_land` command.
+
 ## Scope
 
-This skill is the replacement for the old `atomically_land` command. Use it when the user asks to:
+Use it when the user asks to:
 - "`atomically_land`"
 - finish landing a change
 - make sure docs and tracking are up to date
@@ -26,10 +28,10 @@ This skill is the replacement for the old `atomically_land` command. Use it when
    - if the implementation changed the intended behavior, update the spec
 4. Review whether architectural decisions emerged
    - if yes, use `architecture-decision-records`
-5. Write a devlog or WIP devlog using `session-compaction`
+5. Write a devlog or WIP devlog using `devlog`
 6. For significant work, create a changelog fragment using `changelog-fragments`
 7. Commit the documentation updates when the user wants commits made
-8. Generate a handover prompt when useful using `session-compaction`
+8. Generate a handover prompt when useful using `handover`
 
 ## When to Create Related Artifacts
 
