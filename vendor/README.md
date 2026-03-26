@@ -37,6 +37,7 @@ git diff vendor/
 | `dz0ny/` | [dz0ny/devenv-claude](https://github.com/dz0ny/devenv-claude) | devenv |
 | `andrewyng/` | [andrewyng/context-hub](https://github.com/andrewyng/context-hub) | get-api-docs |
 | `boldsoftware/` | [boldsoftware/exe.dev](https://github.com/boldsoftware/exe.dev) | using-exe-dev |
+| `ChromeDevTools/` | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) | chrome-devtools-cli |
 
 ## Security Review
 

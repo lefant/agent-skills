@@ -78,6 +78,9 @@ fetch_skill "openclaw/skills" "skills/arun-8687/tavily-search" "$VENDOR_DIR/open
 # dz0ny - devenv
 fetch_skill "dz0ny/devenv-claude" "skills/devenv" "$VENDOR_DIR/dz0ny/devenv"
 
+# ChromeDevTools - chrome-devtools-cli
+fetch_skill "ChromeDevTools/chrome-devtools-mcp" "skills/chrome-devtools-cli" "$VENDOR_DIR/ChromeDevTools/chrome-devtools-cli"
+
 # steipete - agent-scripts
 fetch_skill "steipete/agent-scripts" "skills/video-transcript-downloader" "$VENDOR_DIR/steipete/video-transcript-downloader"
 fetch_skill "steipete/agent-scripts" "skills/markdown-converter" "$VENDOR_DIR/steipete/markdown-converter"
