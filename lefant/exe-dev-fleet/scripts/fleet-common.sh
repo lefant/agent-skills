@@ -14,6 +14,8 @@ set -euo pipefail
 _FLEET_SSH_USER="${EXE_DEV_SSH_USER:-exedev}"
 _FLEET_TIMEOUT="${EXE_DEV_TIMEOUT:-5}"
 _FLEET_SSH_OPTS="-o ConnectTimeout=${_FLEET_TIMEOUT} -o StrictHostKeyChecking=accept-new -o BatchMode=yes"
+_FLEET_LOCAL_FQDN="$(hostname -f 2>/dev/null || true)"
+_FLEET_LOCAL_SHORT="$(hostname -s 2>/dev/null || true)"
 
 if [ -n "${EXE_DEV_SSH_KEY:-}" ]; then
   _FLEET_SSH_OPTS="$_FLEET_SSH_OPTS -i $EXE_DEV_SSH_KEY"
@@ -23,6 +25,13 @@ fi
 # Run a command on a single VM. Returns the remote stdout.
 fleet_ssh() {
   local host="$1" cmd="$2"
+  local short_host="${host%%.*}"
+
+  if [ "$host" = "$_FLEET_LOCAL_FQDN" ] || [ "$short_host" = "$_FLEET_LOCAL_SHORT" ]; then
+    bash -lc "$cmd"
+    return
+  fi
+
   # shellcheck disable=SC2086
   ssh $_FLEET_SSH_OPTS "${_FLEET_SSH_USER}@${host}" "$cmd" 2>/dev/null
 }

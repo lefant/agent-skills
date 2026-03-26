@@ -30,7 +30,8 @@ mem_used=$((mem_total - mem_avail))
 disk=$(df -h / | awk 'NR==2{printf "%s\t%s\t%s\t%s", $2, $3, $4, $5}')
 up=$(uptime -s 2>/dev/null || echo unknown)
 procs=$(($(ps aux 2>/dev/null | wc -l) - 1))
-zombies=$(ps aux 2>/dev/null | grep -c '[d]efunct' || echo 0)
+zombies=$(ps aux 2>/dev/null | grep -c '[d]efunct' || true)
+zombies=${zombies:-0}
 printf "%d\t%d\t%d\t%s\t%s\t%d\t%d" "$mem_total" "$mem_used" "$mem_avail" "$disk" "$up" "$procs" "$zombies"
 PROBE_EOF
 
