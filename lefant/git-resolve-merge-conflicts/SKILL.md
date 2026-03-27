@@ -1,5 +1,5 @@
 ---
-name: git_resolve_merge_conflicts
+name: git-resolve-merge-conflicts
 description: Resolve git merge conflicts by inspecting both sides, consulting recent local project context, applying safe resolutions, and completing the merge when the resolution is clear.
 ---
 

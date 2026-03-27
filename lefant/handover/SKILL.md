@@ -11,7 +11,7 @@ This skill is the replacement for the old `handover` command.
 
 ## Workflow
 
-1. Gather recent context first using `recent_context_from_git`
+1. Gather recent context first using `recent-context-from-git`
 2. Ensure there is a current `_progress.md` devlog if work is still in progress
 3. Identify the next task from plans, issues, or the conversation
 4. Produce a concise handover prompt with references

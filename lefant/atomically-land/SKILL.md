@@ -1,5 +1,5 @@
 ---
-name: atomically_land
+name: atomically-land
 description: Land a finished implementation cleanly by updating plans and issues, reviewing specs and ADRs, writing session docs, creating changelog fragments when appropriate, and preparing handover context.
 ---
 
@@ -12,7 +12,7 @@ This skill is the replacement for the old `atomically_land` command.
 ## Scope
 
 Use it when the user asks to:
-- "`atomically_land`"
+- "`atomically-land`"
 - finish landing a change
 - make sure docs and tracking are up to date
 - close out a session cleanly

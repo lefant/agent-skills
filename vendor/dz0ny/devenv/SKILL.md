@@ -1,5 +1,5 @@
 ---
-name: devenv-migration
+name: devenv
 description: Migrate from nix-shell to devenv or create new devenv projects. Use when users mention converting shell.nix/default.nix to devenv, setting up devenv environments, or need help with devenv configuration for languages (Python, Elm, Node, etc), services (PostgreSQL, Redis, MySQL), or processes.
 ---
 

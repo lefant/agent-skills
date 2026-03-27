@@ -1,5 +1,5 @@
 ---
-name: recent_context_from_git
+name: recent-context-from-git
 description: Summarize recent local project context by reading recently changed documentation from git history. Use when the user asks for recent context from git or wants a compact status summary from local docs.
 ---
 

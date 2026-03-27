@@ -1,5 +1,5 @@
 ---
-name: github_get_pr_comments
+name: github-get-pr-comments
 description: Gather pull request review feedback and combine it with recent local project context so reviewer comments can be addressed efficiently.
 ---
 
@@ -13,7 +13,7 @@ This skill is the replacement for the old `github_get_pr_comments` command.
 
 This skill depends on:
 - `github-access` for GitHub API or `gh` usage
-- `recent_context_from_git` patterns for recent local documentation context
+- `recent-context-from-git` patterns for recent local documentation context
 
 ## Workflow
 

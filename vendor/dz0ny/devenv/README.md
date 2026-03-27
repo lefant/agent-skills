@@ -5,7 +5,7 @@ A comprehensive skill for migrating from nix-shell to devenv or creating new dev
 ## Structure
 
 ```
-devenv-migration/
+devenv/
 ├── SKILL.md                          # Main skill file (460 lines)
 ├── references/                       # Detailed guides (3,918 lines total)
 │   ├── migration-guide.md           # nix-shell → devenv conversion (633 lines)
