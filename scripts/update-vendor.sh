@@ -56,9 +56,9 @@ fetch_skill "remotion-dev/skills" "skills/remotion" "$VENDOR_DIR/remotion-dev/re
 # Developer Kit
 fetch_skill "giuseppe-trisciuoglio/developer-kit" "skills/shadcn-ui" "$VENDOR_DIR/giuseppe-trisciuoglio/shadcn-ui"
 
-# Superpowers
-fetch_skill "obra/superpowers" "skills/brainstorming" "$VENDOR_DIR/obra/brainstorming"
-fetch_skill "obra/superpowers" "skills/using-superpowers" "$VENDOR_DIR/obra/using-superpowers"
+# Superpowers (disabled for now)
+# fetch_skill "obra/superpowers" "skills/brainstorming" "$VENDOR_DIR/obra/brainstorming"
+# fetch_skill "obra/superpowers" "skills/using-superpowers" "$VENDOR_DIR/obra/using-superpowers"
 
 # Context7
 fetch_skill "intellectronica/agent-skills" "skills/context7" "$VENDOR_DIR/intellectronica/context7"

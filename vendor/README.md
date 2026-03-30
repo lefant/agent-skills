@@ -26,7 +26,6 @@ git diff vendor/
 | `anthropics/` | [anthropics/skills](https://github.com/anthropics/skills) | frontend-design, skill-creator |
 | `remotion-dev/` | [remotion-dev/skills](https://github.com/remotion-dev/skills) | remotion-best-practices |
 | `giuseppe-trisciuoglio/` | [giuseppe-trisciuoglio/developer-kit](https://github.com/giuseppe-trisciuoglio/developer-kit) | shadcn-ui |
-| `obra/` | [obra/superpowers](https://github.com/obra/superpowers) | brainstorming, using-superpowers |
 | `intellectronica/` | [intellectronica/agent-skills](https://github.com/intellectronica/agent-skills) | context7 |
 | `mitsuhiko/` | [mitsuhiko/agent-stuff](https://github.com/mitsuhiko/agent-stuff) | tmux |
 | `kepano/obsidian-skills/` | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (subtree) | json-canvas, obsidian-bases, obsidian-markdown |
@@ -38,6 +37,12 @@ git diff vendor/
 | `andrewyng/` | [andrewyng/context-hub](https://github.com/andrewyng/context-hub) | get-api-docs |
 | `boldsoftware/` | [boldsoftware/exe.dev](https://github.com/boldsoftware/exe.dev) | using-exe-dev |
 | `ChromeDevTools/` | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) | chrome-devtools-cli |
+
+## Disabled for now
+
+| Vendor Directory | Source Repository | Skills |
+|-----------------|-------------------|--------|
+| `obra/` | [obra/superpowers](https://github.com/obra/superpowers) | brainstorming, using-superpowers |
 
 ## Security Review
 
