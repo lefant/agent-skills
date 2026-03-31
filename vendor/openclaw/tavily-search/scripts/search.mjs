@@ -90,7 +90,7 @@ for (const r of results) {
   const url = String(r?.url ?? "").trim();
   const content = String(r?.content ?? "").trim();
   const score = r?.score ? ` (relevance: ${(r.score * 100).toFixed(0)}%)` : "";
-
+  
   if (!title || !url) continue;
   console.log(`- **${title}**${score}`);
   console.log(`  ${url}`);

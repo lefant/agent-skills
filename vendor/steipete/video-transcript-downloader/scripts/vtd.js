@@ -73,7 +73,7 @@ function resolveBin(name, fallback) {
 
 function run(cmd, args, { cwd } = {}) {
   return new Promise((resolve) => {
-    // Capture stdout + stderr to keep yt-dlp's error context intact.
+    // Capture stdout + stderr to keep yt-dlp’s error context intact.
     const child = spawn(cmd, args, { cwd, stdio: ["ignore", "pipe", "pipe"] });
     let out = "";
     child.stdout.on("data", (d) => (out += d.toString()));

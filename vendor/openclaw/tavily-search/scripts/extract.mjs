@@ -45,7 +45,7 @@ const failed = data.failed_results ?? [];
 for (const r of results) {
   const url = String(r?.url ?? "").trim();
   const content = String(r?.raw_content ?? "").trim();
-
+  
   console.log(`# ${url}\n`);
   console.log(content || "(no content extracted)");
   console.log("\n---\n");

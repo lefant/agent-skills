@@ -15,8 +15,14 @@ fetch_skill() {
     local target_dir=$3
 
     echo "Fetching $repo -> $skill_path"
-    if ! git clone --depth 1 "https://github.com/$repo.git" "$TEMP_DIR/repo" 2>/dev/null; then
+    if ! git clone --depth 1 --filter=blob:none --sparse "https://github.com/$repo.git" "$TEMP_DIR/repo" 2>/dev/null; then
         echo "  Warning: Failed to clone $repo, skipping..."
+        return 1
+    fi
+
+    if ! git -C "$TEMP_DIR/repo" sparse-checkout set "$skill_path" 2>/dev/null; then
+        echo "  Warning: Path $skill_path not found in $repo, skipping..."
+        rm -rf "$TEMP_DIR/repo"
         return 1
     fi
 
@@ -33,60 +39,85 @@ fetch_skill() {
     echo "  -> $target_dir"
 }
 
+apply_post_fetch_fixes() {
+    python - <<'PY'
+from pathlib import Path
+
+replacements = [
+    (Path('vendor/dz0ny/devenv/SKILL.md'), 'name: devenv-migration', 'name: devenv'),
+    (Path('vendor/dz0ny/devenv/README.md'), 'devenv-migration/', 'devenv/'),
+    (Path('vendor/remotion-dev/remotion-best-practices/SKILL.md'), './rules/sound-effects.md', './rules/sfx.md'),
+    (Path('vendor/remotion-dev/remotion-best-practices/rules/voiceover.md'), './calculate-metadata)', './calculate-metadata.md)'),
+    (Path('vendor/vercel-labs/vercel-react-best-practices/AGENTS.md'), './async-defer-await.md', './rules/async-defer-await.md'),
+    (Path('vendor/vercel-labs/vercel-react-best-practices/AGENTS.md'), './async-cheap-condition-before-await.md', './rules/async-cheap-condition-before-await.md'),
+    (Path('vendor/openclaw/tavily-search/SKILL.md'), 'node scripts/search.mjs', 'node {baseDir}/scripts/search.mjs'),
+]
+
+for path, old, new in replacements:
+    if not path.exists():
+        continue
+    text = path.read_text()
+    if old in text:
+        path.write_text(text.replace(old, new))
+PY
+}
+
 echo "Updating vendored skills..."
 echo ""
 
 # Vercel Labs - agent-skills
-fetch_skill "vercel-labs/agent-skills" "skills/web-design-guidelines" "$VENDOR_DIR/vercel-labs/web-design-guidelines"
-fetch_skill "vercel-labs/agent-skills" "skills/react-best-practices" "$VENDOR_DIR/vercel-labs/vercel-react-best-practices"
+fetch_skill "vercel-labs/agent-skills" "skills/web-design-guidelines" "$VENDOR_DIR/vercel-labs/web-design-guidelines" || true
+fetch_skill "vercel-labs/agent-skills" "skills/react-best-practices" "$VENDOR_DIR/vercel-labs/vercel-react-best-practices" || true
 
 # Vercel Labs - agent-browser
-fetch_skill "vercel-labs/agent-browser" "skills/agent-browser" "$VENDOR_DIR/vercel-labs/agent-browser"
+fetch_skill "vercel-labs/agent-browser" "skills/agent-browser" "$VENDOR_DIR/vercel-labs/agent-browser" || true
 
 # Vercel - AI SDK
-fetch_skill "vercel/ai" "skills/use-ai-sdk" "$VENDOR_DIR/vercel/ai-sdk"
+fetch_skill "vercel/ai" "skills/use-ai-sdk" "$VENDOR_DIR/vercel/ai-sdk" || true
 
 # Anthropic
-fetch_skill "anthropics/skills" "skills/frontend-design" "$VENDOR_DIR/anthropics/frontend-design"
-fetch_skill "anthropics/skills" "skills/skill-creator" "$VENDOR_DIR/anthropics/skill-creator"
+fetch_skill "anthropics/skills" "skills/frontend-design" "$VENDOR_DIR/anthropics/frontend-design" || true
+fetch_skill "anthropics/skills" "skills/skill-creator" "$VENDOR_DIR/anthropics/skill-creator" || true
 
 # Remotion
-fetch_skill "remotion-dev/skills" "skills/remotion" "$VENDOR_DIR/remotion-dev/remotion-best-practices"
+fetch_skill "remotion-dev/skills" "skills/remotion" "$VENDOR_DIR/remotion-dev/remotion-best-practices" || true
 
 # Developer Kit
-fetch_skill "giuseppe-trisciuoglio/developer-kit" "skills/shadcn-ui" "$VENDOR_DIR/giuseppe-trisciuoglio/shadcn-ui"
+fetch_skill "giuseppe-trisciuoglio/developer-kit" "plugins/developer-kit-typescript/skills/shadcn-ui" "$VENDOR_DIR/giuseppe-trisciuoglio/shadcn-ui" || true
 
 # Superpowers (disabled for now)
 # fetch_skill "obra/superpowers" "skills/brainstorming" "$VENDOR_DIR/obra/brainstorming"
 # fetch_skill "obra/superpowers" "skills/using-superpowers" "$VENDOR_DIR/obra/using-superpowers"
 
 # Context7
-fetch_skill "intellectronica/agent-skills" "skills/context7" "$VENDOR_DIR/intellectronica/context7"
+fetch_skill "intellectronica/agent-skills" "skills/context7" "$VENDOR_DIR/intellectronica/context7" || true
 
 # Tmux
-fetch_skill "mitsuhiko/agent-stuff" "skills/tmux" "$VENDOR_DIR/mitsuhiko/tmux"
+fetch_skill "mitsuhiko/agent-stuff" "skills/tmux" "$VENDOR_DIR/mitsuhiko/tmux" || true
 
 # ArtemXTech - TaskNotes
-fetch_skill "ArtemXTech/personal-os-skills" "skills/tasknotes" "$VENDOR_DIR/ArtemXTech/tasknotes"
+fetch_skill "ArtemXTech/personal-os-skills" "skills/tasknotes" "$VENDOR_DIR/ArtemXTech/tasknotes" || true
 
 # ast-grep
-fetch_skill "ast-grep/agent-skill" "ast-grep/skills/ast-grep" "$VENDOR_DIR/ast-grep/ast-grep"
+fetch_skill "ast-grep/agent-skill" "ast-grep/skills/ast-grep" "$VENDOR_DIR/ast-grep/ast-grep" || true
 
 # openclaw - tavily-search
-fetch_skill "openclaw/skills" "skills/arun-8687/tavily-search" "$VENDOR_DIR/openclaw/tavily-search"
+fetch_skill "openclaw/skills" "skills/rajtejani61/tavily-web-search" "$VENDOR_DIR/openclaw/tavily-search" || true
 
 # dz0ny - devenv
-fetch_skill "dz0ny/devenv-claude" "skills/devenv" "$VENDOR_DIR/dz0ny/devenv"
+fetch_skill "dz0ny/devenv-claude" "skills/devenv" "$VENDOR_DIR/dz0ny/devenv" || true
 
 # ChromeDevTools - chrome-devtools-cli
-fetch_skill "ChromeDevTools/chrome-devtools-mcp" "skills/chrome-devtools-cli" "$VENDOR_DIR/ChromeDevTools/chrome-devtools-cli"
+fetch_skill "ChromeDevTools/chrome-devtools-mcp" "skills/chrome-devtools-cli" "$VENDOR_DIR/ChromeDevTools/chrome-devtools-cli" || true
 
 # steipete - agent-scripts
-fetch_skill "steipete/agent-scripts" "skills/video-transcript-downloader" "$VENDOR_DIR/steipete/video-transcript-downloader"
-fetch_skill "steipete/agent-scripts" "skills/markdown-converter" "$VENDOR_DIR/steipete/markdown-converter"
+fetch_skill "steipete/agent-scripts" "skills/video-transcript-downloader" "$VENDOR_DIR/steipete/video-transcript-downloader" || true
+fetch_skill "steipete/agent-scripts" "skills/markdown-converter" "$VENDOR_DIR/steipete/markdown-converter" || true
 
 # Obsidian (vendored as subtree, update with: git subtree pull --prefix=vendor/kepano/obsidian-skills https://github.com/kepano/obsidian-skills.git main --squash)
 # Skills are at vendor/kepano/obsidian-skills/skills/{json-canvas,obsidian-bases,obsidian-markdown}
+
+apply_post_fetch_fixes
 
 echo ""
 echo "Done. Review changes with: git diff vendor/"

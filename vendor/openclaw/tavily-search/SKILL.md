@@ -1,29 +1,35 @@
 ---
 name: tavily-search
-description: AI-optimized web search via Tavily API. Returns concise, relevant results for AI agents.
+description: "AI-optimized search and content extraction using Tavily API. Includes deep search, news filtering, and raw content extraction for LLM processing."
 homepage: https://tavily.com
-metadata: {"clawdbot":{"emoji":"🔍","requires":{"bins":["node"],"env":["TAVILY_API_KEY"]},"primaryEnv":"TAVILY_API_KEY"}}
+metadata: {"clawdbot":{"emoji":"🔍","requires":{"bins":["node"],"env":["TAVILY_API_KEY"]}}}
 ---
 
 # Tavily Search
 
-AI-optimized web search using Tavily API. Designed for AI agents - returns clean, relevant content.
+Tavily is a search engine built specifically for AI agents (LLMs). This skill provides optimized search results and content extraction.
 
-## Search
+## Prerequisites
+
+1.  **Node.js** installed.
+2.  **Tavily API Key**: Get one at [tavily.com](https://tavily.com).
+3.  **Environment Variable**: Set `TAVILY_API_KEY` in your environment.
+
+## Usage
+
+### Search
+
+Perform an AI-optimized search.
 
 ```bash
-node {baseDir}/scripts/search.mjs "query"
-node {baseDir}/scripts/search.mjs "query" -n 10
-node {baseDir}/scripts/search.mjs "query" --deep
-node {baseDir}/scripts/search.mjs "query" --topic news
+node {baseDir}/scripts/search.mjs "What are the latest developments in agentic AI?"
 ```
 
-## Options
-
-- `-n <count>`: Number of results (default: 5, max: 20)
-- `--deep`: Use advanced search for deeper research (slower, more comprehensive)
-- `--topic <topic>`: Search topic - `general` (default) or `news`
-- `--days <n>`: For news topic, limit to last n days
+**Options:**
+- `-n <number>`: Number of results (default: 5, max: 20).
+- `--deep`: Use advanced search depth (more tokens, better results).
+- `--topic <general|news>`: Filter by topic (default: general).
+- `--days <number>`: For news topic, limit results to past N days.
 
 ## Extract content from URL
 
@@ -36,3 +42,8 @@ Notes:
 - Tavily is optimized for AI - returns clean, relevant snippets
 - Use `--deep` for complex research questions
 - Use `--topic news` for current events
+
+## Troubleshooting
+
+-   **Missing API Key**: Ensure `TAVILY_API_KEY` is exported or set in your session.
+-   **Network Errors**: Check your internet connection and API quota at Tavily.

@@ -1,3 +1,7 @@
+# shadcn/ui Official Reference
+
+> **Security Note**: Components installed via `npx shadcn@latest add` are fetched from the official shadcn registry (`ui.shadcn.com`). When configuring custom registries, only use trusted registry URLs. Always review component source code after installation. Registry URLs in examples below (e.g., `example.com`) are placeholders — replace with your verified private registry URLs.
+
 ### Create TanStack Start Project with shadcn/ui
 
 Source: https://ui.shadcn.com/docs/installation/tanstack
@@ -440,7 +444,7 @@ npm install cmdk
 
 Source: https://ui.shadcn.com/docs/changelog
 
-Use the @registry/name format to install components from different namespaced registries in a single command. Components are automatically resolved and installed from the correct registry sources.
+Use the `@`registry/name format to install components from different namespaced registries in a single command. Components are automatically resolved and installed from the correct registry sources.
 
 ```bash
 npx shadcn add @acme/button @internal/auth-system
@@ -1312,7 +1316,7 @@ const alertVariants = cva(
 
 Source: https://ui.shadcn.com/docs/components/button
 
-Manual installation of required dependencies for the Button component. Install the @radix-ui/react-slot package which provides slot composition functionality.
+Manual installation of required dependencies for the Button component. Install the `@`radix-ui/react-slot package which provides slot composition functionality.
 
 ```bash
 npm install @radix-ui/react-slot
@@ -1574,7 +1578,7 @@ npm install @radix-ui/react-label
 
 Source: https://ui.shadcn.com/docs/registry/namespace
 
-Install a single resource from a configured namespace using the shadcn CLI. The syntax uses @namespace/resource-name format to specify which registry and resource to install.
+Install a single resource from a configured namespace using the shadcn CLI. The syntax uses `@`namespace/resource-name format to specify which registry and resource to install.
 
 ```bash
 npx shadcn@latest add @v0/dashboard
