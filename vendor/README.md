@@ -37,6 +37,7 @@ git diff vendor/
 | `andrewyng/` | [andrewyng/context-hub](https://github.com/andrewyng/context-hub) | get-api-docs |
 | `boldsoftware/` | [boldsoftware/exe.dev](https://github.com/boldsoftware/exe.dev) | using-exe-dev |
 | `ChromeDevTools/` | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) | chrome-devtools-cli |
+| `JuliusBrussee/` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | caveman, caveman-help, caveman-commit, caveman-review, caveman-compress |
 
 ## Disabled for now
 
@@ -54,6 +55,8 @@ All vendored skills should be reviewed before committing:
 4. Review any scripts included with the skill
 
 Note: `vendor/dz0ny/devenv` includes `.mcp.json` pointing to `https://mcp.devenv.sh`. Treat that as part of the review surface when updating the vendored skill.
+
+Note: `vendor/JuliusBrussee/caveman-compress` includes Python scripts that read/write user-selected Markdown files and may call the Anthropic SDK or local `claude` CLI. Review `SECURITY.md` as part of the update.
 
 ## Version Pinning
 

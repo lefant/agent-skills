@@ -51,6 +51,14 @@ replacements = [
     (Path('vendor/vercel-labs/vercel-react-best-practices/AGENTS.md'), './async-defer-await.md', './rules/async-defer-await.md'),
     (Path('vendor/vercel-labs/vercel-react-best-practices/AGENTS.md'), './async-cheap-condition-before-await.md', './rules/async-cheap-condition-before-await.md'),
     (Path('vendor/openclaw/tavily-search/SKILL.md'), 'node scripts/search.mjs', 'node {baseDir}/scripts/search.mjs'),
+    (Path('vendor/JuliusBrussee/caveman/SKILL.md'), 'Supports intensity levels: lite, full (default), ultra,\n  wenyan-lite, wenyan-full, wenyan-ultra.', 'Supports intensity levels: lite (default in the lefant bundle), full, ultra,\n  wenyan-lite, wenyan-full, wenyan-ultra.'),
+    (Path('vendor/JuliusBrussee/caveman/SKILL.md'), 'Default: **full**. Switch: `/caveman lite|full|ultra`.', 'Default: **lite**. Switch: `/caveman lite|full|ultra`.'),
+    (Path('vendor/JuliusBrussee/caveman-help/SKILL.md'), '| **Lite** | `/caveman lite` | Drop filler. Keep sentence structure. |', '| **Lite** | `/caveman` or `/caveman lite` | Drop filler. Keep sentence structure. Default in lefant bundle. |'),
+    (Path('vendor/JuliusBrussee/caveman-help/SKILL.md'), '| **Full** | `/caveman` | Drop articles, filler, pleasantries, hedging. Fragments OK. Default. |', '| **Full** | `/caveman full` | Drop articles, filler, pleasantries, hedging. Fragments OK. Classic caveman. |'),
+    (Path('vendor/JuliusBrussee/caveman-help/SKILL.md'), 'Default mode = `full`. Change it:', 'Default mode = `lite`. Change it:'),
+    (Path('vendor/JuliusBrussee/caveman-help/SKILL.md'), 'Resolution: env var > config file > `full`.', 'Resolution: env var > config file > `lite`.'),
+    (Path('vendor/JuliusBrussee/caveman-compress/SKILL.md'), '1. The compression scripts live in `caveman-compress/scripts/` (adjacent to this SKILL.md). If the path is not immediately available, search for `caveman-compress/scripts/__main__.py`.', '1. The compression scripts live in `scripts/` (adjacent to this SKILL.md). If the path is not immediately available, search for `{baseDir}/scripts/__main__.py`.'),
+    (Path('vendor/JuliusBrussee/caveman-compress/SKILL.md'), 'cd caveman-compress && python3 -m scripts <absolute_filepath>', 'cd {baseDir} && python3 -m scripts <absolute_filepath>'),
 ]
 
 for path, old, new in replacements:
@@ -113,6 +121,13 @@ fetch_skill "ChromeDevTools/chrome-devtools-mcp" "skills/chrome-devtools-cli" "$
 # steipete - agent-scripts
 fetch_skill "steipete/agent-scripts" "skills/video-transcript-downloader" "$VENDOR_DIR/steipete/video-transcript-downloader" || true
 fetch_skill "steipete/agent-scripts" "skills/markdown-converter" "$VENDOR_DIR/steipete/markdown-converter" || true
+
+# JuliusBrussee - caveman
+fetch_skill "JuliusBrussee/caveman" "skills/caveman" "$VENDOR_DIR/JuliusBrussee/caveman" || true
+fetch_skill "JuliusBrussee/caveman" "skills/caveman-help" "$VENDOR_DIR/JuliusBrussee/caveman-help" || true
+fetch_skill "JuliusBrussee/caveman" "skills/caveman-commit" "$VENDOR_DIR/JuliusBrussee/caveman-commit" || true
+fetch_skill "JuliusBrussee/caveman" "skills/caveman-review" "$VENDOR_DIR/JuliusBrussee/caveman-review" || true
+fetch_skill "JuliusBrussee/caveman" "caveman-compress" "$VENDOR_DIR/JuliusBrussee/caveman-compress" || true
 
 # Obsidian (vendored as subtree, update with: git subtree pull --prefix=vendor/kepano/obsidian-skills https://github.com/kepano/obsidian-skills.git main --squash)
 # Skills are at vendor/kepano/obsidian-skills/skills/{json-canvas,obsidian-bases,obsidian-markdown}
