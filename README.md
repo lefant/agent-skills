@@ -37,7 +37,7 @@ Then review changes before committing.
 | `feature-specs` | Document feature requirements and scenarios |
 | `atomically-land` | Close out implementation work and update surrounding docs/tracking |
 | `devlog` | Write implementation devlogs for current session state |
-| `exa` | Use Exa for web search, MCP setup, and current-information lookups via API |
+| `exa` | Use Exa for web search, code context lookup, and current-information lookups via SDK, API, or MCP |
 | `github-get-pr-comments` | Gather PR comments and combine them with local project context |
 | `git-resolve-merge-conflicts` | Resolve git merge conflicts safely using local context |
 | `mermaid-diagrams` | Create hierarchical Mermaid diagrams |

@@ -1,15 +1,15 @@
 ---
 name: exa
-description: Use Exa for web search, code context lookup, and company or people research via API or MCP. Use when setting up Exa in a coding-agent environment, testing Exa search requests, configuring Exa MCP, verifying that EXA_API_KEY works, or looking up current web information with Exa.
+description: Use Exa for web search, code context lookup, and company or people research via the official SDK, direct API calls, or MCP. Use when setting up Exa in a coding-agent environment, testing EXA_API_KEY, configuring Exa MCP, or looking up current web information.
 ---
 
 # Exa
 
-Use this skill for Exa API and MCP work.
+Use this skill for Exa SDK, API, and MCP work.
 
 ## Requirement: EXA_API_KEY
 
-Before any Exa API call, verify that `EXA_API_KEY` is present:
+Before any Exa call, verify that `EXA_API_KEY` is present:
 
 ```bash
 echo "$EXA_API_KEY"
@@ -23,7 +23,7 @@ Example:
 export EXA_API_KEY="your_key_here"
 ```
 
-If the user stores secrets in a local env file, source that file first and then continue.
+If a workspace `.env` file already exists, source or load it first.
 
 Do not write API keys into tracked repo files.
 
@@ -31,20 +31,114 @@ Do not write API keys into tracked repo files.
 
 Read `references/llms.txt` first.
 
-That file is a full local snapshot of Exa's online documentation index and points to:
+That file is a full local snapshot of Exa's documentation index and points to:
+- JavaScript SDK docs
 - Exa MCP setup
 - coding-agent search and contents guides
 - vertical-specific references like code, company, news, and people search
-- Claude-oriented Exa skill templates
+- Exa-published agent skill templates
 
 Important pages usually worth following from the index:
-- `https://exa.ai/docs/reference/exa-mcp.md`
+- `https://exa.ai/docs/sdks/javascript-sdk.md`
 - `https://exa.ai/docs/reference/search-api-guide-for-coding-agents.md`
 - `https://exa.ai/docs/reference/contents-api-guide-for-coding-agents.md`
+- `https://exa.ai/docs/reference/exa-mcp.md`
 - `https://exa.ai/docs/reference/code-search-claude-skill.md`
 
 If the task is to add a brand-new Exa integration to a project, Exa's coding-agent docs recommend using Dashboard Onboarding first:
 - `https://dashboard.exa.ai/onboarding`
+
+## Preferred in this repo
+
+For repo-local automation, prefer this order:
+
+1. official JavaScript SDK (`exa-js`) via a small Node helper
+2. direct HTTP (`/search`, `/contents`) for low-level debugging and inspection
+3. MCP only when the user specifically wants tool-based agent integration
+
+Operational note:
+- if handwritten HTTP fails but the key should work, test the official SDK before concluding that the key is invalid
+- official SDK behavior can succeed where a naive raw HTTP request fails due to request-shape or compatibility details
+
+## Known-good local helper pattern
+
+This skill ships reusable helper examples at:
+- `scripts/exa-search.mjs`
+- `scripts/exa-contents.mjs`
+
+Use it as a starting point for repo-local helpers.
+
+Recommended workflow:
+- keep reusable Exa helpers in the target repo's `scripts/` directory
+- install `exa-js` locally in the workspace; do not assume global npm access
+- if local tooling lives under `.tools/`, resolve packages from there
+- load `EXA_API_KEY` from the workspace `.env` when present
+- emit compact normalized JSON for downstream agent use
+
+The bundled helper is designed to resolve `exa-js` from the current working directory or `.tools/`, so it works in restricted environments that do not allow global installs.
+
+Known-good invocation patterns once copied into a repo:
+
+```bash
+node scripts/exa-search.mjs 'Altego AI founders' 3
+node scripts/exa-contents.mjs 'https://altego.ai/about' highlights 2000
+```
+
+Recommended JSON shape for helper output:
+- search helper:
+  - `query`
+  - `count`
+  - `results[].title`
+  - `results[].url`
+  - `results[].publishedDate`
+  - `results[].highlights`
+- contents helper:
+  - `url`
+  - `mode`
+  - `result.title`
+  - `result.url`
+  - `result.publishedDate`
+  - `result.author`
+  - `result.highlights`
+  - `result.text`
+
+## Decision rule: search vs contents
+
+Use this default rule:
+- use `exa.search()` or `/search` when discovering sources
+- use `exa.getContents()` or `/contents` once you know the exact URL
+- request `highlights` first for token efficiency
+- request full `text` only when deeper reading is required
+
+## Minimal SDK usage
+
+```js
+import Exa from "exa-js";
+
+const exa = new Exa();
+
+const result = await exa.search("latest developments in AI safety research", {
+  type: "auto",
+  numResults: 10,
+  contents: {
+    highlights: {
+      maxCharacters: 4000,
+    },
+  },
+});
+```
+
+Minimal contents retrieval:
+
+```js
+import Exa from "exa-js";
+
+const exa = new Exa();
+
+const { results } = await exa.getContents(["https://altego.ai/about"], {
+  text: true,
+});
+```
 
 ## Minimal curl usage
 
@@ -66,13 +160,21 @@ curl -fsS 'https://api.exa.ai/search' \
   }'
 ```
 
-Use `type: "auto"` by default unless the user explicitly needs faster or deeper search behavior.
+Use `type: "auto"` by default unless the user explicitly needs a different search mode.
 
 ## Known-good smoke test
 
 To verify the key works against a real company lookup, use this two-step flow.
 
 ### 1. Search for the target
+
+SDK/helper path:
+
+```bash
+node scripts/exa-search.mjs 'co-founders of altego.ai' 3
+```
+
+Raw HTTP path:
 
 ```bash
 curl -fsS 'https://api.exa.ai/search' \
@@ -90,9 +192,29 @@ curl -fsS 'https://api.exa.ai/search' \
   }'
 ```
 
-This query works as an API smoke test, but search results may include noisy `AlterEgo` matches.
+This query works as a smoke test, but search results may include noisy `AlterEgo` matches.
 
 ### 2. Fetch the authoritative page contents
+
+SDK/helper path:
+
+```bash
+node scripts/exa-contents.mjs 'https://altego.ai/about' text 5000
+```
+
+SDK path:
+
+```js
+import Exa from "exa-js";
+
+const exa = new Exa();
+
+const { results } = await exa.getContents(["https://altego.ai/about"], {
+  text: { maxCharacters: 5000 },
+});
+```
+
+Raw HTTP path:
 
 ```bash
 curl -fsS 'https://api.exa.ai/contents' \
@@ -113,6 +235,8 @@ At the time this skill was created, that page identified the founders as:
 Use `/contents` when you already know the URL and want the cleanest answer from a known page.
 
 ## MCP
+
+Treat MCP as optional, not primary.
 
 Base MCP URL:
 
@@ -144,8 +268,8 @@ If tools do not appear after config changes, restart the MCP client.
 
 Prefer these defaults unless the task needs something else:
 - `type: "auto"`
-- compact `highlights` for search result evidence
-- `/contents` for known URLs
+- compact `highlights` for search-result evidence
+- `/contents` or `exa.getContents()` for known URLs
 - domain filters only when the user needs tighter source control
 
 Typical categories:
