@@ -23,6 +23,23 @@ Create a Mermaid diagram when:
 
 Diagrams are stored in `./docs/diagrams/` at the project root if that directory exists. Otherwise, embed diagrams directly in relevant documentation files.
 
+## Validation Workflow
+
+This skill is primarily about diagram quality and structure.
+
+If the shared `lefant/agent-skills` bundle also includes the vendored `mitsuhiko/mermaid` skill, use its validator helper for executable syntax/render checks before embedding a diagram in Markdown:
+
+```bash
+bash vendor/mitsuhiko/mermaid/tools/validate.sh diagram.mmd [output.svg]
+```
+
+Recommended flow:
+
+1. Draft the Mermaid source in a standalone `diagram.mmd` file.
+2. Validate it with `vendor/mitsuhiko/mermaid/tools/validate.sh`.
+3. Once it renders cleanly, copy the Mermaid block into the target document.
+4. Use this skill's layout/style guidance to improve readability, hierarchy, and color use.
+
 ## Key Principles
 
 ### 1. Choose the Right Graph Direction

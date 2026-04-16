@@ -100,8 +100,10 @@ fetch_skill "giuseppe-trisciuoglio/developer-kit" "plugins/developer-kit-typescr
 # Context7
 fetch_skill "intellectronica/agent-skills" "skills/context7" "$VENDOR_DIR/intellectronica/context7" || true
 
-# Tmux
+# Mitsuhiko - agent-stuff
 fetch_skill "mitsuhiko/agent-stuff" "skills/tmux" "$VENDOR_DIR/mitsuhiko/tmux" || true
+fetch_skill "mitsuhiko/agent-stuff" "skills/mermaid" "$VENDOR_DIR/mitsuhiko/mermaid" || true
+fetch_skill "mitsuhiko/agent-stuff" "skills/librarian" "$VENDOR_DIR/mitsuhiko/librarian" || true
 
 # ArtemXTech - TaskNotes
 fetch_skill "ArtemXTech/personal-os-skills" "skills/tasknotes" "$VENDOR_DIR/ArtemXTech/tasknotes" || true
