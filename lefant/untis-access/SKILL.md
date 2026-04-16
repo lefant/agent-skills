@@ -25,11 +25,12 @@ Do not use this skill for:
 
 1. Read `references/research/2026-04-16_webuntis-message-access.md` for the proven tenant flow and repo overview.
 2. Read `references/auth-and-env.md` and confirm the credential file convention.
-3. Start from the bundled script closest to the task:
+3. Check config completeness before running scripts: `WEBUNTIS_USERNAME`, `WEBUNTIS_PASSWORD`, `WEBUNTIS_HOST`, and `WEBUNTIS_SCHOOL`. If host or school is missing, consult the user's local setup notes before proceeding.
+4. Start from the bundled script closest to the task:
    - `scripts/read-latest-message.py` for inbox access
    - `scripts/read-timetable.py` for guardian/dependent timetable access
-4. Only branch into repo comparison or alternate auth when the default scripts do not cover the target surface.
-5. Validate by running the script and confirming the response is real JSON data, not the SPA shell.
+5. Only branch into repo comparison or alternate auth when the default scripts do not cover the target surface.
+6. Validate by running the script and confirming the response is real JSON data, not the SPA shell.
 
 ## Defaults
 

@@ -29,6 +29,19 @@ WEBUNTIS_USERNAME='user@example.com'
 WEBUNTIS_PASSWORD='...'
 ```
 
+## Required local completeness check
+
+Before running the bundled scripts, confirm these four values are available either in `~/.env.webuntis`, via process environment, or via CLI flags:
+
+```bash
+WEBUNTIS_USERNAME=user@example.com
+WEBUNTIS_PASSWORD=...
+WEBUNTIS_HOST=<server>.webuntis.com
+WEBUNTIS_SCHOOL=<school-name>
+```
+
+If `WEBUNTIS_HOST` or `WEBUNTIS_SCHOOL` is missing, stop and check the user's local setup notes before running the scripts.
+
 ## Optional overrides
 
 The scripts also support these optional variables:
