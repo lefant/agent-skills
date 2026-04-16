@@ -1,0 +1,20 @@
+Repository: https://github.com/agentskills/agentskills
+Clone: ~/git/external/agentskills
+Commit: 2e8b3265237b2e5f255d6e675f89ae83be572329
+Fetched: 2026-04-10
+Files:
+- README.md
+- llms.txt
+- docs/what-are-skills.mdx
+- docs/specification.mdx
+- docs/skill-creation/quickstart.mdx
+- docs/skill-creation/best-practices.mdx
+- docs/skill-creation/evaluating-skills.mdx
+- docs/skill-creation/optimizing-descriptions.mdx
+- docs/skill-creation/using-scripts.mdx
+- docs/client-implementation/adding-skills-support.mdx
+- skills-ref/README.md
+- skills-ref/CLAUDE.md
+- skills-ref/pyproject.toml
+- skills-ref/LICENSE
+Method: scripts/update-agentskills-docs.sh copied curated upstream docs into references/upstream/agentskills

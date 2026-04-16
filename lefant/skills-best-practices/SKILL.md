@@ -42,6 +42,8 @@ The target is not a pretty `SKILL.md`. The target is a skill that:
 - `references/evals-and-iterations.md` — output-quality eval loop, assertions, grading, and iteration
 - `references/description-optimization.md` — trigger evals and description tuning
 - `references/scripts.md` — bundling helper scripts and designing script interfaces
+- `references/update-upstream-docs.md` — refreshing bundled upstream Agent Skills docs
+- `references/upstream/agentskills/` — vendored public Agent Skills docs; read specific files only when the distilled local references are insufficient
 - `assets/skill-template.md` — starter skeleton for a new skill
 - `assets/evals-template.json` — starter output-quality eval file
 - `assets/trigger-evals-template.json` — starter trigger eval file
@@ -55,6 +57,7 @@ Do not leave the finished skill dependent on:
 - repo-specific docs outside the skill directory
 - absolute paths to authoring references
 - hidden tribal knowledge that only existed in the extraction session
+- upstream docs that are only present in the source repository but missing from the deployed skill package
 
 The finished skill may still operate on user files or project files. The rule is that the skill's *instructions and bundled resources* should live inside the skill.
 
