@@ -38,6 +38,7 @@ Then review changes before committing.
 | `atomically-land` | Close out implementation work and update surrounding docs/tracking |
 | `devlog` | Write implementation devlogs for current session state |
 | `exa` | Use Exa for web search, code context lookup, and current-information lookups via SDK, API, or MCP |
+| `skills-best-practices` | Create, review, and refactor agent skills with self-contained packaging and eval guidance |
 | `github-get-pr-comments` | Gather PR comments and combine them with local project context |
 | `git-resolve-merge-conflicts` | Resolve git merge conflicts safely using local context |
 | `mermaid-diagrams` | Create hierarchical Mermaid diagrams |

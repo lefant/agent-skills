@@ -1,0 +1,26 @@
+{
+  "skill_name": "your-skill-name",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Realistic user prompt with concrete file paths, domain language, and the actual job to be done.",
+      "expected_output": "Human-readable description of what success looks like.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "prompt": "A second realistic prompt with different phrasing or an edge case.",
+      "expected_output": "Expected outcome for the second prompt.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "prompt": "A third prompt that exercises a boundary or fallback path.",
+      "expected_output": "Expected outcome for the third prompt.",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

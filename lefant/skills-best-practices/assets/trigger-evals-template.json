@@ -1,0 +1,18 @@
+[
+  {
+    "query": "Realistic prompt that should trigger the skill because it clearly needs the domain workflow.",
+    "should_trigger": true
+  },
+  {
+    "query": "Another should-trigger prompt using casual language or indirect phrasing.",
+    "should_trigger": true
+  },
+  {
+    "query": "Near-miss prompt that mentions similar concepts but should be handled by a different skill or by general tools.",
+    "should_trigger": false
+  },
+  {
+    "query": "Another negative example that overlaps in vocabulary but not in actual intent.",
+    "should_trigger": false
+  }
+]
