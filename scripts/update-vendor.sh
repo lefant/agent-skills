@@ -45,6 +45,9 @@ from pathlib import Path
 
 replacements = [
     (Path('vendor/dz0ny/devenv/SKILL.md'), 'name: devenv-migration', 'name: devenv'),
+    (Path('vendor/anthropics/pdf/SKILL.md'), 'see REFERENCE.md. If you need to fill out a PDF form, read FORMS.md and follow its instructions.', 'see reference.md. If you need to fill out a PDF form, read forms.md and follow its instructions.'),
+    (Path('vendor/anthropics/pdf/SKILL.md'), '| Fill PDF forms | pdf-lib or pypdf (see FORMS.md) | See FORMS.md |', '| Fill PDF forms | pdf-lib or pypdf (see forms.md) | See forms.md |'),
+    (Path('vendor/anthropics/pdf/SKILL.md'), '- For advanced pypdfium2 usage, see REFERENCE.md\n- For JavaScript libraries (pdf-lib), see REFERENCE.md\n- If you need to fill out a PDF form, follow the instructions in FORMS.md\n- For troubleshooting guides, see REFERENCE.md', '- For advanced pypdfium2 usage, see reference.md\n- For JavaScript libraries (pdf-lib), see reference.md\n- If you need to fill out a PDF form, follow the instructions in forms.md\n- For troubleshooting guides, see reference.md'),
     (Path('vendor/dz0ny/devenv/README.md'), 'devenv-migration/', 'devenv/'),
     (Path('vendor/remotion-dev/remotion-best-practices/SKILL.md'), './rules/sound-effects.md', './rules/sfx.md'),
     (Path('vendor/remotion-dev/remotion-best-practices/rules/voiceover.md'), './calculate-metadata)', './calculate-metadata.md)'),
@@ -85,6 +88,7 @@ fetch_skill "vercel/ai" "skills/use-ai-sdk" "$VENDOR_DIR/vercel/ai-sdk" || true
 
 # Anthropic
 fetch_skill "anthropics/skills" "skills/frontend-design" "$VENDOR_DIR/anthropics/frontend-design" || true
+fetch_skill "anthropics/skills" "skills/pdf" "$VENDOR_DIR/anthropics/pdf" || true
 fetch_skill "anthropics/skills" "skills/skill-creator" "$VENDOR_DIR/anthropics/skill-creator" || true
 
 # Remotion
