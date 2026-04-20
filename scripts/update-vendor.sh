@@ -136,7 +136,7 @@ fetch_skill "JuliusBrussee/caveman" "skills/caveman-review" "$VENDOR_DIR/JuliusB
 fetch_skill "JuliusBrussee/caveman" "caveman-compress" "$VENDOR_DIR/JuliusBrussee/caveman-compress" || true
 
 # Obsidian (vendored as subtree, update with: git subtree pull --prefix=vendor/kepano/obsidian-skills https://github.com/kepano/obsidian-skills.git main --squash)
-# Skills are at vendor/kepano/obsidian-skills/skills/{json-canvas,obsidian-bases,obsidian-markdown}
+# Skills are at vendor/kepano/obsidian-skills/skills/{json-canvas,obsidian-bases,obsidian-markdown,obsidian-cli,defuddle}
 
 apply_post_fetch_fixes
 
