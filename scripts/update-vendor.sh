@@ -70,6 +70,13 @@ for path, old, new in replacements:
     text = path.read_text()
     if old in text:
         path.write_text(text.replace(old, new))
+
+zfc_path = Path('vendor/lambdamechanic/zfc/SKILL.md')
+if zfc_path.exists():
+    text = zfc_path.read_text()
+    reference = '\n## Reference\n\n- [Steve Yegge, "Zero Framework Cognition: A way to build resilient AI applications"](https://medium.com/@steve-yegge/zero-framework-cognition-a-way-to-build-resilient-ai-applications-56b090ed3e69)\n'
+    if 'zero-framework-cognition-a-way-to-build-resilient-ai-applications-56b090ed3e69' not in text:
+        zfc_path.write_text(text.rstrip() + reference)
 PY
 }
 
@@ -134,6 +141,9 @@ fetch_skill "JuliusBrussee/caveman" "skills/caveman-help" "$VENDOR_DIR/JuliusBru
 fetch_skill "JuliusBrussee/caveman" "skills/caveman-commit" "$VENDOR_DIR/JuliusBrussee/caveman-commit" || true
 fetch_skill "JuliusBrussee/caveman" "skills/caveman-review" "$VENDOR_DIR/JuliusBrussee/caveman-review" || true
 fetch_skill "JuliusBrussee/caveman" "caveman-compress" "$VENDOR_DIR/JuliusBrussee/caveman-compress" || true
+
+# lambdamechanic - skills
+fetch_skill "lambdamechanic/skills" "zfc" "$VENDOR_DIR/lambdamechanic/zfc" || true
 
 # Obsidian (vendored as subtree, update with: git subtree pull --prefix=vendor/kepano/obsidian-skills https://github.com/kepano/obsidian-skills.git main --squash)
 # Skills are at vendor/kepano/obsidian-skills/skills/{json-canvas,obsidian-bases,obsidian-markdown,obsidian-cli,defuddle}

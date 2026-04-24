@@ -38,12 +38,15 @@ git diff vendor/
 | `boldsoftware/` | [boldsoftware/exe.dev](https://github.com/boldsoftware/exe.dev) | using-exe-dev |
 | `ChromeDevTools/` | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) | chrome-devtools-cli |
 | `JuliusBrussee/` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | caveman, caveman-help, caveman-commit, caveman-review, caveman-compress |
+| `lambdamechanic/` | [lambdamechanic/skills](https://github.com/lambdamechanic/skills) | zfc |
 
 ## Disabled for now
 
 | Vendor Directory | Source Repository | Skills |
 |-----------------|-------------------|--------|
 | `obra/` | [obra/superpowers](https://github.com/obra/superpowers) | brainstorming, using-superpowers |
+
+Reference: [Steve Yegge, "Zero Framework Cognition: A way to build resilient AI applications"](https://medium.com/@steve-yegge/zero-framework-cognition-a-way-to-build-resilient-ai-applications-56b090ed3e69)
 
 ## Security Review
 
