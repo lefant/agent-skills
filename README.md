@@ -24,6 +24,21 @@ Cloned to `/opt/lefant-agent-skills` and symlinked via entrypoint.
 ```
 Then review changes before committing.
 
+### Vendor Quality Checks
+
+Before committing vendor changes, verify skill discoverability:
+
+```bash
+find vendor -type d -name skills -print
+find vendor -path '*/SKILL.md' -printf '%h\n' | sort
+```
+
+Rules:
+
+- `find vendor -type d -name skills -print` should normally print nothing. Vendored skills must be flattened to `vendor/<source>/<skill>/SKILL.md`, even when upstream stores them under `skills/`.
+- Do not vendor whole plugin bundles that need agents, commands, MCP config, or other non-skill assets unless the installer can consume those assets. Handle plugin-native bundles in a plugin/package layer instead.
+- Keep source-to-local path mappings in `scripts/update-vendor.sh`; do not rely on symlinks for discoverability.
+
 ## Skills Included
 
 ### Custom Skills (`lefant/`)

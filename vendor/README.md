@@ -16,6 +16,10 @@ Then review changes before committing:
 git diff vendor/
 ```
 
+## Layout
+
+Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when the upstream repository stores them under a `skills/` subdirectory. This keeps wildcard installs from missing nested skills. Use `scripts/update-vendor.sh` as the source-path registry instead of symlinks.
+
 ## Sources
 
 | Vendor Directory | Source Repository | Skills |
@@ -28,7 +32,7 @@ git diff vendor/
 | `giuseppe-trisciuoglio/` | [giuseppe-trisciuoglio/developer-kit](https://github.com/giuseppe-trisciuoglio/developer-kit) | shadcn-ui |
 | `intellectronica/` | [intellectronica/agent-skills](https://github.com/intellectronica/agent-skills) | context7 |
 | `mitsuhiko/` | [mitsuhiko/agent-stuff](https://github.com/mitsuhiko/agent-stuff) | tmux, mermaid, librarian |
-| `kepano/obsidian-skills/` | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (subtree) | json-canvas, obsidian-bases, obsidian-markdown, obsidian-cli, defuddle |
+| `kepano/` | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | json-canvas, obsidian-bases, obsidian-markdown, obsidian-cli, defuddle |
 | `ArtemXTech/` | [ArtemXTech/personal-os-skills](https://github.com/ArtemXTech/personal-os-skills) | tasknotes |
 | `ast-grep/` | [ast-grep/agent-skill](https://github.com/ast-grep/agent-skill) | ast-grep |
 | `steipete/` | [steipete/agent-scripts](https://github.com/steipete/agent-scripts) | video-transcript-downloader, markdown-converter |

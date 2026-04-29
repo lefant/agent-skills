@@ -39,6 +39,73 @@ fetch_skill() {
     echo "  -> $target_dir"
 }
 
+fetch_file() {
+    local repo=$1
+    local file_path=$2
+    local target_file=$3
+
+    echo "Fetching $repo -> $file_path"
+    if ! git clone --depth 1 --filter=blob:none --sparse "https://github.com/$repo.git" "$TEMP_DIR/repo" 2>/dev/null; then
+        echo "  Warning: Failed to clone $repo, skipping..."
+        return 1
+    fi
+
+    if ! git -C "$TEMP_DIR/repo" sparse-checkout set --no-cone "$file_path" 2>/dev/null; then
+        echo "  Warning: Path $file_path not found in $repo, skipping..."
+        rm -rf "$TEMP_DIR/repo"
+        return 1
+    fi
+
+    if [[ ! -f "$TEMP_DIR/repo/$file_path" ]]; then
+        echo "  Warning: Path $file_path not found in $repo, skipping..."
+        rm -rf "$TEMP_DIR/repo"
+        return 1
+    fi
+
+    mkdir -p "$(dirname "$target_file")"
+    cp "$TEMP_DIR/repo/$file_path" "$target_file"
+    rm -rf "$TEMP_DIR/repo"
+    echo "  -> $target_file"
+}
+
+fetch_skillset() {
+    local repo=$1
+    local source_base=$2
+    local target_base=$3
+    shift 3
+    local names=("$@")
+    local sparse_paths=()
+
+    echo "Fetching $repo -> $source_base/{${names[*]}}"
+    if ! git clone --depth 1 --filter=blob:none --sparse "https://github.com/$repo.git" "$TEMP_DIR/repo" 2>/dev/null; then
+        echo "  Warning: Failed to clone $repo, skipping..."
+        return 1
+    fi
+
+    for name in "${names[@]}"; do
+        sparse_paths+=("$source_base/$name")
+    done
+
+    if ! git -C "$TEMP_DIR/repo" sparse-checkout set "${sparse_paths[@]}" 2>/dev/null; then
+        echo "  Warning: One or more paths not found in $repo, skipping..."
+        rm -rf "$TEMP_DIR/repo"
+        return 1
+    fi
+
+    mkdir -p "$target_base"
+    for name in "${names[@]}"; do
+        rm -rf "$target_base/$name"
+        if [[ ! -d "$TEMP_DIR/repo/$source_base/$name" ]]; then
+            echo "  Warning: Path $source_base/$name not found in $repo, skipping..."
+            continue
+        fi
+        cp -r "$TEMP_DIR/repo/$source_base/$name" "$target_base/$name"
+        echo "  -> $target_base/$name"
+    done
+
+    rm -rf "$TEMP_DIR/repo"
+}
+
 apply_post_fetch_fixes() {
     python - <<'PY'
 from pathlib import Path
@@ -145,8 +212,15 @@ fetch_skill "JuliusBrussee/caveman" "caveman-compress" "$VENDOR_DIR/JuliusBrusse
 # lambdamechanic - skills
 fetch_skill "lambdamechanic/skills" "zfc" "$VENDOR_DIR/lambdamechanic/zfc" || true
 
-# Obsidian (vendored as subtree, update with: git subtree pull --prefix=vendor/kepano/obsidian-skills https://github.com/kepano/obsidian-skills.git main --squash)
-# Skills are at vendor/kepano/obsidian-skills/skills/{json-canvas,obsidian-bases,obsidian-markdown,obsidian-cli,defuddle}
+# Kepano - Obsidian skills
+rm -rf "$VENDOR_DIR/kepano/obsidian-skills"
+fetch_skillset "kepano/obsidian-skills" "skills" "$VENDOR_DIR/kepano" \
+    defuddle \
+    json-canvas \
+    obsidian-bases \
+    obsidian-cli \
+    obsidian-markdown || true
+fetch_file "kepano/obsidian-skills" "LICENSE" "$VENDOR_DIR/kepano/LICENSE" || true
 
 apply_post_fetch_fixes
 
