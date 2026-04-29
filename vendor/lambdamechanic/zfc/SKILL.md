@@ -48,7 +48,6 @@ The Correct Flow
 3. Validate Structure • Schema conformance • Safety checks • Policy enforcement
 
 4. Execute Mechanically • Run AI’s decisions without modification
-
 ## Reference
 
 - [Steve Yegge, "Zero Framework Cognition: A way to build resilient AI applications"](https://medium.com/@steve-yegge/zero-framework-cognition-a-way-to-build-resilient-ai-applications-56b090ed3e69)
