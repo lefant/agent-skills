@@ -47,7 +47,6 @@ function loadDotEnv(filePath) {
 
 async function loadExaConstructor() {
   const resolverBases = [cwd, path.join(cwd, ".tools"), __dirname];
-  const errors = [];
 
   for (const base of resolverBases) {
     try {
@@ -55,25 +54,39 @@ async function loadExaConstructor() {
       const resolved = requireFromBase.resolve("exa-js");
       const module = await import(pathToFileURL(resolved).href);
       return module.Exa ?? module.default?.Exa ?? module.default ?? module;
-    } catch (error) {
-      errors.push(`${base}: ${error.message}`);
+    } catch {
+      // Fall back to direct HTTP below.
     }
   }
 
-  throw new Error(
-    [
-      "Could not resolve the exa-js package.",
-      "Install it in the target workspace (for example: npm install exa-js),",
-      "or make it available under .tools/node_modules.",
-      "Resolution errors:",
-      ...errors.map((error) => `- ${error}`),
-    ].join("\n"),
-  );
+  return null;
 }
 
 function usage() {
   console.error("Usage: node scripts/exa-contents.mjs <url> [highlights|text] [maxCharacters]");
   process.exit(1);
+}
+
+async function contentsWithHttp(url, mode, maxCharacters) {
+  const response = await fetch("https://api.exa.ai/contents", {
+    method: "POST",
+    headers: {
+      "x-api-key": process.env.EXA_API_KEY,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      urls: [url],
+      [mode]: {
+        maxCharacters,
+      },
+    }),
+  });
+
+  const text = await response.text();
+  if (!response.ok) {
+    throw new Error(`Exa contents failed (${response.status}): ${text}`);
+  }
+  return JSON.parse(text);
 }
 
 async function main() {
@@ -97,18 +110,16 @@ async function main() {
   }
 
   if (!process.env.EXA_API_KEY) {
-    throw new Error("EXA_API_KEY is not set. Export it or put it in the workspace .env file.");
+    throw new Error("EXA_API_KEY is not set. Export it or rely on OpenClaw skill apiKey injection.");
   }
 
   const Exa = await loadExaConstructor();
-  const exa = new Exa();
-
-  const options =
-    mode === "text"
-      ? { text: { maxCharacters } }
-      : { highlights: { maxCharacters } };
-
-  const response = await exa.getContents([url], options);
+  const response = Exa
+    ? await new Exa().getContents(
+        [url],
+        mode === "text" ? { text: { maxCharacters } } : { highlights: { maxCharacters } },
+      )
+    : await contentsWithHttp(url, mode, maxCharacters);
   const result = response.results?.[0] ?? null;
 
   console.log(

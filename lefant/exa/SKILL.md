@@ -1,6 +1,7 @@
 ---
 name: exa
 description: Use Exa for web search, code context lookup, and company or people research via the official SDK, direct API calls, or MCP. Use when setting up Exa in a coding-agent environment, testing EXA_API_KEY, configuring Exa MCP, or looking up current web information.
+metadata: {"openclaw":{"emoji":"🔎","requires":{"env":["EXA_API_KEY"]},"primaryEnv":"EXA_API_KEY","skillKey":"exa","os":["linux","darwin","win32"]}}
 ---
 
 # Exa
@@ -9,23 +10,15 @@ Use this skill for Exa SDK, API, and MCP work.
 
 ## Requirement: EXA_API_KEY
 
-Before any Exa call, verify that `EXA_API_KEY` is present:
+Before any Exa call, verify that `EXA_API_KEY` is present without printing it:
 
 ```bash
-echo "$EXA_API_KEY"
+test -n "${EXA_API_KEY:-}"
 ```
 
-If it is empty, stop and ask the user to export it first.
+In OpenClaw, this skill declares `primaryEnv: EXA_API_KEY`, so prefer configuring `skills.entries.exa.apiKey` as a SecretRef. OpenClaw injects the key for the agent run.
 
-Example:
-
-```bash
-export EXA_API_KEY="your_key_here"
-```
-
-If a workspace `.env` file already exists, source or load it first.
-
-Do not write API keys into tracked repo files.
+For manual use outside OpenClaw, export `EXA_API_KEY` from your local secret manager or an untracked local env file. Do not write API keys into tracked repo files or echo them into logs.
 
 ## First documentation step
 
@@ -72,7 +65,8 @@ Recommended workflow:
 - keep reusable Exa helpers in the target repo's `scripts/` directory
 - install `exa-js` locally in the workspace; do not assume global npm access
 - if local tooling lives under `.tools/`, resolve packages from there
-- load `EXA_API_KEY` from the workspace `.env` when present
+- rely on OpenClaw SecretRef skill injection when running inside OpenClaw
+- for manual runs, load `EXA_API_KEY` from an untracked local secret source
 - emit compact normalized JSON for downstream agent use
 
 The bundled helper is designed to resolve `exa-js` from the current working directory or `.tools/`, so it works in restricted environments that do not allow global installs.
