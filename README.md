@@ -29,6 +29,12 @@ Then review changes before committing.
 Before committing vendor changes, verify skill discoverability:
 
 ```bash
+./scripts/check-vendor-layout.sh
+```
+
+For quick manual inspection:
+
+```bash
 find vendor -type d -name skills -print
 find vendor -path '*/SKILL.md' -printf '%h\n' | sort
 ```
