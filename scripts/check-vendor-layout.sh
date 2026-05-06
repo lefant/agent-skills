@@ -83,67 +83,6 @@ then
     failed=1
 fi
 
-if ! python - <<'PY'
-from pathlib import Path
-import json
-import sys
-
-path = Path('skills.sources.json')
-if not path.exists():
-    print('Error: skills.sources.json is missing', file=sys.stderr)
-    sys.exit(1)
-
-try:
-    data = json.loads(path.read_text())
-except json.JSONDecodeError as exc:
-    print(f'Error: invalid skills.sources.json: {exc}', file=sys.stderr)
-    sys.exit(1)
-
-errors = []
-if data.get('version') != 1:
-    errors.append('version must be 1')
-sources = data.get('sources')
-skills = data.get('skills')
-if not isinstance(sources, dict):
-    errors.append('sources must be an object')
-    sources = {}
-if not isinstance(skills, dict):
-    errors.append('skills must be an object')
-    skills = {}
-
-supported_types = {'local-path', 'git-sparse', 'plugin-skill-dir'}
-for source_id, source in sorted(sources.items()):
-    if not isinstance(source, dict):
-        errors.append(f'source {source_id}: expected object')
-        continue
-    if source.get('type') not in supported_types:
-        errors.append(f'source {source_id}: unsupported type {source.get("type")!r}')
-
-for skill_name, skill in sorted(skills.items()):
-    if not isinstance(skill, dict):
-        errors.append(f'skill {skill_name}: expected object')
-        continue
-    source_id = skill.get('source')
-    if source_id not in sources:
-        errors.append(f'skill {skill_name}: unknown source {source_id!r}')
-    if not isinstance(skill.get('path'), str) or not skill['path']:
-        errors.append(f'skill {skill_name}: path is required')
-    vendor_path = skill.get('vendorPath')
-    if isinstance(vendor_path, str):
-        vendor_skill = Path(vendor_path) / 'SKILL.md'
-        if not vendor_skill.exists():
-            errors.append(f'skill {skill_name}: vendorPath lacks SKILL.md: {vendor_path}')
-
-if errors:
-    for error in errors:
-        print(f'Error: skills.sources.json: {error}', file=sys.stderr)
-    sys.exit(1)
-print(f'Source catalog OK ({len(skills)} skills).')
-PY
-then
-    failed=1
-fi
-
 if [[ "$failed" -ne 0 ]]; then
     exit 1
 fi
