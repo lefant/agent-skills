@@ -225,5 +225,11 @@ fetch_file "kepano/obsidian-skills" "LICENSE" "$VENDOR_DIR/kepano/LICENSE" || tr
 
 apply_post_fetch_fixes
 
+# Keep the machine-readable source catalog in the review loop. The current
+# fetch workflow remains explicit because several upstream skills need local
+# post-fetch fixes, but downstream OpenClaw deployment tooling consumes
+# skills.sources.json instead of duplicating this source knowledge.
+"$SCRIPT_DIR/check-vendor-layout.sh"
+
 echo ""
-echo "Done. Review changes with: git diff vendor/"
+echo "Done. Review changes with: git diff vendor/ skills.sources.json"
