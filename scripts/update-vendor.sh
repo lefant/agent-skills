@@ -179,6 +179,10 @@ fetch_skill "giuseppe-trisciuoglio/developer-kit" "plugins/developer-kit-typescr
 # Context7
 fetch_skill "intellectronica/agent-skills" "skills/context7" "$VENDOR_DIR/intellectronica/context7" || true
 
+# marimo
+fetch_skill "marimo-team/skills" "skills/marimo-notebook" "$VENDOR_DIR/marimo-team/marimo-notebook" || true
+fetch_skill "marimo-team/marimo-pair" "skills/marimo-pair" "$VENDOR_DIR/marimo-team/marimo-pair" || true
+
 # Mitsuhiko - agent-stuff
 fetch_skill "mitsuhiko/agent-stuff" "skills/tmux" "$VENDOR_DIR/mitsuhiko/tmux" || true
 fetch_skill "mitsuhiko/agent-stuff" "skills/mermaid" "$VENDOR_DIR/mitsuhiko/mermaid" || true

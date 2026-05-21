@@ -31,6 +31,7 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `remotion-dev/` | [remotion-dev/skills](https://github.com/remotion-dev/skills) | remotion-best-practices |
 | `giuseppe-trisciuoglio/` | [giuseppe-trisciuoglio/developer-kit](https://github.com/giuseppe-trisciuoglio/developer-kit) | shadcn-ui |
 | `intellectronica/` | [intellectronica/agent-skills](https://github.com/intellectronica/agent-skills) | context7 |
+| `marimo-team/` | [marimo-team/skills](https://github.com/marimo-team/skills), [marimo-team/marimo-pair](https://github.com/marimo-team/marimo-pair) | marimo-notebook, marimo-pair |
 | `mitsuhiko/` | [mitsuhiko/agent-stuff](https://github.com/mitsuhiko/agent-stuff) | tmux, mermaid, librarian |
 | `kepano/` | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | json-canvas, obsidian-bases, obsidian-markdown, obsidian-cli, defuddle |
 | `ArtemXTech/` | [ArtemXTech/personal-os-skills](https://github.com/ArtemXTech/personal-os-skills) | tasknotes |
