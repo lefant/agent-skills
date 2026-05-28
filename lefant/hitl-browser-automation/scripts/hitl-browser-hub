@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+HUB="$SCRIPT_DIR/browser-debug-hub/bin/browser-debug-hub"
+
+if [ ! -x "$HUB" ]; then
+  echo "missing bundled Browser Debug Hub launcher: $HUB" >&2
+  exit 2
+fi
+
+# Keep browser profiles, traces, screenshots, and logs out of the copied skill
+# package and out of the target project's tracked tree by default. Callers can
+# still override BDH_STATE_ROOT for isolated test runs.
+if [ -z "${BDH_STATE_ROOT:-}" ]; then
+  state_base="${XDG_STATE_HOME:-$HOME/.local/state}/hitl-browser-automation"
+  cwd_hash="$(pwd | cksum | awk '{print $1}')"
+  cwd_name="$(basename "$PWD" | tr -cs '[:alnum:]_.-' '-' | sed 's/^-//; s/-$//')"
+  export BDH_STATE_ROOT="$state_base/${cwd_name:-project}-$cwd_hash"
+fi
+
+exec "$HUB" "$@"

@@ -1,0 +1,352 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BDH_BIN_DIR="$(cd "$(dirname "$0")" && pwd)"
+BDH_ROOT="$(cd "$BDH_BIN_DIR/.." && pwd)"
+# shellcheck disable=SC1091
+source "$BDH_ROOT/lib/runtime-checks.sh"
+# shellcheck disable=SC1091
+source "$BDH_ROOT/lib/hub-state.sh"
+
+usage() {
+  cat <<'USAGE'
+Browser Debug Hub
+
+Usage:
+  browser-debug-hub check [--json]
+  browser-debug-hub start [--url URL] [--no-smoke-app]
+  browser-debug-hub status [--json]
+  browser-debug-hub stop
+  browser-debug-hub paths
+  browser-debug-hub screenshot [label]
+  browser-debug-hub replay-smoke
+  browser-debug-hub shared-session-test
+
+Defaults are safe: CDP and VNC bind to 127.0.0.1 only. Use SSH local forwarding from your workstation.
+USAGE
+}
+
+free_port() {
+  python3 - <<'PY'
+import socket
+s = socket.socket()
+s.bind(('127.0.0.1', 0))
+print(s.getsockname()[1])
+s.close()
+PY
+}
+
+free_display() {
+  local n
+  for n in $(seq 90 140); do
+    if [ ! -e "/tmp/.X11-unix/X$n" ]; then
+      printf '%s\n' "$n"
+      return 0
+    fi
+  done
+  echo "no free display found" >&2
+  return 1
+}
+
+write_meta() {
+  local dir="$1" session_id="$2" display="$3" vnc_port="$4" cdp_port="$5" smoke_port="$6" url="$7" vnc_mode="$8"
+  local ws_url=""
+  ws_url="$(curl -fsS "http://127.0.0.1:$cdp_port/json/version" 2>/dev/null | jq -r '.webSocketDebuggerUrl // empty' || true)"
+  jq -n \
+    --arg sessionId "$session_id" \
+    --arg dir "$dir" \
+    --arg display ":$display" \
+    --argjson vncPort "$vnc_port" \
+    --argjson cdpPort "$cdp_port" \
+    --argjson smokePort "$smoke_port" \
+    --arg url "$url" \
+    --arg vncMode "$vnc_mode" \
+    --arg cdpHttp "http://127.0.0.1:$cdp_port" \
+    --arg cdpWebSocket "$ws_url" \
+    --arg vncEndpoint "127.0.0.1:$vnc_port" \
+    --arg profileManual "$dir/profile-manual" \
+    --arg profileReplay "$dir/profile-replay" \
+    --arg artifacts "$dir/artifacts" \
+    --arg createdAt "$(date -u +%FT%TZ)" \
+    '{sessionId:$sessionId, sessionDir:$dir, createdAt:$createdAt, display:$display, vnc:{endpoint:$vncEndpoint, port:$vncPort, bind:"127.0.0.1", mode:$vncMode}, cdp:{http:$cdpHttp, websocket:$cdpWebSocket, port:$cdpPort, bind:"127.0.0.1"}, smokeApp:{url:$url, port:$smokePort}, profiles:{manual:$profileManual, replay:$profileReplay}, artifacts:$artifacts}' \
+    > "$dir/metadata.json"
+}
+
+wait_http() {
+  local url="$1" label="$2"
+  for _ in $(seq 1 80); do
+    if curl -fsS "$url" >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 0.25
+  done
+  echo "timed out waiting for $label at $url" >&2
+  return 1
+}
+
+wait_file() {
+  local file="$1" label="$2"
+  for _ in $(seq 1 80); do
+    if [ -s "$file" ]; then
+      return 0
+    fi
+    sleep 0.25
+  done
+  echo "timed out waiting for $label at $file" >&2
+  return 1
+}
+
+start_vnc_display() {
+  local dir="$1" display="$2" vnc_port="$3" mode="$4"
+  local kind first second wm
+  IFS=: read -r kind first second <<<"$mode"
+
+  case "$kind" in
+    tigervnc)
+      "$first" ":$display" -localhost -rfbport "$vnc_port" -SecurityTypes None -geometry "${BDH_GEOMETRY:-1440x900}" -depth 24 >"$dir/logs/vnc.log" 2>&1 &
+      echo $! > "$dir/vnc.pid"
+      ;;
+    xvfb-x11vnc)
+      "$first" ":$display" -screen 0 "${BDH_GEOMETRY:-1440x900}x24" >"$dir/logs/xvfb.log" 2>&1 &
+      echo $! > "$dir/xvfb.pid"
+      sleep 0.5
+      "$second" -display ":$display" -localhost -rfbport "$vnc_port" -forever -shared -nopw >"$dir/logs/vnc.log" 2>&1 &
+      echo $! > "$dir/vnc.pid"
+      ;;
+    *)
+      echo "unsupported VNC mode: $mode" >&2
+      return 1
+      ;;
+  esac
+
+  if wm="$(bdh_find_window_manager 2>/dev/null || true)"; then
+    DISPLAY=":$display" "$wm" >"$dir/logs/window-manager.log" 2>&1 &
+    echo $! > "$dir/window-manager.pid"
+  fi
+}
+
+start_hub() {
+  local url="" no_smoke=false
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --url) url="$2"; shift 2 ;;
+      --no-smoke-app) no_smoke=true; shift ;;
+      *) echo "unknown start option: $1" >&2; exit 2 ;;
+    esac
+  done
+
+  bdh_check_required >/dev/null
+
+  local current_dir=""
+  if current_dir="$(bdh_current_session_dir 2>/dev/null || true)"; then
+    if bdh_pid_alive "$(cat "$current_dir/chromium.pid" 2>/dev/null || true)" || bdh_pid_alive "$(cat "$current_dir/vnc.pid" 2>/dev/null || true)"; then
+      echo "Browser Debug Hub session already running: $current_dir" >&2
+      echo "Stop it first with: browser-debug-hub stop" >&2
+      exit 1
+    fi
+    rm -f "$BDH_CURRENT_LINK"
+  fi
+
+  local session_id dir display vnc_port cdp_port smoke_port chromium vnc_mode
+  session_id="$(bdh_now_id)"
+  dir="$(bdh_prepare_session "$session_id")"
+  cleanup_start_failure() {
+    echo "startup failed; cleaning partial Browser Debug Hub session" >&2
+    stop_hub >/dev/null 2>&1 || true
+  }
+  trap cleanup_start_failure ERR
+  display="$(free_display)"
+  vnc_port="${BDH_VNC_PORT:-$(free_port)}"
+  cdp_port="${BDH_CDP_PORT:-$(free_port)}"
+  smoke_port="${BDH_SMOKE_PORT:-$(free_port)}"
+  chromium="$(bdh_find_chromium)"
+  vnc_mode="$(bdh_find_vnc_mode)"
+
+  if [ -z "$url" ] && [ "$no_smoke" = false ]; then
+    node "$BDH_ROOT/smoke-app/server.mjs" --host 127.0.0.1 --port "$smoke_port" >"$dir/logs/smoke-app.log" 2>&1 &
+    echo $! > "$dir/smoke-app.pid"
+    wait_http "http://127.0.0.1:$smoke_port/api/state" "smoke app"
+    url="http://127.0.0.1:$smoke_port/"
+  fi
+  if [ -z "$url" ]; then
+    url="about:blank"
+  fi
+
+  start_vnc_display "$dir" "$display" "$vnc_port" "$vnc_mode"
+  sleep 0.8
+
+  DISPLAY=":$display" "$chromium" \
+    --user-data-dir="$dir/profile-manual" \
+    --remote-debugging-address=127.0.0.1 \
+    --remote-debugging-port="$cdp_port" \
+    --no-first-run \
+    --no-default-browser-check \
+    --disable-dev-shm-usage \
+    --disable-gpu \
+    --no-sandbox \
+    --window-size=1440,900 \
+    "$url" >"$dir/logs/chromium.log" 2>&1 &
+  echo $! > "$dir/chromium.pid"
+  wait_http "http://127.0.0.1:$cdp_port/json/version" "Chromium CDP"
+
+  node "$BDH_ROOT/recorder/cdp-recorder.mjs" --cdp-url "http://127.0.0.1:$cdp_port" --out-dir "$dir/artifacts" --session-id "$session_id" >"$dir/logs/recorder.log" 2>&1 &
+  echo $! > "$dir/recorder.pid"
+  wait_file "$dir/artifacts/metadata.json" "CDP recorder"
+
+  write_meta "$dir" "$session_id" "$display" "$vnc_port" "$cdp_port" "$smoke_port" "$url" "$vnc_mode"
+  trap - ERR
+
+  cat <<EOF
+Browser Debug Hub started.
+
+Session: $session_id
+Metadata: $dir/metadata.json
+Smoke URL: $url
+VNC endpoint on VM: 127.0.0.1:$vnc_port
+CDP endpoint on VM: http://127.0.0.1:$cdp_port
+
+From macOS, forward ports with:
+  ssh -L $vnc_port:127.0.0.1:$vnc_port -L $cdp_port:127.0.0.1:$cdp_port exedev@<vm>.exe.xyz
+
+Then connect your VNC client to:
+  127.0.0.1:$vnc_port
+
+Stop with:
+  browser-debug-hub stop
+EOF
+}
+
+status_hub() {
+  local json=false
+  if [ "${1:-}" = "--json" ]; then json=true; fi
+  local dir
+  if ! dir="$(bdh_current_session_dir 2>/dev/null)"; then
+    if [ "$json" = true ]; then jq -n '{running:false, reason:"no current session"}'; else echo "Browser Debug Hub is not running."; fi
+    return 1
+  fi
+  local meta="$dir/metadata.json"
+  local chromium=false vnc=false recorder=false smoke=false
+  bdh_pid_alive "$(cat "$dir/chromium.pid" 2>/dev/null || true)" && chromium=true
+  bdh_pid_alive "$(cat "$dir/vnc.pid" 2>/dev/null || true)" && vnc=true
+  bdh_pid_alive "$(cat "$dir/recorder.pid" 2>/dev/null || true)" && recorder=true
+  bdh_pid_alive "$(cat "$dir/smoke-app.pid" 2>/dev/null || true)" && smoke=true
+  if [ "$json" = true ]; then
+    jq -n --arg dir "$dir" --argjson chromium "$chromium" --argjson vnc "$vnc" --argjson recorder "$recorder" --argjson smokeApp "$smoke" --slurpfile meta "$meta" '{running:($chromium and $vnc), sessionDir:$dir, processes:{chromium:$chromium,vnc:$vnc,recorder:$recorder,smokeApp:$smokeApp}, metadata:$meta[0]}'
+  else
+    echo "Session: $dir"
+    echo "chromium: $chromium"
+    echo "vnc: $vnc"
+    echo "recorder: $recorder"
+    echo "smoke-app: $smoke"
+    [ -f "$meta" ] && jq '{vnc, cdp, smokeApp, artifacts}' "$meta"
+  fi
+}
+
+stop_hub() {
+  local dir
+  if ! dir="$(bdh_current_session_dir 2>/dev/null)"; then
+    echo "No Browser Debug Hub session is running."
+    return 0
+  fi
+  bdh_kill_pid_file "$dir/recorder.pid" recorder
+  bdh_kill_pid_file "$dir/chromium.pid" chromium
+  bdh_kill_pid_file "$dir/window-manager.pid" window-manager
+  bdh_kill_pid_file "$dir/vnc.pid" vnc
+  bdh_kill_pid_file "$dir/xvfb.pid" xvfb
+  bdh_kill_pid_file "$dir/smoke-app.pid" smoke-app
+  rm -f "$BDH_CURRENT_LINK"
+  echo "Browser Debug Hub stopped. Artifacts remain at: $dir"
+}
+
+paths_hub() {
+  local dir
+  dir="$(bdh_current_session_dir)"
+  jq '{sessionDir, artifacts, profiles, cdp, vnc, smokeApp}' "$dir/metadata.json"
+}
+
+screenshot_hub() {
+  local label="${1:-manual}"
+  local dir pid safe_label
+  dir="$(bdh_current_session_dir)"
+  pid="$(cat "$dir/recorder.pid" 2>/dev/null || true)"
+  if ! bdh_pid_alive "$pid"; then
+    echo "recorder is not running" >&2
+    return 1
+  fi
+  wait_file "$dir/artifacts/metadata.json" "CDP recorder"
+  safe_label="$(printf '%s' "$label" | tr -cs '[:alnum:]_.-' '-' | sed 's/^-//; s/-$//')"
+  printf '%s\n' "${safe_label:-checkpoint}" > "$dir/artifacts/checkpoint-label.txt"
+  kill -USR2 "$pid"
+  echo "requested recorder screenshot/checkpoint: ${safe_label:-checkpoint}"
+}
+
+replay_smoke() {
+  local dir url session_name
+  dir="$(bdh_current_session_dir)"
+  url="$(jq -r '.smokeApp.url' "$dir/metadata.json")"
+  session_name="bdh-smoke-$(jq -r '.sessionId' "$dir/metadata.json")"
+  if ! command -v agent-browser >/dev/null 2>&1; then
+    echo "agent-browser is unavailable" >&2
+    return 1
+  fi
+  AGENT_BROWSER_SESSION="$session_name" agent-browser open "$url"
+  AGENT_BROWSER_SESSION="$session_name" agent-browser fill '#message' 'agent-browser replay'
+  AGENT_BROWSER_SESSION="$session_name" agent-browser click '#submit'
+  AGENT_BROWSER_SESSION="$session_name" agent-browser wait 500
+  AGENT_BROWSER_SESSION="$session_name" agent-browser get text '#status' | tee "$dir/artifacts/agent-browser-replay.txt"
+  AGENT_BROWSER_SESSION="$session_name" agent-browser close >/dev/null 2>&1 || true
+}
+
+shared_session_test() {
+  local dir port url out session_name cdp_url current_url
+  dir="$(bdh_current_session_dir)"
+  port="$(jq -r '.cdp.port' "$dir/metadata.json")"
+  url="$(jq -r '.smokeApp.url' "$dir/metadata.json")"
+  session_name="bdh-shared-$(jq -r '.sessionId' "$dir/metadata.json")"
+  out="$dir/artifacts/shared-session-test.md"
+  {
+    echo "# Shared Session Test"
+    echo
+    echo "- Time: $(date -u +%FT%TZ)"
+    echo "- CDP port: $port"
+    echo "- URL: $url"
+    echo "- agent-browser session: $session_name"
+    echo
+  } > "$out"
+  if ! cdp_url="$(AGENT_BROWSER_SESSION="$session_name" agent-browser --cdp "$port" get cdp-url 2>>"$out")"; then
+    echo "Result: agent-browser could not connect to existing CDP endpoint." >> "$out"
+    echo "shared-session test failed non-blockingly; see $out"
+    return 0
+  fi
+  current_url="$(AGENT_BROWSER_SESSION="$session_name" agent-browser --cdp "$port" get url 2>>"$out" || true)"
+  {
+    echo "Connected CDP URL: $cdp_url"
+    echo "Current URL: $current_url"
+    echo
+  } >> "$out"
+  if [[ "$cdp_url" == *":$port/"* ]]; then
+    echo "Result: agent-browser connected to the hub CDP endpoint." >> "$out"
+    AGENT_BROWSER_SESSION="$session_name" agent-browser --cdp "$port" snapshot -i -c >>"$out" 2>&1 || true
+    echo "shared-session result written: $out"
+  else
+    echo "Result: agent-browser connected to a different CDP endpoint." >> "$out"
+    echo "shared-session test failed non-blockingly; see $out"
+  fi
+}
+
+cmd="${1:-}"
+shift || true
+case "$cmd" in
+  check)
+    if [ "${1:-}" = "--json" ]; then bdh_check_required_json; else bdh_check_required; fi
+    ;;
+  start) start_hub "$@" ;;
+  status) status_hub "$@" ;;
+  stop) stop_hub ;;
+  paths) paths_hub ;;
+  screenshot) screenshot_hub "$@" ;;
+  replay-smoke) replay_smoke ;;
+  shared-session-test) shared_session_test ;;
+  help|-h|--help|'') usage ;;
+  *) echo "unknown command: $cmd" >&2; usage >&2; exit 2 ;;
+esac

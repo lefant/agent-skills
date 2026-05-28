@@ -1,0 +1,20 @@
+{
+  "skill_name": "hitl-browser-automation",
+  "positive_triggers": [
+    "I'll show you the workflow in the browser once, then automate it.",
+    "Run this with agent-browser but let me inspect it in VNC before submit.",
+    "I need to log in manually and then have you continue.",
+    "Set up a VNC browser session so I can verify what the automation did.",
+    "Use agent-browser after I complete MFA in the browser.",
+    "I'll click buttons in the smoke app over VNC; infer the sequence from the artifacts.",
+    "Watch my VNC demo and generate a replay script if the evidence supports it."
+  ],
+  "negative_triggers": [
+    "Open this public website and summarize the page.",
+    "Take a screenshot of the homepage with normal browser automation.",
+    "Fetch this URL and extract the headings.",
+    "Debug this backend unit test failure.",
+    "Create a static HTML mockup.",
+    "Use agent-browser to click a button on a public page without me watching or logging in."
+  ]
+}
