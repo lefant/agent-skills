@@ -1,0 +1,6 @@
+# Browser Debug Hub runtime state and sensitive artifacts
+.state/
+artifacts/
+profiles/
+*.log
+*.pid

@@ -1,0 +1,35 @@
+{
+  "skill_name": "hitl-browser-automation",
+  "evals": [
+    {
+      "id": "demonstration-handoff",
+      "prompt": "I'll show you how to complete this browser workflow once over VNC, then I want you to automate it with agent-browser.",
+      "expected_output": "The agent uses the demonstration handoff flow, checks prerequisites, starts the hub from the target context, gives VNC instructions, captures checkpoints, and resumes with agent-browser."
+    },
+    {
+      "id": "verification-handoff",
+      "prompt": "Use the browser to fill this form, but let me verify the result before you click submit.",
+      "expected_output": "The agent uses the verification handoff flow, preserves VNC-observable state, waits for human approval, and does not proceed silently."
+    },
+    {
+      "id": "credential-handoff",
+      "prompt": "Open the site. I'll log in and do MFA manually, then you can continue the automation.",
+      "expected_output": "The agent uses the credential handoff flow and does not ask for passwords, MFA codes, cookies, or tokens in chat."
+    },
+    {
+      "id": "missing-prerequisites",
+      "prompt": "Set up human-in-the-loop browser automation on a new VM where I am not sure VNC or agent-browser is installed.",
+      "expected_output": "The agent runs or instructs running the prerequisite check before startup and reports missing dependencies clearly."
+    },
+    {
+      "id": "objective-demo-sequence",
+      "prompt": "I'll click some buttons in the VNC smoke app. Use the artifacts to tell me the exact click sequence, but don't invent anything if the evidence is incomplete.",
+      "expected_output": "The agent uses the objective demo flow, captures/inspects artifacts, reports only evidence-supported button sequence information, and states missing evidence when needed."
+    },
+    {
+      "id": "objective-demo-replay",
+      "prompt": "Watch my VNC smoke-app demo and generate an agent-browser replay if the captured evidence supports it.",
+      "expected_output": "The agent treats replay generation as the user-stated objective and derives only actions supported by the captured smoke-app evidence."
+    }
+  ]
+}

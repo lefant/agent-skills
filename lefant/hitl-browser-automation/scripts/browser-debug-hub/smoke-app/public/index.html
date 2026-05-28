@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Browser Debug Hub Smoke App</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 820px; margin: 4rem auto; padding: 0 1rem; line-height: 1.5; }
+    main { border: 1px solid #d0d7de; border-radius: 12px; padding: 1.5rem; }
+    label, input, button { font: inherit; }
+    input { min-width: 22rem; padding: .5rem; }
+    button { padding: .55rem .9rem; margin: .25rem .35rem .25rem 0; }
+    pre { background: #f6f8fa; padding: 1rem; border-radius: 8px; overflow: auto; }
+    .ok { color: #116329; font-weight: 700; }
+    .err { color: #a40e26; font-weight: 700; }
+    .panel { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid #d0d7de; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Browser Debug Hub Smoke App</h1>
+    <p>This page produces visible state and JSON network traffic for VNC, CDP recorder, and agent-browser replay tests.</p>
+
+    <section class="panel" aria-labelledby="button-flow-title">
+      <h2 id="button-flow-title">Objective demo buttons</h2>
+      <p>Click any sequence. The browser shows final state while CDP records network evidence that an agent can inspect for prompt-directed objectives.</p>
+      <button class="choice" data-choice="red" type="button">Red</button>
+      <button class="choice" data-choice="blue" type="button">Blue</button>
+      <button class="choice" data-choice="green" type="button">Green</button>
+      <button id="reset-flow" type="button">Reset flow</button>
+      <p id="flow-status" data-testid="flow-status">No button clicks yet.</p>
+      <pre id="flow-result" data-testid="flow-result">[]</pre>
+    </section>
+
+    <section class="panel" aria-labelledby="echo-title">
+      <h2 id="echo-title">Replay form</h2>
+      <form id="echo-form">
+        <label for="message">Message</label>
+        <input id="message" name="message" value="hello browser debug hub" autocomplete="off" />
+        <button id="submit" type="submit">Send JSON</button>
+      </form>
+      <p id="status" data-testid="status">Ready</p>
+      <pre id="result" data-testid="result">No response yet.</pre>
+    </section>
+  </main>
+  <script>
+    const flowStatus = document.getElementById('flow-status');
+    const flowResult = document.getElementById('flow-result');
+
+    function renderFlow(json) {
+      flowResult.textContent = JSON.stringify(json.sequence || [], null, 2);
+      flowStatus.textContent = json.sequence?.length
+        ? `Clicked ${json.sequence.join(' → ')} (${json.count} total)`
+        : 'No button clicks yet.';
+      flowStatus.className = json.ok ? 'ok' : 'err';
+    }
+
+    async function postJson(url, body = {}) {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-bdh-smoke': 'objective-demo' },
+        body: JSON.stringify(body)
+      });
+      return response.json();
+    }
+
+    document.querySelectorAll('.choice').forEach((button) => {
+      button.addEventListener('click', async () => {
+        renderFlow(await postJson('/api/click', { choice: button.dataset.choice }));
+      });
+    });
+
+    document.getElementById('reset-flow').addEventListener('click', async () => {
+      renderFlow(await postJson('/api/reset'));
+    });
+
+    document.getElementById('echo-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const status = document.getElementById('status');
+      const result = document.getElementById('result');
+      status.textContent = 'Submitting...';
+      status.className = '';
+      try {
+        const json = await postJson('/api/echo', { message: document.getElementById('message').value });
+        result.textContent = JSON.stringify(json, null, 2);
+        status.textContent = json.ok ? `Success ${json.replayToken}` : `Error ${json.error}`;
+        status.className = json.ok ? 'ok' : 'err';
+      } catch (error) {
+        status.textContent = `Error ${error.message}`;
+        status.className = 'err';
+      }
+    });
+  </script>
+</body>
+</html>
