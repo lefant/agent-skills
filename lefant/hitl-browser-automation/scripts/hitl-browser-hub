@@ -19,4 +19,4 @@ if [ -z "${BDH_STATE_ROOT:-}" ]; then
   export BDH_STATE_ROOT="$state_base/${cwd_name:-project}-$cwd_hash"
 fi
 
-exec "$HUB" "$@"
+exec bash "$HUB" "$@"
