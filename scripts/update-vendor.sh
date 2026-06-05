@@ -217,6 +217,27 @@ fetch_skill "JuliusBrussee/caveman" "caveman-compress" "$VENDOR_DIR/JuliusBrusse
 # lambdamechanic - skills
 fetch_skill "lambdamechanic/skills" "zfc" "$VENDOR_DIR/lambdamechanic/zfc" || true
 
+# Pulumi - agent-skills
+rm -rf "$VENDOR_DIR/pulumi"
+fetch_skillset "pulumi/agent-skills" "migration/skills" "$VENDOR_DIR/pulumi" \
+    pulumi-terraform-to-pulumi \
+    pulumi-cdk-to-pulumi \
+    cloudformation-to-pulumi \
+    pulumi-arm-to-pulumi || true
+fetch_skillset "pulumi/agent-skills" "pulumi/skills" "$VENDOR_DIR/pulumi" \
+    pulumi-overview \
+    pulumi-best-practices \
+    pulumi-component \
+    pulumi-automation-api \
+    pulumi-esc \
+    provider-upgrade \
+    package-usage || true
+fetch_skillset "pulumi/agent-skills" "package-maintenance/skills" "$VENDOR_DIR/pulumi" \
+    pulumi-upgrade-provider \
+    upstream-patches || true
+fetch_skillset "pulumi/agent-skills" "delegation/skills" "$VENDOR_DIR/pulumi" \
+    pulumi-neo-handoff || true
+
 # Kepano - Obsidian skills
 rm -rf "$VENDOR_DIR/kepano/obsidian-skills"
 fetch_skillset "kepano/obsidian-skills" "skills" "$VENDOR_DIR/kepano" \
