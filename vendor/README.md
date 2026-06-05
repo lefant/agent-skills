@@ -44,6 +44,7 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `ChromeDevTools/` | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) | chrome-devtools-cli |
 | `JuliusBrussee/` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | caveman, caveman-help, caveman-commit, caveman-review, caveman-compress |
 | `lambdamechanic/` | [lambdamechanic/skills](https://github.com/lambdamechanic/skills) | zfc |
+| `pulumi/` | [pulumi/agent-skills](https://github.com/pulumi/agent-skills) | pulumi-overview, pulumi-best-practices, pulumi-component, pulumi-automation-api, pulumi-esc, provider-upgrade, package-usage, pulumi-terraform-to-pulumi, pulumi-cdk-to-pulumi, cloudformation-to-pulumi, pulumi-arm-to-pulumi, pulumi-upgrade-provider, upstream-patches, pulumi-neo-handoff |
 
 ## Disabled for now
 
