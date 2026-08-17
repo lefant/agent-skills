@@ -4,14 +4,24 @@ This document provides `gh` CLI commands for common GitHub operations. Use these
 
 ## Prerequisites
 
-Ensure `GH_TOKEN` environment variable is set:
+Check that `gh` is available:
+
 ```bash
-echo $GH_TOKEN
+command -v gh
 ```
 
-Check `gh` is available:
+On exe.dev VMs, prefer the GitHub integration:
+
 ```bash
-which gh
+export GH_HOST=github.int.exe.xyz
+gh auth status --hostname github.int.exe.xyz
+```
+
+Otherwise, use existing `gh auth login` credentials or a non-empty `GH_TOKEN`. Never print token values:
+
+```bash
+gh auth status --hostname github.com
+test -n "${GH_TOKEN:-}"
 ```
 
 ## Actions / Workflows
@@ -368,6 +378,7 @@ echo "https://github.com/owner/repo/issues/123" | sed -E 's|https://github.com/(
 
 - Use `--json` flag to get structured output that can be parsed with `jq`
 - Use `--repo OWNER/REPO` to specify repository, or run commands from within a git repository
-- Set `GH_TOKEN` environment variable for authentication
+- On exe.dev VMs, set `GH_HOST=github.int.exe.xyz` to use the attached GitHub integration without a token on the VM
+- Otherwise, use `gh auth login` or set `GH_TOKEN` for authentication; never print token values
 - Use `gh api` for endpoints not covered by `gh` subcommands
 - Many commands support `--web` flag to open the resource in a browser

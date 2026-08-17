@@ -1,56 +1,62 @@
 ---
 name: github-access
-description: Access GitHub repositories programmatically using gh CLI or REST API. Use this skill when needing to interact with GitHub issues, pull requests, workflows, discussions, or actions. The skill automatically adapts based on available tools (gh CLI or curl) and requires GH_TOKEN for authentication.
+description: "Access GitHub repositories programmatically using the exe.dev GitHub integration, gh CLI, or REST API. Use when interacting with GitHub repositories, issues, pull requests, workflows, discussions, or actions. On exe.dev VMs, prefer the tokenless GitHub integration before falling back to local gh authentication or GH_TOKEN."
 ---
 
 # GitHub Access
 
 ## Overview
 
-This skill enables programmatic access to GitHub repositories through either the `gh` CLI tool or the REST API with `curl`. Use this skill to interact with GitHub issues, pull requests, workflows, discussions, and GitHub Actions. The skill provides comprehensive commands and patterns for common GitHub operations.
+This skill enables programmatic GitHub access through the exe.dev GitHub integration, the `gh` CLI, or the REST API with `curl`. Prefer credentials held outside the VM when exe.dev provides them.
 
 ## Prerequisites and Tool Selection
 
-Before performing any GitHub operations, follow this workflow:
+Before performing GitHub operations, follow this workflow:
 
-### 1. Check for GH_TOKEN
+### 1. Prefer the exe.dev GitHub integration
 
-**CRITICAL**: Always verify that the `GH_TOKEN` environment variable is set before attempting any GitHub operations:
-
-```bash
-echo $GH_TOKEN
-```
-
-**If `GH_TOKEN` is not set:**
-- Abort the operation immediately
-- Inform the user that a GitHub token is required
-- Instruct them to set `GH_TOKEN` with a valid GitHub personal access token
-
-**Example message:**
-```
-GitHub operations require authentication. Please set the GH_TOKEN environment variable with a valid GitHub personal access token:
-
-export GH_TOKEN="your_token_here"
-
-You can create a token at: https://github.com/settings/tokens
-```
-
-### 2. Check for gh CLI Availability
-
-If `GH_TOKEN` is set, check if the `gh` CLI tool is available:
+On an exe.dev VM with `gh` installed, test the aggregate integration hostname:
 
 ```bash
-which gh
+GH_HOST=github.int.exe.xyz gh auth status --hostname github.int.exe.xyz
 ```
 
-### 3. Load the Appropriate Reference
+If this succeeds, use the integration for the rest of the task:
 
-Based on availability, load the corresponding reference document:
+```bash
+export GH_HOST=github.int.exe.xyz
+gh repo view OWNER/REPO
+gh issue list --repo OWNER/REPO
+```
 
-- **If `gh` is available**: Read and use `references/gh-commands.md` for command examples
-- **If `gh` is NOT available**: Read and use `references/curl-api.md` for REST API calls with curl
+No `GH_TOKEN` is needed. The credential stays outside the VM and is injected at the network edge. Read `references/exe-dev-integration.md` for setup, repository scope, read-only mode, attribution, cloning, and pushing.
 
-The `references/mcp-tools.md` file provides a comprehensive list of all available GitHub MCP tools and their parameters for reference.
+For Git operations, use the integration hostname rather than `github.com`:
+
+```bash
+git clone https://github.int.exe.xyz/OWNER/REPO.git
+git push https://github.int.exe.xyz/OWNER/REPO.git HEAD
+```
+
+### 2. Fall back to ordinary GitHub authentication
+
+Only when the exe.dev integration is unavailable:
+
+1. If `gh` is installed and `gh auth status --hostname github.com` succeeds, use `gh` with its existing authentication.
+2. Otherwise, check whether `GH_TOKEN` is non-empty without printing it:
+
+   ```bash
+   test -n "${GH_TOKEN:-}"
+   ```
+
+3. If no authentication is available, stop and ask the user to configure the exe.dev GitHub integration, run `gh auth login`, or provide `GH_TOKEN`. Never print or log token values.
+
+### 3. Load the appropriate reference
+
+- **exe.dev integration available**: Read `references/exe-dev-integration.md`, then use `references/gh-commands.md`.
+- **Ordinary `gh` authentication available**: Read `references/gh-commands.md`.
+- **Only `curl` and `GH_TOKEN` available**: Read `references/curl-api.md`.
+- `references/mcp-tools.md` lists GitHub MCP tools and parameters.
 
 ## Key Operations
 
@@ -282,10 +288,13 @@ REPO=$(echo "$OWNER_REPO" | cut -d'/' -f2)
 
 ## Resources
 
-This skill includes three reference documents with comprehensive command examples:
+This skill includes these reference documents:
 
 ### references/mcp-tools.md
 Complete list of all available GitHub MCP tools and their parameters. Use this as a reference for understanding available functionality and parameter requirements.
+
+### references/exe-dev-integration.md
+Use exe.dev's GitHub integration without storing a GitHub token on the VM. Load this first on exe.dev VMs.
 
 ### references/gh-commands.md
 Comprehensive `gh` CLI commands for all GitHub operations. Load this document when `gh` is available. Includes:
@@ -298,7 +307,7 @@ Comprehensive `gh` CLI commands for all GitHub operations. Load this document wh
 **Official documentation**: https://docs.github.com/en/rest/using-the-rest-api/getting-started-with-the-rest-api?apiVersion=2022-11-28&tool=cli
 
 ### references/curl-api.md
-REST API calls using `curl` for environments without `gh` CLI. Load this document when `gh` is not available. Includes:
+Token-authenticated REST API calls using `curl` when neither the exe.dev integration nor authenticated `gh` is available. Includes:
 - Complete REST API endpoints
 - Request headers and authentication
 - Response parsing with `jq`
