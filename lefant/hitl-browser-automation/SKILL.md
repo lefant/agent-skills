@@ -1,6 +1,6 @@
 ---
 name: hitl-browser-automation
-description: Use when browser automation needs a human checkpoint: the user wants to demonstrate a workflow once, watch and verify an agent-driven browser result before proceeding, log in or complete MFA/credential-sensitive steps manually, connect through VNC, or use agent-browser with human-in-the-loop browser control. This skill sets up and operates the bundled Browser Debug Hub runtime with safe loopback VNC/CDP defaults.
+description: "Use when browser automation needs a human checkpoint: the user wants to demonstrate a workflow once, watch and verify an agent-driven browser result before proceeding, log in or complete MFA/credential-sensitive steps manually, connect through VNC, or use agent-browser with human-in-the-loop browser control. This skill sets up and operates the bundled Browser Debug Hub runtime with safe loopback VNC/CDP defaults."
 ---
 
 # HITL Browser Automation
