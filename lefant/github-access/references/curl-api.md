@@ -7,9 +7,10 @@ This document provides `curl` commands for GitHub REST API operations when `gh` 
 
 ## Prerequisites
 
-Ensure `GH_TOKEN` environment variable is set:
+Use this token-based fallback only when the exe.dev GitHub integration and authenticated `gh` are unavailable. Ensure `GH_TOKEN` is non-empty without printing it:
+
 ```bash
-echo $GH_TOKEN
+test -n "${GH_TOKEN:-}"
 ```
 
 ## Common Headers
