@@ -5,7 +5,8 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-VENDOR_DIR="$SCRIPT_DIR/../vendor"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+VENDOR_DIR="$REPO_ROOT/vendor"
 TEMP_DIR=$(mktemp -d)
 trap "rm -rf $TEMP_DIR" EXIT
 
@@ -107,8 +108,11 @@ fetch_skillset() {
 }
 
 apply_post_fetch_fixes() {
-    python - <<'PY'
+    python - "$REPO_ROOT" <<'PY'
+import sys
 from pathlib import Path
+
+repo_root = Path(sys.argv[1])
 
 replacements = [
     (Path('vendor/dz0ny/devenv/SKILL.md'), 'name: devenv-migration', 'name: devenv'),
@@ -130,21 +134,62 @@ replacements = [
     (Path('vendor/JuliusBrussee/caveman-help/SKILL.md'), 'Resolution: env var > config file > `full`.', 'Resolution: env var > config file > `lite`.'),
     (Path('vendor/JuliusBrussee/caveman-compress/SKILL.md'), '1. The compression scripts live in `caveman-compress/scripts/` (adjacent to this SKILL.md). If the path is not immediately available, search for `caveman-compress/scripts/__main__.py`.', '1. The compression scripts live in `scripts/` (adjacent to this SKILL.md). If the path is not immediately available, search for `{baseDir}/scripts/__main__.py`.'),
     (Path('vendor/JuliusBrussee/caveman-compress/SKILL.md'), 'cd caveman-compress && python3 -m scripts <absolute_filepath>', 'cd {baseDir} && python3 -m scripts <absolute_filepath>'),
+    (Path('vendor/woosal1337/ste-writing/SKILL.md'), 'python3 ste-lint.py draft.md            # flavored target: under 2.5 per 100 words\npython3 ste-lint.py --strict draft.md   # strict target: under 1.5 per 100 words', 'python3 {baseDir}/ste-lint.py draft.md            # flavored target: under 2.5 per 100 words\npython3 {baseDir}/ste-lint.py --strict draft.md   # strict target: under 1.5 per 100 words'),
+    (Path('vendor/woosal1337/ste-writing/ste-lint.py'), '    longs = [(wc(s), s) for s in sents if wc(s) > 20]\n    v["long_sentence(>20w)"] = len(longs)', '    sentence_limit = 20 if strict else 25\n    longs = [(wc(s), s) for s in sents if wc(s) > sentence_limit]\n    v[f"long_sentence(>{sentence_limit}w)"] = len(longs)'),
+    (Path('vendor/woosal1337/ste-writing/ste-lint.py'), '    v["contraction"] = len(re.findall(r"\\b\\w+[\'’](?:t|re|ve|ll|d|s|m)\\b", text))', '    v["contraction"] = len(re.findall(\n        r"\\b(?:\\w+[\'’](?:t|re|ve|ll|d|m)|(?:he|here|how|it|let|she|that|there|what|when|where|who|why)[\'’]s)\\b",\n        text, re.I))'),
 ]
 
 for path, old, new in replacements:
+    path = repo_root / path
     if not path.exists():
         continue
     text = path.read_text()
     if old in text:
         path.write_text(text.replace(old, new))
 
-zfc_path = Path('vendor/lambdamechanic/zfc/SKILL.md')
+zfc_path = repo_root / 'vendor/lambdamechanic/zfc/SKILL.md'
 if zfc_path.exists():
     text = zfc_path.read_text()
     reference = '\n## Reference\n\n- [Steve Yegge, "Zero Framework Cognition: A way to build resilient AI applications"](https://medium.com/@steve-yegge/zero-framework-cognition-a-way-to-build-resilient-ai-applications-56b090ed3e69)\n'
     if 'zero-framework-cognition-a-way-to-build-resilient-ai-applications-56b090ed3e69' not in text:
         zfc_path.write_text(text.rstrip() + reference)
+
+ste_skill_path = repo_root / 'vendor/woosal1337/ste-writing/SKILL.md'
+required_ste_lint_commands = (
+    'python3 {baseDir}/ste-lint.py draft.md',
+    'python3 {baseDir}/ste-lint.py --strict draft.md',
+)
+if not ste_skill_path.is_file():
+    raise SystemExit(f'Post-fetch fix failed: {ste_skill_path} does not exist')
+
+ste_skill_text = ste_skill_path.read_text()
+missing_commands = [
+    command for command in required_ste_lint_commands if command not in ste_skill_text
+]
+if missing_commands:
+    raise SystemExit(
+        f'Post-fetch fix failed: {ste_skill_path} is missing required command(s): '
+        + ', '.join(missing_commands)
+    )
+
+ste_lint_path = repo_root / 'vendor/woosal1337/ste-writing/ste-lint.py'
+required_ste_lint_snippets = (
+    'sentence_limit = 20 if strict else 25',
+    'v[f"long_sentence(>{sentence_limit}w)"] = len(longs)',
+    "(?:he|here|how|it|let|she|that|there|what|when|where|who|why)['’]s",
+)
+if not ste_lint_path.is_file():
+    raise SystemExit(f'Post-fetch fix failed: {ste_lint_path} does not exist')
+
+ste_lint_text = ste_lint_path.read_text()
+missing_snippets = [
+    snippet for snippet in required_ste_lint_snippets if snippet not in ste_lint_text
+]
+if missing_snippets:
+    raise SystemExit(
+        f'Post-fetch fix failed: {ste_lint_path} is missing required local fixes: '
+        + ', '.join(missing_snippets)
+    )
 PY
 }
 
@@ -217,6 +262,12 @@ fetch_skill "JuliusBrussee/caveman" "caveman-compress" "$VENDOR_DIR/JuliusBrusse
 # lambdamechanic - skills
 fetch_skill "lambdamechanic/skills" "zfc" "$VENDOR_DIR/lambdamechanic/zfc" || true
 
+# woosal1337 - ste-writing
+fetch_file "woosal1337/blog" "videos/ep01-the-cure-for-ai-slop/ste-writing-skill.md" "$VENDOR_DIR/woosal1337/ste-writing/SKILL.md" || true
+fetch_file "woosal1337/blog" "videos/ep01-the-cure-for-ai-slop/ste-recurring-errors.md" "$VENDOR_DIR/woosal1337/ste-writing/ste-recurring-errors.md" || true
+fetch_file "woosal1337/blog" "videos/ep01-the-cure-for-ai-slop/ste-lint.py" "$VENDOR_DIR/woosal1337/ste-writing/ste-lint.py" || true
+fetch_file "woosal1337/blog" "LICENSE" "$VENDOR_DIR/woosal1337/LICENSE" || true
+
 # Pulumi - agent-skills
 rm -rf "$VENDOR_DIR/pulumi"
 fetch_skillset "pulumi/agent-skills" "migration/skills" "$VENDOR_DIR/pulumi" \
@@ -250,6 +301,7 @@ fetch_file "kepano/obsidian-skills" "LICENSE" "$VENDOR_DIR/kepano/LICENSE" || tr
 
 apply_post_fetch_fixes
 
+"$SCRIPT_DIR/check-ste-lint.sh"
 "$SCRIPT_DIR/check-vendor-layout.sh"
 
 echo ""
