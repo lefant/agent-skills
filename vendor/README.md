@@ -29,6 +29,7 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `vercel/` | [vercel/ai](https://github.com/vercel/ai) | ai-sdk |
 | `anthropics/` | [anthropics/skills](https://github.com/anthropics/skills) | frontend-design, pdf, skill-creator |
 | `remotion-dev/` | [remotion-dev/skills](https://github.com/remotion-dev/skills) | remotion-best-practices |
+| `humanlayer/` | [humanlayer/skills](https://github.com/humanlayer/skills) | show-me |
 | `giuseppe-trisciuoglio/` | [giuseppe-trisciuoglio/developer-kit](https://github.com/giuseppe-trisciuoglio/developer-kit) | shadcn-ui |
 | `intellectronica/` | [intellectronica/agent-skills](https://github.com/intellectronica/agent-skills) | context7 |
 | `marimo-team/` | [marimo-team/skills](https://github.com/marimo-team/skills), [marimo-team/marimo-pair](https://github.com/marimo-team/marimo-pair) | marimo-notebook, marimo-pair |

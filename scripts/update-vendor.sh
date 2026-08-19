@@ -137,6 +137,7 @@ replacements = [
     (Path('vendor/woosal1337/ste-writing/SKILL.md'), 'python3 ste-lint.py draft.md            # flavored target: under 2.5 per 100 words\npython3 ste-lint.py --strict draft.md   # strict target: under 1.5 per 100 words', 'python3 {baseDir}/ste-lint.py draft.md            # flavored target: under 2.5 per 100 words\npython3 {baseDir}/ste-lint.py --strict draft.md   # strict target: under 1.5 per 100 words'),
     (Path('vendor/woosal1337/ste-writing/ste-lint.py'), '    longs = [(wc(s), s) for s in sents if wc(s) > 20]\n    v["long_sentence(>20w)"] = len(longs)', '    sentence_limit = 20 if strict else 25\n    longs = [(wc(s), s) for s in sents if wc(s) > sentence_limit]\n    v[f"long_sentence(>{sentence_limit}w)"] = len(longs)'),
     (Path('vendor/woosal1337/ste-writing/ste-lint.py'), '    v["contraction"] = len(re.findall(r"\\b\\w+[\'’](?:t|re|ve|ll|d|s|m)\\b", text))', '    v["contraction"] = len(re.findall(\n        r"\\b(?:\\w+[\'’](?:t|re|ve|ll|d|m)|(?:he|here|how|it|let|she|that|there|what|when|where|who|why)[\'’]s)\\b",\n        text, re.I))'),
+    (Path('vendor/humanlayer/show-me/SKILL.md'), 'Then open it for the user:\n\n```\nBash(open path/to/show-me-{description}.html)\n```', 'Then open it for the user with the host\'s available browser or file-opening capability. If none is available, return the file path:\n\n```text\npath/to/show-me-{description}.html\n```'),
 ]
 
 for path, old, new in replacements:
@@ -213,6 +214,10 @@ fetch_skill "anthropics/skills" "skills/skill-creator" "$VENDOR_DIR/anthropics/s
 
 # Remotion
 fetch_skill "remotion-dev/skills" "skills/remotion" "$VENDOR_DIR/remotion-dev/remotion-best-practices" || true
+
+# HumanLayer - show-me
+fetch_skill "humanlayer/skills" "plugins/show-me/skills/show-me" "$VENDOR_DIR/humanlayer/show-me" || true
+fetch_file "humanlayer/skills" "LICENSE" "$VENDOR_DIR/humanlayer/LICENSE" || true
 
 # Developer Kit
 fetch_skill "giuseppe-trisciuoglio/developer-kit" "plugins/developer-kit-typescript/skills/shadcn-ui" "$VENDOR_DIR/giuseppe-trisciuoglio/shadcn-ui" || true
@@ -301,6 +306,7 @@ fetch_file "kepano/obsidian-skills" "LICENSE" "$VENDOR_DIR/kepano/LICENSE" || tr
 
 apply_post_fetch_fixes
 
+"$SCRIPT_DIR/check-show-me-vendor.py"
 "$SCRIPT_DIR/check-ste-lint.sh"
 "$SCRIPT_DIR/check-vendor-layout.sh"
 
