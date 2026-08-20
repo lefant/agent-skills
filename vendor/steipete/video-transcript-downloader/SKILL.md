@@ -19,6 +19,15 @@ Transcript behavior:
 cd ~/Projects/agent-scripts/skills/video-transcript-downloader && npm ci
 ```
 
+CLI syntax:
+
+```bash
+./scripts/vtd.js --help
+./scripts/vtd.js transcript --help
+```
+
+Subcommands support focused help without requiring `--url`.
+
 ## Transcript (default: clean paragraph)
 
 ```bash

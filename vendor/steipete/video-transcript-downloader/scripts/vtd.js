@@ -379,8 +379,53 @@ async function cmdFormats({ url, extra }) {
   process.stdout.write(r.out);
 }
 
-function usage() {
+function usage(command) {
   const rel = path.relative(process.cwd(), path.join(__dirname, "vtd.js"));
+  const lines = {
+    transcript: [
+      "usage:",
+      `  ${rel} transcript --url 'https://…' [--lang en] [--timestamps] [--keep-brackets] [-- <yt-dlp extra…>]`,
+      "",
+      "flags:",
+      "  --url URL          video URL",
+      "  --lang CODE        subtitle language (default: en)",
+      "  --timestamps       print timestamps when available",
+      "  --keep-brackets    keep bracketed cues like [Music]",
+    ],
+    download: [
+      "usage:",
+      `  ${rel} download --url 'https://…' [--output-dir ~/Downloads] [-- <yt-dlp extra…>]`,
+      "",
+      "flags:",
+      "  --url URL          video URL",
+      "  --output-dir DIR   output directory",
+    ],
+    audio: [
+      "usage:",
+      `  ${rel} audio --url 'https://…' [--output-dir ~/Downloads] [-- <yt-dlp extra…>]`,
+      "",
+      "flags:",
+      "  --url URL          video URL",
+      "  --output-dir DIR   output directory",
+    ],
+    subs: [
+      "usage:",
+      `  ${rel} subs --url 'https://…' [--output-dir ~/Downloads] [--lang en] [-- <yt-dlp extra…>]`,
+      "",
+      "flags:",
+      "  --url URL          video URL",
+      "  --lang CODE        subtitle language (default: en)",
+      "  --output-dir DIR   output directory",
+    ],
+    formats: [
+      "usage:",
+      `  ${rel} formats --url 'https://…' [-- <yt-dlp extra…>]`,
+      "",
+      "flags:",
+      "  --url URL          video URL",
+    ],
+  };
+  if (command && lines[command]) return lines[command].join("\n");
   return [
     "usage:",
     `  ${rel} transcript --url 'https://…' [--lang en] [--timestamps] [--keep-brackets] [-- <yt-dlp extra…>]`,
@@ -397,6 +442,11 @@ async function main() {
 
   if (!cmd || cmd === "help" || cmd === "-h" || cmd === "--help") {
     process.stdout.write(usage() + "\n");
+    return;
+  }
+
+  if (opts.help || positional[1] === "help" || positional[1] === "-h" || positional[1] === "--help") {
+    process.stdout.write(usage(cmd) + "\n");
     return;
   }
 
