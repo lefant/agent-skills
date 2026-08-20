@@ -109,6 +109,7 @@ fetch_skillset() {
 
 apply_post_fetch_fixes() {
     python - "$REPO_ROOT" <<'PY'
+import re
 import sys
 from pathlib import Path
 
@@ -200,6 +201,15 @@ for relative_path, snippets in required_local_snippets.items():
             f'Post-fetch fix failed: {path} is missing required local snippet(s): '
             + ', '.join(missing)
         )
+
+remotion_root = repo_root / 'vendor/remotion-dev/remotion-best-practices'
+if remotion_root.is_dir():
+    for path in remotion_root.rglob('*.md'):
+        text = path.read_text()
+        normalized = re.sub(r'[ \t]+$', '', text, flags=re.MULTILINE)
+        normalized = re.sub(r'^ +(?=\t)', '', normalized, flags=re.MULTILINE)
+        if normalized != text:
+            path.write_text(normalized)
 
 zfc_path = repo_root / 'vendor/lambdamechanic/zfc/SKILL.md'
 if zfc_path.exists():
