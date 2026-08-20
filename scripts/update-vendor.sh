@@ -224,7 +224,7 @@ fetch_skill "anthropics/skills" "skills/pdf" "$VENDOR_DIR/anthropics/pdf" || tru
 fetch_skill "anthropics/skills" "skills/skill-creator" "$VENDOR_DIR/anthropics/skill-creator" || true
 
 # Remotion
-fetch_skill "remotion-dev/skills" "skills/remotion" "$VENDOR_DIR/remotion-dev/remotion-best-practices" || true
+fetch_skill "remotion-dev/skills" "skills/remotion-best-practices" "$VENDOR_DIR/remotion-dev/remotion-best-practices" || true
 
 # HumanLayer - show-me
 fetch_skill "humanlayer/skills" "plugins/show-me/skills/show-me" "$VENDOR_DIR/humanlayer/show-me" || true
