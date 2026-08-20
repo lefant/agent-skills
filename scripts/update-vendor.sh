@@ -309,7 +309,6 @@ fetch_skill "marimo-team/marimo-pair" "skills/marimo-pair" "$VENDOR_DIR/marimo-t
 
 # Mitsuhiko - agent-stuff
 fetch_skill "mitsuhiko/agent-stuff" "skills/tmux" "$VENDOR_DIR/mitsuhiko/tmux" || true
-# Upstream removed skills/mermaid; retain the last reviewed snapshot until a replacement source is chosen.
 fetch_skill "mitsuhiko/agent-stuff" "skills/librarian" "$VENDOR_DIR/mitsuhiko/librarian" || true
 
 # ArtemXTech - TaskNotes
