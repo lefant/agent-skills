@@ -245,6 +245,9 @@ fetch_skill "andrewyng/context-hub" "cli/skills/get-api-docs" "$VENDOR_DIR/andre
 # Context7
 fetch_skill "intellectronica/agent-skills" "skills/context7" "$VENDOR_DIR/intellectronica/context7" || true
 
+# exe.dev
+fetch_skill "boldsoftware/exe.dev" "skill" "$VENDOR_DIR/boldsoftware/using-exe-dev" || true
+
 # marimo
 fetch_skill "marimo-team/skills" "skills/marimo-notebook" "$VENDOR_DIR/marimo-team/marimo-notebook" || true
 fetch_skill "marimo-team/marimo-pair" "skills/marimo-pair" "$VENDOR_DIR/marimo-team/marimo-pair" || true
