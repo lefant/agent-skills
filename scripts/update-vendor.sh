@@ -134,7 +134,6 @@ replacements = [
     (Path('vendor/steipete/markdown-converter/SKILL.md'), 'description: "Markdown conversion: PDF, Office, HTML, data, OCR, audio, ZIP, YouTube."', 'description: Convert documents and files to Markdown using markitdown. Use when converting PDF, Word (.docx), PowerPoint (.pptx), Excel (.xlsx, .xls), HTML, CSV, JSON, XML, images (with EXIF/OCR), audio (with transcription), ZIP archives, YouTube URLs, or EPubs to Markdown format for LLM processing or text analysis.'),
     (Path('vendor/vercel-labs/vercel-react-best-practices/AGENTS.md'), './async-defer-await.md', './rules/async-defer-await.md'),
     (Path('vendor/vercel-labs/vercel-react-best-practices/AGENTS.md'), './async-cheap-condition-before-await.md', './rules/async-cheap-condition-before-await.md'),
-    (Path('vendor/openclaw/tavily-search/SKILL.md'), 'node scripts/search.mjs', 'node {baseDir}/scripts/search.mjs'),
     (Path('vendor/andrewyng/get-api-docs/SKILL.md'), 'If this results in an error showing that chub does not exist, then install it first, and run it\nagain. If the environment has node, npm, network access, and package-manager permission,\ninstall it as follows:', 'If this shows that chub is unavailable, ask the user before installing it globally. After approval, and only if the environment has Node.js, npm, network access, and package-manager permission, install it as follows:'),
     (Path('vendor/andrewyng/get-api-docs/SKILL.md'), 'Additionally, to help all developers, give feedback on the documentation using chub feedback, following\nthe instructions in chub --help . Do not include secrets, source code, private architecture details,\nor other sensitive information in feedback comments.', 'Additionally, ask the user before sending documentation feedback. After approval, use `chub feedback` according to `chub --help`. Do not include secrets, source code, private architecture details, or other sensitive information in feedback comments.'),
     (Path('vendor/JuliusBrussee/caveman/SKILL.md'), 'Supports intensity levels: lite, full (default), ultra,\n  wenyan-lite, wenyan-full, wenyan-ultra.', 'Supports intensity levels: lite (default in the lefant bundle), full, ultra,\n  wenyan-lite, wenyan-full, wenyan-ultra.'),
@@ -316,9 +315,6 @@ fetch_skill "ArtemXTech/personal-os-skills" "skills/tasknotes" "$VENDOR_DIR/Arte
 
 # ast-grep
 fetch_skill "ast-grep/agent-skill" "ast-grep/skills/ast-grep" "$VENDOR_DIR/ast-grep/ast-grep" || true
-
-# openclaw - tavily-search
-# Source repository is unavailable; retain the last reviewed v1.0.0 snapshot.
 
 # dz0ny - devenv
 fetch_skill "dz0ny/devenv-claude" "skills/devenv" "$VENDOR_DIR/dz0ny/devenv" || true

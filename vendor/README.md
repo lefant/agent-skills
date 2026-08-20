@@ -38,7 +38,6 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `ArtemXTech/` | [ArtemXTech/personal-os-skills](https://github.com/ArtemXTech/personal-os-skills) | tasknotes |
 | `ast-grep/` | [ast-grep/agent-skill](https://github.com/ast-grep/agent-skill) | ast-grep |
 | `steipete/` | [steipete/agent-scripts](https://github.com/steipete/agent-scripts) | video-transcript-downloader, markdown-converter |
-| `openclaw/` | [openclaw/skills](https://github.com/openclaw/skills) | tavily-search |
 | `dz0ny/` | [dz0ny/devenv-claude](https://github.com/dz0ny/devenv-claude) | devenv |
 | `andrewyng/` | [andrewyng/context-hub](https://github.com/andrewyng/context-hub) | get-api-docs |
 | `boldsoftware/` | [boldsoftware/exe.dev](https://github.com/boldsoftware/exe.dev) | using-exe-dev |
@@ -53,10 +52,6 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | Vendor Directory | Source Repository | Skills |
 |-----------------|-------------------|--------|
 | `obra/` | [obra/superpowers](https://github.com/obra/superpowers) | brainstorming, using-superpowers |
-
-## Pinned Source Exceptions
-
-- `openclaw/tavily-search` stays at its last reviewed v1.0.0 snapshot because `openclaw/skills` is unavailable.
 
 Reference: [Steve Yegge, "Zero Framework Cognition: A way to build resilient AI applications"](https://medium.com/@steve-yegge/zero-framework-cognition-a-way-to-build-resilient-ai-applications-56b090ed3e69)
 
