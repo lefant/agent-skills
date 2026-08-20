@@ -54,6 +54,11 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 |-----------------|-------------------|--------|
 | `obra/` | [obra/superpowers](https://github.com/obra/superpowers) | brainstorming, using-superpowers |
 
+## Pinned Source Exceptions
+
+- `mitsuhiko/mermaid` stays at its last reviewed snapshot because upstream removed `skills/mermaid`.
+- `openclaw/tavily-search` stays at its last reviewed v1.0.0 snapshot because `openclaw/skills` is unavailable.
+
 Reference: [Steve Yegge, "Zero Framework Cognition: A way to build resilient AI applications"](https://medium.com/@steve-yegge/zero-framework-cognition-a-way-to-build-resilient-ai-applications-56b090ed3e69)
 
 ## Security Review
