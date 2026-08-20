@@ -129,6 +129,8 @@ replacements = [
     (Path('vendor/vercel-labs/vercel-react-best-practices/AGENTS.md'), './async-defer-await.md', './rules/async-defer-await.md'),
     (Path('vendor/vercel-labs/vercel-react-best-practices/AGENTS.md'), './async-cheap-condition-before-await.md', './rules/async-cheap-condition-before-await.md'),
     (Path('vendor/openclaw/tavily-search/SKILL.md'), 'node scripts/search.mjs', 'node {baseDir}/scripts/search.mjs'),
+    (Path('vendor/andrewyng/get-api-docs/SKILL.md'), 'If this results in an error showing that chub does not exist, then install it first, and run it\nagain. If the environment has node, npm, network access, and package-manager permission,\ninstall it as follows:', 'If this shows that chub is unavailable, ask the user before installing it globally. After approval, and only if the environment has Node.js, npm, network access, and package-manager permission, install it as follows:'),
+    (Path('vendor/andrewyng/get-api-docs/SKILL.md'), 'Additionally, to help all developers, give feedback on the documentation using chub feedback, following\nthe instructions in chub --help . Do not include secrets, source code, private architecture details,\nor other sensitive information in feedback comments.', 'Additionally, ask the user before sending documentation feedback. After approval, use `chub feedback` according to `chub --help`. Do not include secrets, source code, private architecture details, or other sensitive information in feedback comments.'),
     (Path('vendor/JuliusBrussee/caveman/SKILL.md'), 'Supports intensity levels: lite, full (default), ultra,\n  wenyan-lite, wenyan-full, wenyan-ultra.', 'Supports intensity levels: lite (default in the lefant bundle), full, ultra,\n  wenyan-lite, wenyan-full, wenyan-ultra.'),
     (Path('vendor/JuliusBrussee/caveman/SKILL.md'), 'Default: **full**. Switch: `/caveman lite|full|ultra|wenyan-lite|wenyan-full|wenyan-ultra|off`.', 'Default: **lite**. Switch: `/caveman lite|full|ultra|wenyan-lite|wenyan-full|wenyan-ultra|off`.'),
     (Path('vendor/JuliusBrussee/caveman/README.md'), '| `lite` | Drop filler/hedging. Sentences stay full. Professional but tight. |\n| `full` | Default. Drop articles, fragments OK, short synonyms. |', '| `lite` | Default in the lefant bundle. Drop filler/hedging. Sentences stay full. Professional but tight. |\n| `full` | Drop articles, fragments OK, short synonyms. |'),
@@ -236,6 +238,9 @@ fetch_skill "giuseppe-trisciuoglio/developer-kit" "plugins/developer-kit-typescr
 # Superpowers (disabled for now)
 # fetch_skill "obra/superpowers" "skills/brainstorming" "$VENDOR_DIR/obra/brainstorming"
 # fetch_skill "obra/superpowers" "skills/using-superpowers" "$VENDOR_DIR/obra/using-superpowers"
+
+# Context Hub
+fetch_skill "andrewyng/context-hub" "cli/skills/get-api-docs" "$VENDOR_DIR/andrewyng/get-api-docs" || true
 
 # Context7
 fetch_skill "intellectronica/agent-skills" "skills/context7" "$VENDOR_DIR/intellectronica/context7" || true
