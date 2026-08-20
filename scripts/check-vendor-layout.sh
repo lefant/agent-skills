@@ -1,5 +1,5 @@
 #!/bin/bash
-# Verify vendored skills are discoverable by wildcard skill installers.
+# Verify vendor layout and reject skill-name collisions across the bundle.
 
 set -euo pipefail
 
@@ -36,17 +36,12 @@ errors = []
 skills = []
 seen_names = {}
 
-for path in sorted(Path('vendor').rglob('SKILL.md')):
-    skills.append(path)
-    parts = path.parts
-    if len(parts) != 4 or parts[0] != 'vendor' or parts[-1] != 'SKILL.md':
-        errors.append(f'{path}: expected vendor/<source>/<skill>/SKILL.md')
-        continue
 
+def read_frontmatter(path):
     text = path.read_text(errors='replace')
     if not text.startswith('---\n'):
         errors.append(f'{path}: missing YAML frontmatter')
-        continue
+        return None, False
 
     frontmatter = text.split('---', 2)[1]
     name = None
@@ -56,7 +51,26 @@ for path in sorted(Path('vendor').rglob('SKILL.md')):
             name = line.split(':', 1)[1].strip().strip('"\'')
         if line.startswith('description:'):
             has_description = True
+    return name, has_description
 
+
+for path in sorted(Path('lefant').glob('*/SKILL.md')):
+    name, has_description = read_frontmatter(path)
+    if name != path.parent.name:
+        errors.append(f'{path}: frontmatter name {name!r} does not match directory {path.parent.name!r}')
+    if not has_description:
+        errors.append(f'{path}: missing description')
+    if name:
+        seen_names.setdefault(name, []).append(path)
+
+for path in sorted(Path('vendor').rglob('SKILL.md')):
+    skills.append(path)
+    parts = path.parts
+    if len(parts) != 4 or parts[0] != 'vendor' or parts[-1] != 'SKILL.md':
+        errors.append(f'{path}: expected vendor/<source>/<skill>/SKILL.md')
+        continue
+
+    name, has_description = read_frontmatter(path)
     if name != path.parent.name:
         errors.append(f'{path}: frontmatter name {name!r} does not match directory {path.parent.name!r}')
     if not has_description:
@@ -67,7 +81,7 @@ for path in sorted(Path('vendor').rglob('SKILL.md')):
 for name, paths in sorted(seen_names.items()):
     if len(paths) > 1:
         joined = ', '.join(str(p) for p in paths)
-        errors.append(f'duplicate vendor skill name {name!r}: {joined}')
+        errors.append(f'duplicate skill name {name!r}: {joined}')
 
 if not skills:
     errors.append('no vendored SKILL.md files found')

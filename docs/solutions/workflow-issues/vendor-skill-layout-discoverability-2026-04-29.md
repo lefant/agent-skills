@@ -75,7 +75,7 @@ The check fails if:
 - a vendored skill is not shaped as `vendor/<source>/<skill>/SKILL.md`
 - frontmatter `name:` does not match the skill directory
 - frontmatter `description:` is missing
-- duplicate vendor skill names exist
+- duplicate skill names exist across `lefant/` and `vendor/`
 
 ## Why This Matters
 

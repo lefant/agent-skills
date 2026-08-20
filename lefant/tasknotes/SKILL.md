@@ -1,192 +1,196 @@
 ---
 name: tasknotes
-description: Create and manage tasks in Obsidian via the TaskNotes plugin by writing markdown files directly. Use when user wants to create tasks, list tasks, update task status, or check what they need to do.
+description: Manage TaskNotes tasks in Obsidian through maintained TaskNotes interfaces or a safe Markdown fallback. Use when the user wants to create, list, search, update, complete, archive, or delete tasks, or asks what they should work on.
 ---
 
-# TaskNotes Skill
+# TaskNotes
 
-Create and manage Obsidian tasks by writing markdown files with YAML frontmatter directly to the vault. No HTTP API or CLI required -- TaskNotes picks up files automatically.
+Manage TaskNotes tasks through the safest available interface. Prefer maintained TaskNotes tools over hand-editing frontmatter because plugin operations preserve configured mappings, workflow behavior, recurrence, cache updates, and integrations.
 
-## How TaskNotes Works
+## Default workflow
 
-Each task is a separate markdown file with YAML frontmatter stored in a configured folder inside an Obsidian vault. TaskNotes identifies tasks by the presence of `tags: [task]` in frontmatter (default method). All views (kanban, calendar, task list) are powered by Obsidian Bases querying these files.
+1. Find the Obsidian vault. Ask for its path if it is unknown.
+2. Read `<vault>/.obsidian/plugins/tasknotes/data.json` when present. Do not print authentication tokens or unrelated settings.
+3. Choose the first suitable interface below.
+4. Inspect available statuses, priorities, and field mappings before writing values.
+5. Perform the operation and verify the resulting task.
 
-## Vault Location
+Do not install a CLI or enable the HTTP API without user approval.
 
-The Obsidian vault path must be known. Common locations:
+## Choose an interface
 
-- Linux: `~/Documents/Obsidian/VaultName/` or `~/Obsidian/VaultName/`
-- macOS: `~/Documents/VaultName/` or `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultName/`
+### 1. Live TaskNotes: HTTP API or official CLI
 
-If unknown, ask the user for their vault path.
+Use a live interface when Obsidian is running and the operation can trigger TaskNotes behavior, including completion, recurrence, archive movement, dependencies, timers, notifications, or calendar synchronization.
 
-## Tasks Folder
+TaskNotes offers:
 
-Default: `TaskNotes/Tasks/` inside the vault root.
+- HTTP API at `http://localhost:8080/api` by default
+- `tn` (`tasknotes-cli`), which uses the HTTP API
+- built-in `obsidian tasknotes:*` commands for capture, timers, and Pomodoro
 
-The user may have configured a different folder in their TaskNotes plugin settings. The settings are stored at:
-```
-<vault>/.obsidian/plugins/tasknotes/data.json
-```
-Read `tasksFolder` from that file if you need to confirm the path. You can also check the `taskTag`, `taskIdentificationMethod`, `fieldMapping`, `customStatuses`, and `customPriorities` settings to match the user's configuration.
+Probe existing tools before using them:
 
-## Creating a Task
-
-Write a `.md` file to the tasks folder with this structure:
-
-```markdown
----
-tags:
-  - task
-title: "Task title here"
-status: open
-priority: normal
-dateCreated: "2026-02-09T10:30:00.000Z"
-dateModified: "2026-02-09T10:30:00.000Z"
----
-
-Optional body content, notes, context, or details.
+```bash
+command -v tn
+command -v obsidian
+curl -fsS http://localhost:8080/api/health
 ```
 
-### Filename
+The HTTP API is desktop-only, disabled by default, and bound to loopback. If TaskNotes has an API token, send it as `Authorization: Bearer <token>` without logging it.
 
-Use the sanitized title as the filename (default TaskNotes behavior):
-- Replace `<>:"/\|?*#[]` with nothing
-- Replace multiple spaces with single space
-- Trim leading/trailing dots
-- Append `.md`
+Useful endpoints:
 
-Example: `"Buy groceries tomorrow"` -> `Buy groceries tomorrow.md`
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/api/tasks?limit=50&offset=0` | List tasks with pagination |
+| `POST` | `/api/tasks/query` | Filter or sort tasks |
+| `POST` | `/api/tasks` | Create a task |
+| `GET` | `/api/tasks/{id}` | Read one task |
+| `PUT` | `/api/tasks/{id}` | Update one task |
+| `DELETE` | `/api/tasks/{id}` | Delete one task |
+| `GET` | `/api/filter-options` | Read valid statuses, priorities, and projects |
+| `GET` | `/api/stats` | Read task statistics |
 
-If a file with that name already exists, append `-2`, `-3`, etc.
+Do not send filters such as `status`, `priority`, `project`, or `overdue` to `GET /api/tasks`; current TaskNotes rejects them. Use `POST /api/tasks/query`.
 
-### Required Fields
-
-| Field | Description |
-|-------|-------------|
-| `tags` | Must include `task` for TaskNotes to recognize the file |
-| `title` | The task title |
-| `status` | Task status (see defaults below) |
-| `dateCreated` | ISO 8601 timestamp of creation |
-| `dateModified` | ISO 8601 timestamp (same as dateCreated initially) |
-
-### Common Optional Fields
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `priority` | string | `none`, `low`, `normal`, `high` |
-| `due` | date | Due date as `YYYY-MM-DD` |
-| `scheduled` | date | Date to work on it as `YYYY-MM-DD` |
-| `contexts` | string[] | Context tags, e.g. `["@work", "@home"]` |
-| `projects` | string[] | Project links as wikilinks, e.g. `["[[Project Name]]"]` |
-| `timeEstimate` | number | Estimated minutes |
-| `completedDate` | date | Date completed as `YYYY-MM-DD` |
-| `recurrence` | string | RFC 5545 RRULE, e.g. `FREQ=WEEKLY;BYDAY=MO` |
-
-### Default Status Values
-
-| Value | Meaning | Completed? |
-|-------|---------|------------|
-| `open` | New task | No |
-| `in-progress` | Being worked on | No |
-| `done` | Finished | Yes |
-| `none` | Unset | No |
-
-### Default Priority Values
-
-| Value | Weight |
-|-------|--------|
-| `none` | 0 |
-| `low` | 1 |
-| `normal` | 2 |
-| `high` | 3 |
-
-## Updating a Task
-
-Read the existing `.md` file, modify its YAML frontmatter, update `dateModified` to the current timestamp, and write it back.
-
-To mark a task done:
-```yaml
-status: done
-completedDate: "2026-02-09"
-dateModified: "2026-02-09T15:00:00.000Z"
-```
-
-## Listing Tasks
-
-Use Glob and Grep to find and read task files:
-
-```
-Glob: <vault>/TaskNotes/Tasks/*.md
-Grep: pattern="^status:" in those files
-```
-
-Parse the YAML frontmatter to extract task properties for display.
-
-## Reading User Configuration
-
-To respect user customizations, read `<vault>/.obsidian/plugins/tasknotes/data.json`:
+Example query for open tasks, sorted by due date:
 
 ```json
 {
-  "tasksFolder": "TaskNotes/Tasks",
-  "taskTag": "task",
-  "taskIdentificationMethod": "tag",
-  "defaultTaskStatus": "open",
-  "defaultTaskPriority": "normal",
-  "fieldMapping": {
-    "title": "title",
-    "status": "status",
-    "priority": "priority",
-    "due": "due",
-    "scheduled": "scheduled",
-    "contexts": "contexts",
-    "projects": "projects",
-    "timeEstimate": "timeEstimate",
-    "completedDate": "completedDate",
-    "dateCreated": "dateCreated",
-    "dateModified": "dateModified"
-  },
-  "customStatuses": [...],
-  "customPriorities": [...]
+  "type": "group",
+  "id": "root",
+  "conjunction": "and",
+  "children": [
+    {
+      "type": "condition",
+      "id": "status",
+      "property": "status",
+      "operator": "is",
+      "value": "open"
+    }
+  ],
+  "sortKey": "due",
+  "sortDirection": "asc"
 }
 ```
 
-Use the `fieldMapping` values as the actual YAML property names. Use `customStatuses` and `customPriorities` for valid values.
+Use `tn --help`, `obsidian help`, or the live API documentation at `/api/docs` for commands and fields supported by the installed version.
 
-## Field Mapping
+### 2. Headless or direct-file work: `mtn`
 
-All property names are configurable by the user. The `fieldMapping` in `data.json` maps internal names to what the user chose. For example, if a user remapped `due` to `deadline`, write `deadline:` instead of `due:` in frontmatter. Always check the mapping before creating tasks.
+Prefer `mtn` (`mdbase-tasknotes`) when Obsidian is closed, on a remote machine, or when a script must operate directly on Markdown files. It reads the generated mdbase schema, including custom statuses and priorities.
 
-## When to Use
+Probe it first:
 
-- "create a task for X" -> create task file
-- "show my tasks" -> glob + grep task files
-- "what should I work on" -> list non-done tasks sorted by priority/due
-- "mark X as done" -> update task frontmatter
-- "schedule X for tomorrow" -> set scheduled date
+```bash
+command -v mtn
+mtn config --get collectionPath
+```
 
-## Example
+Common commands:
 
-Creating a high-priority task with a due date:
+```bash
+mtn list --json
+mtn list --status in-progress
+mtn list --overdue
+mtn create "Review pull request tomorrow #work +backend"
+mtn update "Review pull request" --status in-progress
+mtn complete "Review pull request"
+mtn archive "Review pull request"
+mtn delete "Review pull request"
+```
 
-File: `<vault>/TaskNotes/Tasks/Review pull request.md`
+If `mtn` is installed but not configured, ask before changing its configuration.
+
+### 3. Manual Markdown fallback
+
+Use direct file reads for inspection when no maintained interface is available. Use direct writes only for basic task creation or simple frontmatter updates. Do not manually implement recurrence advancement, archive movement, dependency changes, timers, notifications, or calendar behavior.
+
+## Manual fallback details
+
+### Read configuration
+
+Read `<vault>/.obsidian/plugins/tasknotes/data.json` and account for:
+
+- `tasksFolder`
+- `taskIdentificationMethod`
+- `taskTag`
+- `taskPropertyName` and `taskPropertyValue`
+- `fieldMapping`
+- `defaultTaskStatus` and `defaultTaskPriority`
+- `customStatuses` and `customPriorities`
+- `storeTitleInFilename`, `taskFilenameFormat`, and `customFilenameTemplate`
+
+If the task folder or filename template contains unresolved variables, ask for the missing context instead of guessing.
+
+### Identify a task
+
+For tag-based identification, include the configured task tag:
+
+```yaml
+tags:
+  - task
+```
+
+For property-based identification, write the configured property name and value instead. Do not add the task tag unless the configuration requires it.
+
+### Respect field mappings
+
+`fieldMapping` maps TaskNotes semantic fields to the vault's YAML property names. For example, if `due` maps to `deadline`, write `deadline:` rather than `due:`. Preserve unknown frontmatter and the note body when updating a task.
+
+### Create a basic task
+
+With default tag identification and default field mappings:
+
 ```markdown
 ---
 tags:
   - task
 title: "Review pull request"
 status: open
-priority: high
-due: "2026-02-10"
-scheduled: "2026-02-09"
-dateCreated: "2026-02-09T10:00:00.000Z"
-dateModified: "2026-02-09T10:00:00.000Z"
-contexts:
-  - "@work"
-projects:
-  - "[[Backend Refactor]]"
+priority: normal
+due: "2026-08-21"
+dateCreated: "2026-08-20T10:00:00.000Z"
+dateModified: "2026-08-20T10:00:00.000Z"
 ---
 
-PR #456 - needs security review before merge.
+Review API behavior and test coverage.
 ```
+
+Use current timestamps, not the example values.
+
+When title-based filenames are active:
+
+- collapse whitespace
+- remove `<>:"/\\|?*#[]` and control characters
+- trim leading and trailing dots
+- avoid Windows reserved names
+- append `-2`, `-3`, and so on when a file exists
+
+When another filename mode is configured, use the maintained API or CLI unless its behavior can be reproduced safely.
+
+### Update or complete a task
+
+Update the mapped `dateModified` field whenever changing frontmatter. Determine completion from the configured status metadata instead of assuming every vault uses `done`.
+
+For a basic default completion:
+
+```yaml
+status: done
+completedDate: "2026-08-20"
+dateModified: "2026-08-20T15:00:00.000Z"
+```
+
+After a manual write, reread the file and confirm that the identification marker, mapped fields, and body are intact.
+
+## Listing and prioritization
+
+When no CLI or API is available:
+
+1. Search the configured task folder recursively for Markdown files.
+2. Parse YAML frontmatter; do not rely on `grep` alone for lists or remapped fields.
+3. Select tasks using the configured identification method.
+4. Exclude statuses marked completed when listing active work.
+5. Sort urgent or high-priority tasks first, then overdue and due dates, then scheduled dates.
+6. Show task title, status, priority, due or scheduled date, and project when available.

@@ -44,6 +44,7 @@ Rules:
 - `find vendor -type d -name skills -print` should normally print nothing. Vendored skills must be flattened to `vendor/<source>/<skill>/SKILL.md`, even when upstream stores them under `skills/`.
 - Do not vendor whole plugin bundles that need agents, commands, MCP config, or other non-skill assets unless the installer can consume those assets. Handle plugin-native bundles in a plugin/package layer instead.
 - Keep source-to-local path mappings in `scripts/update-vendor.sh`; do not rely on symlinks for discoverability.
+- Keep frontmatter `name:` values unique across `lefant/` and `vendor/`; installers expose one skill per name.
 
 ## Skills Included
 
@@ -69,7 +70,7 @@ Rules:
 | `recent-context-from-git` | Summarize recent local docs and work context from git history |
 | `test-analyzer` | Analyze CTRF test reports with jq |
 | `youtube-transcript` | Fetch YouTube video transcripts |
-| `tasknotes` | Create and manage Obsidian tasks via TaskNotes (direct file creation) |
+| `tasknotes` | Manage Obsidian tasks through maintained TaskNotes interfaces or a safe Markdown fallback |
 | `untis-access` | Access WebUntis data, compare repo implementations, and run proven message/timetable scripts |
 
 ### Vendored Skills (`vendor/`)

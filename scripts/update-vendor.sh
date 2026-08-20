@@ -310,9 +310,6 @@ fetch_skill "marimo-team/marimo-pair" "skills/marimo-pair" "$VENDOR_DIR/marimo-t
 fetch_skill "mitsuhiko/agent-stuff" "skills/tmux" "$VENDOR_DIR/mitsuhiko/tmux" || true
 fetch_skill "mitsuhiko/agent-stuff" "skills/librarian" "$VENDOR_DIR/mitsuhiko/librarian" || true
 
-# ArtemXTech - TaskNotes
-fetch_skill "ArtemXTech/personal-os-skills" "skills/tasknotes" "$VENDOR_DIR/ArtemXTech/tasknotes" || true
-
 # ast-grep
 fetch_skill "ast-grep/agent-skill" "ast-grep/skills/ast-grep" "$VENDOR_DIR/ast-grep/ast-grep" || true
 

@@ -57,8 +57,8 @@ Before copying anything:
 2. Require each skill directory's basename to equal the `name` in its `SKILL.md` frontmatter.
 3. Require a non-empty frontmatter `description`.
 4. Inventory names across both `lefant/` and `vendor/`, not only within each tree.
-5. Resolve the known `tasknotes` collision in favor of `lefant/tasknotes`; do not publish `vendor/ArtemXTech/tasknotes` under another implicit name.
-6. For any other duplicate name, stop and ask for a decision. Do not silently choose one or rename a vendored skill.
+5. Require names to be unique across the complete inventory; `./scripts/check-vendor-layout.sh` enforces this repository-wide rule.
+6. If a duplicate exists, stop and ask for a decision. Do not silently choose one or rename a vendored skill.
 7. Exclude an entire skill containing binary files. Amp's global repositories serve text resources only, and a skill containing a binary resource will not load. Do not publish an incomplete copy with the binary silently removed; report the excluded skill and files instead. At the time this recipe was written, `vendor/remotion-dev/remotion-best-practices` is excluded because it bundles PNG icons.
 8. Review bundled scripts and any `mcpServers` frontmatter or `mcp.json` as executable code. Preserve explicit MCP `includeTools` filters and stop for review if an MCP server exposes an unfiltered tool set.
 
