@@ -69,7 +69,7 @@ description: |
 EOF
 run_pass "accepts inline, folded, and literal descriptions"
 
-for scalar in 'description:' 'description: null' 'description: ~' 'description: # comment only' 'description: ""'; do
+for scalar in 'description:' 'description: null' 'description: ~' 'description: # comment only' 'description: ""' 'description: "   "'; do
     new_fixture
     mkdir -p "$FIXTURE/vendor/example/invalid"
     cat >"$FIXTURE/vendor/example/invalid/SKILL.md" <<EOF
@@ -81,16 +81,18 @@ EOF
     run_fail "rejects blank description scalar: $scalar" "description"
 done
 
-new_fixture
-mkdir -p "$FIXTURE/vendor/example/invalid"
-cat >"$FIXTURE/vendor/example/invalid/SKILL.md" <<'EOF'
+for header in '>' '|'; do
+    new_fixture
+    mkdir -p "$FIXTURE/vendor/example/invalid"
+    cat >"$FIXTURE/vendor/example/invalid/SKILL.md" <<EOF
 ---
 name: invalid
-description: >
+description: $header
 
 ---
 EOF
-run_fail "rejects an empty folded description" "description"
+    run_fail "rejects an empty block description: $header" "description"
+done
 
 for scalar in 'description: "unterminated' "description: 'unterminated" 'description: > trailing'; do
     new_fixture
