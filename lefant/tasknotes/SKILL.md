@@ -34,10 +34,11 @@ Probe existing tools before using them:
 ```bash
 command -v tn
 command -v obsidian
-curl -fsS http://localhost:8080/api/health
 ```
 
-The HTTP API is desktop-only, disabled by default, and bound to loopback. If TaskNotes has an API token, send it as `Authorization: Bearer <token>` without logging it.
+Before probing HTTP, read `enableAPI`, `apiPort`, and `apiAuthToken` from the plugin's `data.json`. Probe only when `enableAPI` is true. Use `apiPort`, or `8080` only when that setting is absent, for `GET http://localhost:<port>/api/health`. If `apiAuthToken` is nonempty, send it as `Authorization: Bearer <token>`.
+
+The HTTP API is desktop-only, disabled by default, and bound to loopback. Read the token from `data.json` in process and construct the authorization header in memory. Never paste the token into a command or shell history, expose it through process arguments, or print or log it.
 
 Useful endpoints:
 
@@ -113,16 +114,18 @@ Use direct file reads for inspection when no maintained interface is available. 
 
 Read `<vault>/.obsidian/plugins/tasknotes/data.json` and account for:
 
-- `tasksFolder`
+- `tasksFolder` as the default destination for new tasks, not the task inventory boundary
 - `taskIdentificationMethod`
 - `taskTag`
 - `taskPropertyName` and `taskPropertyValue`
-- `fieldMapping`
+- `excludedFolders`
+- `moveArchivedTasks` and `archiveFolder`
+- `fieldMapping`, including `archiveTag`
 - `defaultTaskStatus` and `defaultTaskPriority`
 - `customStatuses` and `customPriorities`
 - `storeTitleInFilename`, `taskFilenameFormat`, and `customFilenameTemplate`
 
-If the task folder or filename template contains unresolved variables, ask for the missing context instead of guessing.
+If a task-folder, archive-folder, or filename template contains unresolved variables, ask for the missing context instead of guessing.
 
 ### Identify a task
 
@@ -188,9 +191,11 @@ After a manual write, reread the file and confirm that the identification marker
 
 When no CLI or API is available:
 
-1. Search the configured task folder recursively for Markdown files.
-2. Parse YAML frontmatter; do not rely on `grep` alone for lists or remapped fields.
-3. Select tasks using the configured identification method.
-4. Exclude statuses marked completed when listing active work.
-5. Sort urgent or high-priority tasks first, then overdue and due dates, then scheduled dates.
-6. Show task title, status, priority, due or scheduled date, and project when available.
+1. Search Markdown files across the vault. `tasksFolder` is only the default creation destination.
+2. Skip Obsidian system locations, every folder in `excludedFolders`, and the resolved `archiveFolder` location.
+3. Parse YAML frontmatter; do not rely on `grep` alone for lists or remapped fields.
+4. Select tasks using the configured identification method.
+5. Exclude tasks whose `tags` contain the archive tag named by `fieldMapping.archiveTag`, even when they remain outside `archiveFolder` or have an incomplete status.
+6. Exclude statuses marked completed when listing active work.
+7. Sort urgent or high-priority tasks first, then overdue and due dates, then scheduled dates.
+8. Show task title, status, priority, due or scheduled date, and project when available.
