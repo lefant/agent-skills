@@ -50,11 +50,12 @@ def read_frontmatter(path):
         if line.startswith('name:'):
             name = line.split(':', 1)[1].strip().strip('"\'')
         if line.startswith('description:'):
-            has_description = True
+            value = line.split(':', 1)[1].strip().strip('"\'')
+            has_description = bool(value)
     return name, has_description
 
 
-for path in sorted(Path('lefant').glob('*/SKILL.md')):
+def validate_skill(path):
     name, has_description = read_frontmatter(path)
     if name != path.parent.name:
         errors.append(f'{path}: frontmatter name {name!r} does not match directory {path.parent.name!r}')
@@ -62,6 +63,10 @@ for path in sorted(Path('lefant').glob('*/SKILL.md')):
         errors.append(f'{path}: missing description')
     if name:
         seen_names.setdefault(name, []).append(path)
+
+
+for path in sorted(Path('lefant').glob('*/SKILL.md')):
+    validate_skill(path)
 
 for path in sorted(Path('vendor').rglob('SKILL.md')):
     skills.append(path)
@@ -70,13 +75,7 @@ for path in sorted(Path('vendor').rglob('SKILL.md')):
         errors.append(f'{path}: expected vendor/<source>/<skill>/SKILL.md')
         continue
 
-    name, has_description = read_frontmatter(path)
-    if name != path.parent.name:
-        errors.append(f'{path}: frontmatter name {name!r} does not match directory {path.parent.name!r}')
-    if not has_description:
-        errors.append(f'{path}: missing description')
-    if name:
-        seen_names.setdefault(name, []).append(path)
+    validate_skill(path)
 
 for name, paths in sorted(seen_names.items()):
     if len(paths) > 1:
