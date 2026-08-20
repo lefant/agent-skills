@@ -143,8 +143,8 @@ replacements = [
     (Path('vendor/JuliusBrussee/caveman-commit/README.md'), '\n- [Caveman README](../../README.md) — repo overview', ''),
     (Path('vendor/JuliusBrussee/caveman-help/README.md'), '\n- [Caveman README](../../README.md) — repo overview', ''),
     (Path('vendor/JuliusBrussee/caveman-review/README.md'), '\n- [Caveman README](../../README.md) — repo overview', ''),
-    (Path('vendor/JuliusBrussee/caveman-compress/SKILL.md'), '1. The compression scripts live in `caveman-compress/scripts/` (adjacent to this SKILL.md). If the path is not immediately available, search for `caveman-compress/scripts/__main__.py`.', '1. The compression scripts live in `scripts/` (adjacent to this SKILL.md). If the path is not immediately available, search for `{baseDir}/scripts/__main__.py`.'),
-    (Path('vendor/JuliusBrussee/caveman-compress/SKILL.md'), 'cd caveman-compress && python3 -m scripts <absolute_filepath>', 'cd {baseDir} && python3 -m scripts <absolute_filepath>'),
+    (Path('vendor/JuliusBrussee/caveman-compress/SKILL.md'), '1. The compression scripts live in `scripts/` (adjacent to this SKILL.md). If the path is not immediately available, search for `scripts/__main__.py` next to this SKILL.md.', '1. The compression scripts live in `scripts/` (adjacent to this SKILL.md). If the path is not immediately available, search for `{baseDir}/scripts/__main__.py`.'),
+    (Path('vendor/JuliusBrussee/caveman-compress/SKILL.md'), 'python3 -m scripts <absolute_filepath>', 'cd {baseDir} && python3 -m scripts <absolute_filepath>'),
     (Path('vendor/woosal1337/ste-writing/SKILL.md'), 'python3 ste-lint.py draft.md            # flavored target: under 2.5 per 100 words\npython3 ste-lint.py --strict draft.md   # strict target: under 1.5 per 100 words', 'python3 {baseDir}/ste-lint.py draft.md            # flavored target: under 2.5 per 100 words\npython3 {baseDir}/ste-lint.py --strict draft.md   # strict target: under 1.5 per 100 words'),
     (Path('vendor/woosal1337/ste-writing/ste-lint.py'), '    longs = [(wc(s), s) for s in sents if wc(s) > 20]\n    v["long_sentence(>20w)"] = len(longs)', '    sentence_limit = 20 if strict else 25\n    longs = [(wc(s), s) for s in sents if wc(s) > sentence_limit]\n    v[f"long_sentence(>{sentence_limit}w)"] = len(longs)'),
     (Path('vendor/woosal1337/ste-writing/ste-lint.py'), '    v["contraction"] = len(re.findall(r"\\b\\w+[\'’](?:t|re|ve|ll|d|s|m)\\b", text))', '    v["contraction"] = len(re.findall(\n        r"\\b(?:\\w+[\'’](?:t|re|ve|ll|d|m)|(?:he|here|how|it|let|she|that|there|what|when|where|who|why)[\'’]s)\\b",\n        text, re.I))'),
@@ -273,7 +273,7 @@ fetch_skill "JuliusBrussee/caveman" "skills/caveman" "$VENDOR_DIR/JuliusBrussee/
 fetch_skill "JuliusBrussee/caveman" "skills/caveman-help" "$VENDOR_DIR/JuliusBrussee/caveman-help" || true
 fetch_skill "JuliusBrussee/caveman" "skills/caveman-commit" "$VENDOR_DIR/JuliusBrussee/caveman-commit" || true
 fetch_skill "JuliusBrussee/caveman" "skills/caveman-review" "$VENDOR_DIR/JuliusBrussee/caveman-review" || true
-fetch_skill "JuliusBrussee/caveman" "caveman-compress" "$VENDOR_DIR/JuliusBrussee/caveman-compress" || true
+fetch_skill "JuliusBrussee/caveman" "skills/caveman-compress" "$VENDOR_DIR/JuliusBrussee/caveman-compress" || true
 
 # lambdamechanic - skills
 fetch_skill "lambdamechanic/skills" "zfc" "$VENDOR_DIR/lambdamechanic/zfc" || true
