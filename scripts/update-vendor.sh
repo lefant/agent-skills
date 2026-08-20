@@ -163,6 +163,44 @@ for path, old, new in replacements:
     if old in text:
         path.write_text(text.replace(old, new))
 
+required_local_snippets = {
+    Path('vendor/JuliusBrussee/caveman/SKILL.md'): (
+        'lite (default in the lefant bundle)',
+        'Default: **lite**.',
+    ),
+    Path('vendor/JuliusBrussee/caveman-help/SKILL.md'): (
+        'Default mode = `lite`.',
+        'Resolution: env var > config file > `lite`.',
+    ),
+    Path('vendor/JuliusBrussee/caveman-compress/SKILL.md'): (
+        'cd {baseDir} && python3 -m scripts <absolute_filepath>',
+    ),
+    Path('vendor/andrewyng/get-api-docs/SKILL.md'): (
+        'ask the user before installing it globally',
+        'ask the user before sending documentation feedback',
+    ),
+    Path('vendor/steipete/markdown-converter/SKILL.md'): (
+        'Use when converting PDF',
+    ),
+    Path('vendor/steipete/video-transcript-downloader/SKILL.md'): (
+        'Use when asked to “download this video”',
+    ),
+    Path('vendor/marimo-team/marimo-notebook/SKILL.md'): (
+        'see [COLUMNS.md](references/COLUMNS.md)',
+    ),
+}
+for relative_path, snippets in required_local_snippets.items():
+    path = repo_root / relative_path
+    if not path.is_file():
+        raise SystemExit(f'Post-fetch fix failed: {path} does not exist')
+    text = path.read_text()
+    missing = [snippet for snippet in snippets if snippet not in text]
+    if missing:
+        raise SystemExit(
+            f'Post-fetch fix failed: {path} is missing required local snippet(s): '
+            + ', '.join(missing)
+        )
+
 zfc_path = repo_root / 'vendor/lambdamechanic/zfc/SKILL.md'
 if zfc_path.exists():
     text = zfc_path.read_text()
