@@ -5,7 +5,7 @@ description: Download videos, audio, subtitles, and clean paragraph-style transc
 
 # Video Transcript Downloader
 
-`./scripts/vtd.js` can:
+`node {baseDir}/scripts/vtd.js` can:
 - Print a transcript as a clean paragraph (timestamps optional).
 - Download video/audio/subtitles.
 
@@ -16,14 +16,14 @@ Transcript behavior:
 ## Setup
 
 ```bash
-cd ~/Projects/agent-scripts/skills/video-transcript-downloader && npm ci
+cd {baseDir} && npm ci  # Requires Node.js 20+
 ```
 
 CLI syntax:
 
 ```bash
-./scripts/vtd.js --help
-./scripts/vtd.js transcript --help
+node {baseDir}/scripts/vtd.js --help
+node {baseDir}/scripts/vtd.js transcript --help
 ```
 
 Subcommands support focused help without requiring `--url`.
@@ -31,18 +31,18 @@ Subcommands support focused help without requiring `--url`.
 ## Transcript (default: clean paragraph)
 
 ```bash
-./scripts/vtd.js transcript --url 'https://…'
-./scripts/vtd.js transcript --url 'https://…' --lang en
-./scripts/vtd.js transcript --url 'https://…' --timestamps
-./scripts/vtd.js transcript --url 'https://…' --keep-brackets
+node {baseDir}/scripts/vtd.js transcript --url 'https://…'
+node {baseDir}/scripts/vtd.js transcript --url 'https://…' --lang en
+node {baseDir}/scripts/vtd.js transcript --url 'https://…' --timestamps
+node {baseDir}/scripts/vtd.js transcript --url 'https://…' --keep-brackets
 ```
 
 ## Download video / audio / subtitles
 
 ```bash
-./scripts/vtd.js download --url 'https://…' --output-dir ~/Downloads
-./scripts/vtd.js audio --url 'https://…' --output-dir ~/Downloads
-./scripts/vtd.js subs --url 'https://…' --output-dir ~/Downloads --lang en
+node {baseDir}/scripts/vtd.js download --url 'https://…' --output-dir ~/Downloads
+node {baseDir}/scripts/vtd.js audio --url 'https://…' --output-dir ~/Downloads
+node {baseDir}/scripts/vtd.js subs --url 'https://…' --output-dir ~/Downloads --lang en
 ```
 
 ## Formats (list + choose)
@@ -50,19 +50,19 @@ Subcommands support focused help without requiring `--url`.
 List available formats (format ids, resolution, container, audio-only, etc):
 
 ```bash
-./scripts/vtd.js formats --url 'https://…'
+node {baseDir}/scripts/vtd.js formats --url 'https://…'
 ```
 
 Download a specific format id (example):
 
 ```bash
-./scripts/vtd.js download --url 'https://…' --output-dir ~/Downloads -- --format 137+140
+node {baseDir}/scripts/vtd.js download --url 'https://…' --output-dir ~/Downloads -- --format 137+140
 ```
 
 Prefer MP4 container without re-encoding (remux when possible):
 
 ```bash
-./scripts/vtd.js download --url 'https://…' --output-dir ~/Downloads -- --remux-video mp4
+node {baseDir}/scripts/vtd.js download --url 'https://…' --output-dir ~/Downloads -- --remux-video mp4
 ```
 
 ## Notes
@@ -72,7 +72,7 @@ Prefer MP4 container without re-encoding (remux when possible):
 - Pass extra `yt-dlp` args after `--` for `transcript` fallback, `download`, `audio`, `subs`, `formats`.
 
 ```bash
-./scripts/vtd.js formats --url 'https://…' -- -v
+node {baseDir}/scripts/vtd.js formats --url 'https://…' -- -v
 ```
 
 ## Troubleshooting (only when needed)

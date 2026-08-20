@@ -128,6 +128,9 @@ replacements = [
     (Path('vendor/marimo-team/marimo-notebook/references/COLUMNS.md'), '    # This cell is in column 2 \n', '    # This cell is in column 2\n'),
     (Path('vendor/marimo-team/marimo-pair/SKILL.md'), '`edit_cell` change notebook structure only. Use `run_cell` to execute. \n', '`edit_cell` change notebook structure only. Use `run_cell` to execute.\n'),
     (Path('vendor/steipete/video-transcript-downloader/SKILL.md'), 'description: "yt-dlp downloads: video, audio, subtitles, transcripts, clips, playlists."', 'description: Download videos, audio, subtitles, and clean paragraph-style transcripts from YouTube and any other yt-dlp supported site. Use when asked to “download this video”, “save this clip”, “rip audio”, “get subtitles”, “get transcript”, or to troubleshoot yt-dlp/ffmpeg and formats/playlists.'),
+    (Path('vendor/steipete/video-transcript-downloader/SKILL.md'), '`./scripts/vtd.js` can:', '`node {baseDir}/scripts/vtd.js` can:'),
+    (Path('vendor/steipete/video-transcript-downloader/SKILL.md'), 'cd ~/Projects/agent-scripts/skills/video-transcript-downloader && npm ci', 'cd {baseDir} && npm ci  # Requires Node.js 20+'),
+    (Path('vendor/steipete/video-transcript-downloader/SKILL.md'), './scripts/vtd.js', 'node {baseDir}/scripts/vtd.js'),
     (Path('vendor/steipete/markdown-converter/SKILL.md'), 'description: "Markdown conversion: PDF, Office, HTML, data, OCR, audio, ZIP, YouTube."', 'description: Convert documents and files to Markdown using markitdown. Use when converting PDF, Word (.docx), PowerPoint (.pptx), Excel (.xlsx, .xls), HTML, CSV, JSON, XML, images (with EXIF/OCR), audio (with transcription), ZIP archives, YouTube URLs, or EPubs to Markdown format for LLM processing or text analysis.'),
     (Path('vendor/vercel-labs/vercel-react-best-practices/AGENTS.md'), './async-defer-await.md', './rules/async-defer-await.md'),
     (Path('vendor/vercel-labs/vercel-react-best-practices/AGENTS.md'), './async-cheap-condition-before-await.md', './rules/async-cheap-condition-before-await.md'),
@@ -185,6 +188,8 @@ required_local_snippets = {
     ),
     Path('vendor/steipete/video-transcript-downloader/SKILL.md'): (
         'Use when asked to “download this video”',
+        'node {baseDir}/scripts/vtd.js',
+        'Requires Node.js 20+',
     ),
     Path('vendor/marimo-team/marimo-notebook/SKILL.md'): (
         'see [COLUMNS.md](references/COLUMNS.md)',
