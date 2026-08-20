@@ -124,6 +124,7 @@ replacements = [
     (Path('vendor/remotion-dev/remotion-best-practices/rules/voiceover.md'), './calculate-metadata)', './calculate-metadata.md)'),
     (Path('vendor/remotion-dev/remotion-best-practices/SKILL.md'), 'You can render a single frame with the CLI to sanity-check layout, colors, or timing.  ', 'You can render a single frame with the CLI to sanity-check layout, colors, or timing.'),
     (Path('vendor/marimo-team/marimo-notebook/SKILL.md'), 'For marimo notebooks that run in width=columns [SQL.md](references/COLUMNS.md)', 'For marimo notebooks that use columns, see [COLUMNS.md](references/COLUMNS.md)'),
+    (Path('vendor/marimo-team/marimo-pair/SKILL.md'), '`edit_cell` change notebook structure only. Use `run_cell` to execute. \n', '`edit_cell` change notebook structure only. Use `run_cell` to execute.\n'),
     (Path('vendor/vercel-labs/vercel-react-best-practices/AGENTS.md'), './async-defer-await.md', './rules/async-defer-await.md'),
     (Path('vendor/vercel-labs/vercel-react-best-practices/AGENTS.md'), './async-cheap-condition-before-await.md', './rules/async-cheap-condition-before-await.md'),
     (Path('vendor/openclaw/tavily-search/SKILL.md'), 'node scripts/search.mjs', 'node {baseDir}/scripts/search.mjs'),
