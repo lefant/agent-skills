@@ -116,6 +116,8 @@ from pathlib import Path
 repo_root = Path(sys.argv[1])
 
 replacements = [
+    (Path('vendor/googlecolab/operating-colab/SKILL.md'), 'name: colab-operator', 'name: operating-colab'),
+    (Path('vendor/googlecolab/operating-colab/SKILL.md'), '# Skill: Colab Session Operator', '# Operating Google Colab\n\nModified for lefant/agent-skills: renamed the skill and added the following operating boundaries.\n\n## Operating boundaries\n\n- Ask before allocating billable compute unless the user already authorized it; do not silently switch hardware tiers. Prefer `colab run` without `--keep` for one-shot jobs.\n- Stop only sessions created for this task unless the user explicitly asks to stop an existing session. Download required outputs before stopping, then verify release with `colab sessions`.\n- Keep credentials, session tokens, and raw auth/debug logs private. Let the user complete browser consent, ADC login, and interactive Drive/GCP authentication.\n- Use Linux or macOS. Check `colab version` and command `--help` against this guidance before running; CLI behavior can change.\n- Report execution outcome, downloaded artifact paths, and whether the task session was released or intentionally retained.'),
     (Path('vendor/dz0ny/devenv/SKILL.md'), 'name: devenv-migration', 'name: devenv'),
     (Path('vendor/anthropics/pdf/SKILL.md'), 'see REFERENCE.md. If you need to fill out a PDF form, read FORMS.md and follow its instructions.', 'see reference.md. If you need to fill out a PDF form, read forms.md and follow its instructions.'),
     (Path('vendor/anthropics/pdf/SKILL.md'), '| Fill PDF forms | pdf-lib or pypdf (see FORMS.md) | See FORMS.md |', '| Fill PDF forms | pdf-lib or pypdf (see forms.md) | See forms.md |'),
@@ -298,6 +300,10 @@ fetch_skill "andrewyng/context-hub" "cli/skills/get-api-docs" "$VENDOR_DIR/andre
 
 # Context7
 fetch_skill "intellectronica/agent-skills" "skills/context7" "$VENDOR_DIR/intellectronica/context7" || true
+
+# Google Colab CLI
+fetch_skill "googlecolab/google-colab-cli" "skills/colab-operator" "$VENDOR_DIR/googlecolab/operating-colab" || true
+fetch_file "googlecolab/google-colab-cli" "LICENSE" "$VENDOR_DIR/googlecolab/operating-colab/LICENSE" || true
 
 # exe.dev
 fetch_skill "boldsoftware/exe.dev" "skill" "$VENDOR_DIR/boldsoftware/using-exe-dev" || true

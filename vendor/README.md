@@ -39,6 +39,7 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `steipete/` | [steipete/agent-scripts](https://github.com/steipete/agent-scripts) | video-transcript-downloader, markdown-converter |
 | `dz0ny/` | [dz0ny/devenv-claude](https://github.com/dz0ny/devenv-claude) | devenv |
 | `andrewyng/` | [andrewyng/context-hub](https://github.com/andrewyng/context-hub) | get-api-docs |
+| `googlecolab/` | [googlecolab/google-colab-cli](https://github.com/googlecolab/google-colab-cli) | operating-colab (upstream: colab-operator) |
 | `boldsoftware/` | [boldsoftware/exe.dev](https://github.com/boldsoftware/exe.dev) | using-exe-dev |
 | `ChromeDevTools/` | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) | chrome-devtools-cli |
 | `JuliusBrussee/` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | caveman, caveman-help, caveman-commit, caveman-review, caveman-compress |
@@ -66,6 +67,8 @@ All vendored skills should be reviewed before committing:
 Note: `vendor/dz0ny/devenv` includes `.mcp.json` pointing to `https://mcp.devenv.sh`. Treat that as part of the review surface when updating the vendored skill.
 
 Note: `vendor/JuliusBrussee/caveman-compress` includes Python scripts that read/write user-selected Markdown files and may call the Anthropic SDK or local `claude` CLI. Review `SECURITY.md` as part of the update.
+
+Note: `vendor/googlecolab/operating-colab` is a self-contained instruction-only skill with no bundled scripts or MCP servers. Its commands install the CLI, authenticate to Google, transfer files, and allocate billable runtimes. Local post-fetch changes rename it and add consent, credential protection, session ownership, and cleanup verification guidance. The Apache-2.0 license travels with the skill. Initial import: [upstream revision](https://github.com/googlecolab/google-colab-cli/commit/465b941001afa3d804fa2094bed763236b72e654).
 
 ## Version Pinning
 
