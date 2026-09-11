@@ -67,6 +67,7 @@ Rules:
 | `handover` | Generate a concise resume prompt for the next session |
 | `hitl-browser-automation` | Run human-in-the-loop browser automation with VNC, loopback CDP, smoke validation, and agent-browser continuation |
 | `rpi` | Preserve the create_plan, implement_plan, and research_codebase workflows |
+| `qrspi` | Portable adaptation of matanshavit/qrspi's eight-phase workflow; upstream provenance and local changes documented in `lefant/qrspi/SOURCE.md` |
 | `recent-context-from-git` | Summarize recent local docs and work context from git history |
 | `test-analyzer` | Analyze CTRF test reports with jq |
 | `youtube-transcript` | Fetch YouTube video transcripts |

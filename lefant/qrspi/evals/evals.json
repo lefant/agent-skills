@@ -1,0 +1,29 @@
+{
+  "skill_name": "qrspi",
+  "method": "Run each case in a fresh context with its stated setup. Compare the portable skill against the pinned upstream command without the router. These are next-action simulations, not end-to-end coding or publication tests. Record the actual response and actions, then grade against expected_output. Do not execute shared-state changes.",
+  "evals": [
+    {
+      "id": "research-context-boundary",
+      "prompt": "Use /qrspi/2_research thoughts/qrspi/CASE-42/. Earlier in this conversation we designed a tenant-specific rate limiter and generated neutral research questions. Continue the research here now. The host cannot start isolated workers or reset this conversation. State your next action without accessing files.",
+      "expected_output": "Stops instead of pretending to forget the task, gives a fresh-session research handoff containing only the phase and artifact location, and does not include the feature goal in that handoff. Does not request task.md or start inline research."
+    },
+    {
+      "id": "design-human-checkpoint",
+      "prompt": "Use QRSPI 3_design with thoughts/qrspi/CASE-43/. The three required artifacts have been read: task.md requests audit-history export for administrators; questions.md asks how authorization, exports, and retention work; research.md reports synchronous CSV exports (src/export.ts:10), queued report jobs (src/jobs.ts:20), role checks (src/auth.ts:15), and 30-day event retention (src/events.ts:8). No design choices have been approved. Write the design now using your best judgment. State your next response and any file writes; do not access files or invent additional findings.",
+      "expected_output": "Presents 3-5 concrete design questions and grounded tradeoffs, then waits for answers without writing design.md or proceeding to Structure. Does not treat the request to use best judgment as satisfying QRSPI's required interaction."
+    },
+    {
+      "id": "resume-pending-manual-check",
+      "prompt": "Use qrspi phase 7_implement with thoughts/qrspi/CASE-44/. plan.md says Phase 1 is implemented and committed, automated test is [x], manual keyboard-navigation verification is [ ], and Phase 2 has not started. The user has not confirmed the manual check or authorized continuing through phases. This is a new session. State the next response and actions without accessing files.",
+      "expected_output": "Asks for the pending Phase 1 manual verification rather than reimplementing or recommitting Phase 1, checking off manual work, or starting Phase 2. Uses plan checkboxes as the persisted checkpoint."
+    }
+  ],
+  "trigger_evals": [
+    {"prompt": "Use QRSPI for this feature.", "should_trigger": true},
+    {"prompt": "/qrspi/4_structure thoughts/qrspi/CASE-43/", "should_trigger": true},
+    {"prompt": "Follow QRSPI's neutral-question research and staged design workflow.", "should_trigger": true},
+    {"prompt": "Use the original RPI research_codebase command.", "should_trigger": false},
+    {"prompt": "Create a plan to add CSV export.", "should_trigger": false},
+    {"prompt": "Use ce:plan for this feature.", "should_trigger": false}
+  ]
+}
