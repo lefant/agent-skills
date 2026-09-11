@@ -7,6 +7,77 @@ Curated skills for AI coding agents (Claude Code, Codex, OpenCode).
 - `lefant/` - Custom skills developed in-house
 - `vendor/` - Vendored skills from upstream repositories (reviewed for security)
 
+## Reference Guides
+
+- [Agentic project guide](docs/reference/agentic-project-guide/README.md) —
+  Start with [documentation and learning](docs/reference/agentic-project-guide/documentation-and-learning.md):
+  documentation ownership, ADRs, devlogs, and reusable solutions. The guide also
+  covers repository onboarding, testing, and safe delivery. Read or copy it; it is
+  not installed by the skills CLI.
+
+## Documentation & Process
+
+### Documentation (`./docs`)
+
+Start with the [agentic project guide](docs/reference/agentic-project-guide/README.md)
+and its [documentation and learning workflow](docs/reference/agentic-project-guide/documentation-and-learning.md).
+
+Use these documentation areas. Create optional directories only when there is
+content to own; not every area below exists in this tooling repository yet.
+
+- **`docs/specs/`**: Feature Specifications — living documents describing WHAT features do and WHY
+  - Skill: [`feature-specs`](lefant/feature-specs/SKILL.md)
+- **`docs/decisions/`**: Architecture Decision Records (ADRs) — immutable records of architectural choices once accepted; supersede rather than rewrite their rationale
+  - Skill: [`architecture-decision-records`](lefant/architecture-decision-records/SKILL.md)
+- **`docs/changelog/`**: Release notes and changelog fragments
+  - Skill: [`changelog-fragments`](lefant/changelog-fragments/SKILL.md)
+- **`docs/solutions/`**: Documented solutions to past problems and team learnings, organized by category with YAML frontmatter (`module`, `tags`, `problem_type`)
+- **`docs/reference/`**: Technical references and operational details
+- **`docs/api/`**: Technical references for internal APIs, when applicable
+- **`docs/brand-guide.md`**: Brand and design guide, when applicable
+- **`docs/research/`**: Discovery notes and analysis
+- **`docs/brainstorms/`**: Existing standalone brainstorms and design explorations
+- **`docs/plans/`**: Time-stamped implementation plans
+- **`docs/devlog/`**: Time-stamped implementation outcomes, caveats, and learnings
+  - Skill: [`devlog`](lefant/devlog/SKILL.md)
+
+The spec, ADR, and changelog skills replace the old `spec_create`, `adr_create`,
+and `changelog_create` commands. Use the installed agent's skill invocation syntax;
+the links above point to the maintained skill instructions.
+
+### AI-Assisted Development (`./docs`)
+
+**Workflow**: Research/Plan → Implement → Review → Compound
+
+Prefer the Compound Engineering skills when installed. Verify the installed
+version's skill names and output paths before invoking them; this repository does
+not install that plugin. The workflow also works without it.
+
+Commit progress continuously in small, reviewable increments. Once continuous
+pushes to the agreed remote and branch are authorized, push each coherent, checked
+checkpoint without asking again. Inspect automatic deployment effects first;
+separate release and shared-state actions still need their own authorization.
+
+1. **Research/Plan** — document current behavior, constraints, and requirements;
+   define implementation strategy and verification. Durable research belongs in
+   `docs/research/`, and plans in `docs/plans/`. A plugin may keep brainstorm and
+   planning work in one plan artifact; do not duplicate it just to fill folders.
+2. **Implement** — make the source changes and verify them against the plan.
+3. **Review** — inspect correctness, contracts, security, and test coverage;
+   resolve findings and rerun affected checks.
+4. **Compound** — capture verified reusable solutions in `docs/solutions/` and
+   update their existing owners rather than duplicating knowledge.
+
+At meaningful checkpoints, use [`devlog`](lefant/devlog/SKILL.md) to record outcomes,
+evidence, caveats, and follow-ups in `docs/devlog/`. Devlogs preserve session history;
+solutions preserve reusable knowledge. Use [`atomically-land`](lefant/atomically-land/SKILL.md)
+when closing out work that also needs plans, specs, ADRs, or changelog updates.
+
+Use `docs/research/`, `docs/plans/`, and `docs/devlog/` for new work, even where an
+older skill template still says `thoughts/shared/`. The [`rpi`](lefant/rpi/SKILL.md)
+skill remains available for explicitly requested legacy workflows; it is not the
+default process. Do not move historical files merely to follow the new convention.
+
 ## Usage
 
 ### With skills CLI
