@@ -9,18 +9,13 @@ Curated skills for AI coding agents (Claude Code, Codex, OpenCode).
 
 ## Reference Guides
 
-- [Agentic project guide](docs/reference/agentic-project-guide/README.md) —
-  Start with [documentation and learning](docs/reference/agentic-project-guide/documentation-and-learning.md):
-  documentation ownership, ADRs, devlogs, and reusable solutions. The guide also
-  covers repository onboarding, testing, and safe delivery. Read or copy it; it is
-  not installed by the skills CLI.
+- [Adopt Documentation & Process](docs/reference/adopt-documentation-process.md) —
+  A single-file instruction for adding a documentation map and development workflow
+  to another repository's README, with pointers from AGENTS.md and CLAUDE.md.
 
 ## Documentation & Process
 
 ### Documentation (`./docs`)
-
-Start with the [agentic project guide](docs/reference/agentic-project-guide/README.md)
-and its [documentation and learning workflow](docs/reference/agentic-project-guide/documentation-and-learning.md).
 
 Use these documentation areas. Create optional directories only when there is
 content to own; not every area below exists in this tooling repository yet.
