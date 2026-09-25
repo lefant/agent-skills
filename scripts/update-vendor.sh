@@ -301,6 +301,9 @@ fetch_skill "andrewyng/context-hub" "cli/skills/get-api-docs" "$VENDOR_DIR/andre
 # Context7
 fetch_skill "intellectronica/agent-skills" "skills/context7" "$VENDOR_DIR/intellectronica/context7" || true
 
+# TypeSafe - Jev instructions and typed judgments
+fetch_skill "typesafe-ai/skills" "skills/typesafe-ai" "$VENDOR_DIR/typesafe-ai/typesafe-ai" || true
+
 # Google Colab CLI
 fetch_skill "googlecolab/google-colab-cli" "skills/colab-operator" "$VENDOR_DIR/googlecolab/operating-colab" || true
 fetch_file "googlecolab/google-colab-cli" "LICENSE" "$VENDOR_DIR/googlecolab/operating-colab/LICENSE" || true

@@ -32,6 +32,7 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `humanlayer/` | [humanlayer/skills](https://github.com/humanlayer/skills) | show-me |
 | `giuseppe-trisciuoglio/` | [giuseppe-trisciuoglio/developer-kit](https://github.com/giuseppe-trisciuoglio/developer-kit) | shadcn-ui |
 | `intellectronica/` | [intellectronica/agent-skills](https://github.com/intellectronica/agent-skills) | context7 |
+| `typesafe-ai/` | [typesafe-ai/skills](https://github.com/typesafe-ai/skills) | typesafe-ai |
 | `marimo-team/` | [marimo-team/skills](https://github.com/marimo-team/skills), [marimo-team/marimo-pair](https://github.com/marimo-team/marimo-pair) | marimo-notebook, marimo-pair |
 | `mitsuhiko/` | [mitsuhiko/agent-stuff](https://github.com/mitsuhiko/agent-stuff) | tmux, librarian |
 | `kepano/` | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | json-canvas, obsidian-bases, obsidian-markdown, obsidian-cli, defuddle |
@@ -69,6 +70,8 @@ Note: `vendor/dz0ny/devenv` includes `.mcp.json` pointing to `https://mcp.devenv
 Note: `vendor/JuliusBrussee/caveman-compress` includes Python scripts that read/write user-selected Markdown files and may call the Anthropic SDK or local `claude` CLI. Review `SECURITY.md` as part of the update.
 
 Note: `vendor/googlecolab/operating-colab` is a self-contained instruction-only skill with no bundled scripts or MCP servers. Its commands install the CLI, authenticate to Google, transfer files, and allocate billable runtimes. Local post-fetch changes rename it and add consent, credential protection, session ownership, and cleanup verification guidance. The Apache-2.0 license travels with the skill. Initial import: [upstream revision](https://github.com/googlecolab/google-colab-cli/commit/465b941001afa3d804fa2094bed763236b72e654).
+
+Note: `vendor/typesafe-ai/typesafe-ai` preserves the official instruction-only skill and MIT license unchanged. It links to live TypeSafe documentation and has no bundled scripts, MCP servers, or credentials. Initial import: [upstream revision](https://github.com/typesafe-ai/skills/commit/65a39f393687675ce170e6094757de20370365b9).
 
 ## Version Pinning
 
