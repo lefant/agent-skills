@@ -12,6 +12,9 @@ Curated skills for AI coding agents (Claude Code, Codex, OpenCode).
 - [Adopt Documentation & Process](docs/reference/adopt-documentation-process.md) —
   A single-file instruction for adding a documentation map and development workflow
   to another repository's README, with pointers from AGENTS.md and CLAUDE.md.
+- [Adopt Project Agent Resources](docs/reference/adopt-project-agent-resources.md) —
+  Package version-matched docs and selected skills for a fresh checkout, with
+  pinned sources, portable references, reproducible refresh and packaging checks.
 
 ## Documentation & Process
 
