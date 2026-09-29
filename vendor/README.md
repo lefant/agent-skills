@@ -48,6 +48,15 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `woosal1337/` | [woosal1337/blog](https://github.com/woosal1337/blog) | ste-writing |
 | `pulumi/` | [pulumi/agent-skills](https://github.com/pulumi/agent-skills) | pulumi-overview, pulumi-best-practices, pulumi-component, pulumi-automation-api, pulumi-esc, provider-upgrade, package-usage, pulumi-terraform-to-pulumi, pulumi-cdk-to-pulumi, cloudformation-to-pulumi, pulumi-arm-to-pulumi, pulumi-upgrade-provider, upstream-patches, pulumi-neo-handoff |
 
+## Future sources / optional project-local installs
+
+These sources are not vendored or included in `scripts/update-vendor.sh`. Review
+selected skills before installing them locally in a project that needs them.
+
+| Source Repository | Potential Use |
+|-------------------|---------------|
+| [cloudflare/skills](https://github.com/cloudflare/skills) | Possible future enhancement for Cloudflare API, DNS, rules, TLS, and observability guidance, plus Wrangler workflows. Prefer selected project-local skills over installing the full plugin; skills do not grant API access, and debugging credentials require separate setup. |
+
 ## Disabled for now
 
 | Vendor Directory | Source Repository | Skills |
