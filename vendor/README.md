@@ -49,6 +49,7 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `pulumi/` | [pulumi/agent-skills](https://github.com/pulumi/agent-skills) | pulumi-overview, pulumi-best-practices, pulumi-component, pulumi-automation-api, pulumi-esc, provider-upgrade, package-usage, pulumi-terraform-to-pulumi, pulumi-cdk-to-pulumi, cloudformation-to-pulumi, pulumi-arm-to-pulumi, pulumi-upgrade-provider, upstream-patches, pulumi-neo-handoff |
 | `mattpocock/` | [mattpocock/skills](https://github.com/mattpocock/skills) | 27 published engineering and productivity skills; see below |
 | `antithesishq/` | [antithesishq/antithesis-skills](https://github.com/antithesishq/antithesis-skills) | 14 Antithesis research, harness, launch, and investigation skills; see [snapshot and review](antithesishq/SOURCE.md) |
+| `hegeldev/` | [hegeldev/hegel-skill](https://github.com/hegeldev/hegel-skill) | hegel, hegel-review |
 
 ### Matt Pocock skills
 
@@ -137,6 +138,15 @@ credential and mutation-harness risks, and downstream exporter requirements.
 Vendoring does not authorize authentication, remote debug commands, uploads,
 cluster operations, or billable runs. No Antithesis service was exercised during
 the import; local helper tests are not end-to-end platform validation.
+
+Note: `vendor/hegeldev` preserves both instruction-only skills and all six Hegel
+technique guides unchanged from [upstream revision a60b282](https://github.com/hegeldev/hegel-skill/commit/a60b28243199b24aeebb2c90aece34082ee4997c).
+Each skill carries the upstream MIT license for standalone distribution. The
+review found no scripts, MCP servers, hooks, binaries, or credential access.
+`hegel` references `hegel-review`, so install both. They remain separate from the
+Antithesis plugin: these are local property-testing workflows, not hosted test
+runs. The broad upstream testing triggers and high-case-count/scale-probe guidance
+are preserved; installation does not install a Hegel library or run tests.
 
 ## Version Pinning
 

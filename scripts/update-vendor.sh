@@ -398,6 +398,13 @@ fetch_skillset "antithesishq/antithesis-skills" "." "$VENDOR_DIR/antithesishq" \
     antithesis-triage antithesis-workload || true
 fetch_file "antithesishq/antithesis-skills" "LICENSE" "$VENDOR_DIR/antithesishq/LICENSE" || true
 
+# Hegel - property-based testing and its companion review checklist
+fetch_skillset "hegeldev/hegel-skill" "skills" "$VENDOR_DIR/hegeldev" \
+    hegel hegel-review || true
+for skill in hegel hegel-review; do
+    fetch_file "hegeldev/hegel-skill" "LICENSE" "$VENDOR_DIR/hegeldev/$skill/LICENSE" || true
+done
+
 apply_post_fetch_fixes
 
 "$SCRIPT_DIR/check-show-me-vendor.py"
