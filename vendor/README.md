@@ -47,6 +47,40 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `lambdamechanic/` | [lambdamechanic/skills](https://github.com/lambdamechanic/skills) | zfc |
 | `woosal1337/` | [woosal1337/blog](https://github.com/woosal1337/blog) | ste-writing |
 | `pulumi/` | [pulumi/agent-skills](https://github.com/pulumi/agent-skills) | pulumi-overview, pulumi-best-practices, pulumi-component, pulumi-automation-api, pulumi-esc, provider-upgrade, package-usage, pulumi-terraform-to-pulumi, pulumi-cdk-to-pulumi, cloudformation-to-pulumi, pulumi-arm-to-pulumi, pulumi-upgrade-provider, upstream-patches, pulumi-neo-handoff |
+| `mattpocock/` | [mattpocock/skills](https://github.com/mattpocock/skills) | 27 published engineering and productivity skills; see below |
+
+### Matt Pocock skills
+
+The import matches the 27 skills listed in upstream's plugin manifest at
+[revision d81f3a1](https://github.com/mattpocock/skills/commit/d81f3a183412e71a5b1e84ca21bc1a35eea03a60)
+(plugin version 1.2.3). Skill contents and supporting files are unchanged, with
+upstream's MIT license at `mattpocock/LICENSE`. The explicit update lists in
+`scripts/update-vendor.sh` exclude unpublished skills, `misc/`, and `in-progress/`;
+new upstream skills require review before inclusion. The Claude plugin manifest
+itself is not installed.
+
+- **Engineering:** ask-matt, diagnosing-bugs, grill-with-docs, triage,
+  improve-codebase-architecture, setup-matt-pocock-skills, tdd, to-spec, to-tickets,
+  wayfinder, implement, implement-spec, prototype, research, domain-modeling,
+  codebase-design, code-review, pr, retro, wizard.
+- **Productivity:** grill-me, grilling, handoff, teach, to-questionnaire, wait-what,
+  writing-for-agents.
+
+Vendoring is not activation. Wildcard installers (including toolnix's current
+host-local baseline after its input is updated) expose these as bare names.
+An Amp `mp:*` namespace requires a separate directory plugin that registers the
+skills; personal-plugin publication is what makes that bundle available across
+Amp projects and orbs. Neither is configured here. Exporters must carry the MIT
+license into the resulting distribution, including individually exported skills.
+
+For a future `mp` plugin, qualify internal skill calls consistently, preserve
+upstream's `disable-model-invocation` flags, and verify how Amp handles them.
+Avoid installing both bare and namespaced copies. Namespaces prevent name
+collisions, not overlapping triggers or conflicting workflow instructions.
+Use fresh threads and explicitly select MP or CE when comparing them; follow each
+project's existing document ownership and approval rules. Upstream engineering
+flows may require per-project setup; review its proposed instruction/configuration
+changes rather than running setup automatically on installation.
 
 ## Future sources / optional project-local installs
 
@@ -81,6 +115,18 @@ Note: `vendor/JuliusBrussee/caveman-compress` includes Python scripts that read/
 Note: `vendor/googlecolab/operating-colab` is a self-contained instruction-only skill with no bundled scripts or MCP servers. Its commands install the CLI, authenticate to Google, transfer files, and allocate billable runtimes. Local post-fetch changes rename it and add consent, credential protection, session ownership, and cleanup verification guidance. The Apache-2.0 license travels with the skill. Initial import: [upstream revision](https://github.com/googlecolab/google-colab-cli/commit/465b941001afa3d804fa2094bed763236b72e654).
 
 Note: `vendor/typesafe-ai/typesafe-ai` preserves the official instruction-only skill and MIT license unchanged. It links to live TypeSafe documentation and has no bundled scripts, MCP servers, or credentials. Initial import: [upstream revision](https://github.com/typesafe-ai/skills/commit/65a39f393687675ce170e6094757de20370365b9).
+
+Note: `vendor/mattpocock` was statically reviewed across all 79 bundled files.
+It contains no bundled MCP servers, hooks, symlinks, or binaries. Two Bash templates
+are included: `diagnosing-bugs/scripts/hitl-loop.template.sh` echoes observations
+back to the agent (never use it to capture secrets), and `wizard/template.sh` is
+a human-run template that can write `.env` values and GitHub Actions secrets or
+variables. Review generated wizards, ensure secret files are ignored by Git, and
+obtain authorization before remote writes. Other invoked workflows can edit
+project instructions, commit, create worktrees or draft PRs, and update or close
+tracker items. Generated architecture reports use third-party CDN scripts.
+Importing these files executes none of those actions; this review is not runtime
+validation or blanket authorization to run them.
 
 ## Version Pinning
 

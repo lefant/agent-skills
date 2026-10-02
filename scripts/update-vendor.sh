@@ -379,6 +379,16 @@ fetch_skillset "kepano/obsidian-skills" "skills" "$VENDOR_DIR/kepano" \
     obsidian-markdown || true
 fetch_file "kepano/obsidian-skills" "LICENSE" "$VENDOR_DIR/kepano/LICENSE" || true
 
+# Matt Pocock - published plugin skill set (explicitly reviewed; no misc/in-progress)
+fetch_skillset "mattpocock/skills" "skills/engineering" "$VENDOR_DIR/mattpocock" \
+    ask-matt diagnosing-bugs grill-with-docs triage improve-codebase-architecture \
+    setup-matt-pocock-skills tdd to-spec to-tickets wayfinder implement \
+    implement-spec prototype research domain-modeling codebase-design code-review \
+    pr retro wizard || true
+fetch_skillset "mattpocock/skills" "skills/productivity" "$VENDOR_DIR/mattpocock" \
+    grill-me grilling handoff teach to-questionnaire wait-what writing-for-agents || true
+fetch_file "mattpocock/skills" "LICENSE" "$VENDOR_DIR/mattpocock/LICENSE" || true
+
 apply_post_fetch_fixes
 
 "$SCRIPT_DIR/check-show-me-vendor.py"
