@@ -91,6 +91,7 @@ selected skills before installing them locally in a project that needs them.
 | Source Repository | Potential Use |
 |-------------------|---------------|
 | [cloudflare/skills](https://github.com/cloudflare/skills) | Possible future enhancement for Cloudflare API, DNS, rules, TLS, and observability guidance, plus Wrangler workflows. Prefer selected project-local skills over installing the full plugin; skills do not grant API access, and debugging credentials require separate setup. |
+| [huggingface/skills](https://github.com/huggingface/skills) | Possible future enhancement for Hugging Face workflows. Review and select project-local skills as needed rather than installing the full collection; authentication and service access require separate setup. |
 
 ## Disabled for now
 
