@@ -389,6 +389,15 @@ fetch_skillset "mattpocock/skills" "skills/productivity" "$VENDOR_DIR/mattpocock
     grill-me grilling handoff teach to-questionnaire wait-what writing-for-agents || true
 fetch_file "mattpocock/skills" "LICENSE" "$VENDOR_DIR/mattpocock/LICENSE" || true
 
+# Antithesis - reviewed root-level skills; exclude internal tests and plugin/CI files
+fetch_skillset "antithesishq/antithesis-skills" "." "$VENDOR_DIR/antithesishq" \
+    antithesis-agent-browser antithesis-debug antithesis-documentation \
+    antithesis-feature-workload antithesis-launch antithesis-mutation-testing \
+    antithesis-query-logs antithesis-research antithesis-review-inputs \
+    antithesis-setup antithesis-setup-k8s antithesis-skills-feedback \
+    antithesis-triage antithesis-workload || true
+fetch_file "antithesishq/antithesis-skills" "LICENSE" "$VENDOR_DIR/antithesishq/LICENSE" || true
+
 apply_post_fetch_fixes
 
 "$SCRIPT_DIR/check-show-me-vendor.py"

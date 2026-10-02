@@ -48,6 +48,7 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `woosal1337/` | [woosal1337/blog](https://github.com/woosal1337/blog) | ste-writing |
 | `pulumi/` | [pulumi/agent-skills](https://github.com/pulumi/agent-skills) | pulumi-overview, pulumi-best-practices, pulumi-component, pulumi-automation-api, pulumi-esc, provider-upgrade, package-usage, pulumi-terraform-to-pulumi, pulumi-cdk-to-pulumi, cloudformation-to-pulumi, pulumi-arm-to-pulumi, pulumi-upgrade-provider, upstream-patches, pulumi-neo-handoff |
 | `mattpocock/` | [mattpocock/skills](https://github.com/mattpocock/skills) | 27 published engineering and productivity skills; see below |
+| `antithesishq/` | [antithesishq/antithesis-skills](https://github.com/antithesishq/antithesis-skills) | 14 Antithesis research, harness, launch, and investigation skills; see [snapshot and review](antithesishq/SOURCE.md) |
 
 ### Matt Pocock skills
 
@@ -127,6 +128,14 @@ project instructions, commit, create worktrees or draft PRs, and update or close
 tracker items. Generated architecture reports use third-party CDN scripts.
 Importing these files executes none of those actions; this review is not runtime
 validation or blanket authorization to run them.
+
+Note: `vendor/antithesishq` preserves 14 skills and their executable helpers
+unchanged, with the Apache-2.0 license at the collection root. The
+[snapshot review](antithesishq/SOURCE.md) records provenance, prerequisites,
+credential and mutation-harness risks, and downstream exporter requirements.
+Vendoring does not authorize authentication, remote debug commands, uploads,
+cluster operations, or billable runs. No Antithesis service was exercised during
+the import; local helper tests are not end-to-end platform validation.
 
 ## Version Pinning
 
