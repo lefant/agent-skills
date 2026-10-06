@@ -54,12 +54,22 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 ### Matt Pocock skills
 
 The import matches the 27 skills listed in upstream's plugin manifest at
-[revision d81f3a1](https://github.com/mattpocock/skills/commit/d81f3a183412e71a5b1e84ca21bc1a35eea03a60)
-(plugin version 1.2.3). Skill contents and supporting files are unchanged, with
-upstream's MIT license at `mattpocock/LICENSE`. The explicit update lists in
+[v1.3.1 (0b6cee1)](https://github.com/mattpocock/skills/commit/0b6cee10f260a2e048279cf737bfd3e37b1fce0b).
+Skill contents and supporting files match upstream except for the two
+`implement` inter-skill calls made harness-neutral in `scripts/update-vendor.sh`.
+The upstream MIT license is at `mattpocock/LICENSE`. The explicit update lists in
 `scripts/update-vendor.sh` exclude unpublished skills, `misc/`, and `in-progress/`;
 new upstream skills require review before inclusion. The Claude plugin manifest
 itself is not installed.
+
+The v1.3 release graduated `implement-spec`, `pr`, and `retro` and removed
+`resolving-merge-conflicts`; all three new skills were already present in this
+bundle's earlier d81f3a1 snapshot, and the removed skill was not included.
+The skills now read/write `GLOSSARY.md` and, for multiple contexts,
+`GLOSSARY-MAP.md` instead of `CONTEXT.md` and `CONTEXT-MAP.md`. Projects using
+the old filenames must rename their own files when upgrading; this tooling
+repository has no such project-owned files to migrate. Inter-skill invocation
+instructions call the Skill tool, rather than relying on slash-command syntax.
 
 - **Engineering:** ask-matt, diagnosing-bugs, grill-with-docs, triage,
   improve-codebase-architecture, setup-matt-pocock-skills, tdd, to-spec, to-tickets,

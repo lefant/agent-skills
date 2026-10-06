@@ -158,6 +158,8 @@ replacements = [
     (Path('vendor/woosal1337/ste-writing/ste-lint.py'), '    longs = [(wc(s), s) for s in sents if wc(s) > 20]\n    v["long_sentence(>20w)"] = len(longs)', '    sentence_limit = 20 if strict else 25\n    longs = [(wc(s), s) for s in sents if wc(s) > sentence_limit]\n    v[f"long_sentence(>{sentence_limit}w)"] = len(longs)'),
     (Path('vendor/woosal1337/ste-writing/ste-lint.py'), '    v["contraction"] = len(re.findall(r"\\b\\w+[\'’](?:t|re|ve|ll|d|s|m)\\b", text))', '    v["contraction"] = len(re.findall(\n        r"\\b(?:\\w+[\'’](?:t|re|ve|ll|d|m)|(?:he|here|how|it|let|she|that|there|what|when|where|who|why)[\'’]s)\\b",\n        text, re.I))'),
     (Path('vendor/humanlayer/show-me/SKILL.md'), 'Then open it for the user:\n\n```\nBash(open path/to/show-me-{description}.html)\n```', 'Then open it for the user with the host\'s available browser or file-opening capability. If none is available, return the file path:\n\n```text\npath/to/show-me-{description}.html\n```'),
+    (Path('vendor/mattpocock/implement/SKILL.md'), 'Use /tdd where possible', 'Call the Skill tool with "tdd" where possible'),
+    (Path('vendor/mattpocock/implement/SKILL.md'), 'use /code-review to review', 'call the Skill tool with "code-review" to review'),
 ]
 
 for path, old, new in replacements:
@@ -194,6 +196,10 @@ required_local_snippets = {
     ),
     Path('vendor/marimo-team/marimo-notebook/SKILL.md'): (
         'see [COLUMNS.md](references/COLUMNS.md)',
+    ),
+    Path('vendor/mattpocock/implement/SKILL.md'): (
+        'Call the Skill tool with "tdd"',
+        'call the Skill tool with "code-review"',
     ),
 }
 for relative_path, snippets in required_local_snippets.items():
