@@ -411,6 +411,10 @@ for skill in hegel hegel-review; do
     fetch_file "hegeldev/hegel-skill" "LICENSE" "$VENDOR_DIR/hegeldev/$skill/LICENSE" || true
 done
 
+# Ponytail - instruction-only core skill, not the plugin or lifecycle hooks
+fetch_skill "DietrichGebert/ponytail" "skills/ponytail" "$VENDOR_DIR/DietrichGebert/ponytail" || true
+fetch_file "DietrichGebert/ponytail" "LICENSE" "$VENDOR_DIR/DietrichGebert/ponytail/LICENSE" || true
+
 apply_post_fetch_fixes
 
 "$SCRIPT_DIR/check-show-me-vendor.py"

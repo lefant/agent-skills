@@ -50,6 +50,7 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `mattpocock/` | [mattpocock/skills](https://github.com/mattpocock/skills) | 27 published engineering and productivity skills; see below |
 | `antithesishq/` | [antithesishq/antithesis-skills](https://github.com/antithesishq/antithesis-skills) | 14 Antithesis research, harness, launch, and investigation skills; see [snapshot and review](antithesishq/SOURCE.md) |
 | `hegeldev/` | [hegeldev/hegel-skill](https://github.com/hegeldev/hegel-skill) | hegel, hegel-review |
+| `DietrichGebert/` | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | ponytail |
 
 ### Matt Pocock skills
 
@@ -157,6 +158,14 @@ review found no scripts, MCP servers, hooks, binaries, or credential access.
 Antithesis plugin: these are local property-testing workflows, not hosted test
 runs. The broad upstream testing triggers and high-case-count/scale-probe guidance
 are preserved; installation does not install a Hegel library or run tests.
+
+Note: `vendor/DietrichGebert/ponytail` preserves the instruction-only core skill
+and MIT license unchanged from [upstream revision 16352ac](https://github.com/DietrichGebert/ponytail/commit/16352ac229eb08a9598dcae48fe9f2b342567d86)
+(v5.3.2). The reviewed package contains no scripts, MCP servers, hooks, binaries,
+network commands, or credential access. Its broad coding-task triggers and
+session-long behavior guidance are preserved, with `full` as the default level.
+The plugin, lifecycle hooks, band/board, and companion command skills are not
+included; installing the skill does not provide automatic per-turn injection.
 
 ## Version Pinning
 
