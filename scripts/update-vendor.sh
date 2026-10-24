@@ -415,6 +415,13 @@ done
 fetch_skill "DietrichGebert/ponytail" "skills/ponytail" "$VENDOR_DIR/DietrichGebert/ponytail" || true
 fetch_file "DietrichGebert/ponytail" "LICENSE" "$VENDOR_DIR/DietrichGebert/ponytail/LICENSE" || true
 
+# Quint - portable CLI-based skills only; no Docker, agents, commands, or MCP servers
+fetch_skillset "quint-co/quint-llm-kit" "quint-llm-kit-plugin/skills" "$VENDOR_DIR/quint-co" \
+    quint-lang quint-modeling quint-execute-spec || true
+for skill in quint-lang quint-modeling quint-execute-spec; do
+    fetch_file "quint-co/quint-llm-kit" "LICENSE" "$VENDOR_DIR/quint-co/$skill/LICENSE" || true
+done
+
 apply_post_fetch_fixes
 
 "$SCRIPT_DIR/check-show-me-vendor.py"

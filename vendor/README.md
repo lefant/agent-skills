@@ -51,6 +51,7 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `antithesishq/` | [antithesishq/antithesis-skills](https://github.com/antithesishq/antithesis-skills) | 14 Antithesis research, harness, launch, and investigation skills; see [snapshot and review](antithesishq/SOURCE.md) |
 | `hegeldev/` | [hegeldev/hegel-skill](https://github.com/hegeldev/hegel-skill) | hegel, hegel-review |
 | `DietrichGebert/` | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | ponytail |
+| `quint-co/` | [quint-co/quint-llm-kit](https://github.com/quint-co/quint-llm-kit) | quint-lang, quint-modeling, quint-execute-spec; see [snapshot and review](quint-co/SOURCE.md) |
 
 ### Matt Pocock skills
 
@@ -166,6 +167,15 @@ network commands, or credential access. Its broad coding-task triggers and
 session-long behavior guidance are preserved, with `full` as the default level.
 The plugin, lifecycle hooks, band/board, and companion command skills are not
 included; installing the skill does not provide automatic per-turn injection.
+
+Note: `vendor/quint-co` preserves the three portable Quint skills, guidelines,
+and five `.qnt` example files unchanged. Each skill includes the Apache-2.0
+license. No Docker environment, Claude agents/commands, MCP servers, or installers
+are imported. The [snapshot review](quint-co/SOURCE.md) records prerequisites and
+upstream verification caveats: checking a model alone does not prove application
+conformance, and witness predicates must be interpreted according to the selector
+used. Vendoring installs neither Quint nor its model-checking backend and does
+not publish the skills to Amp User Skills.
 
 ## Version Pinning
 
