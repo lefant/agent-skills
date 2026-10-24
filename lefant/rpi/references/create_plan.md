@@ -2,7 +2,9 @@
 
 Preserve this workflow name when using this reference.
 
-Original command source: `sources/claude-code-plugins/rpi/commands/create_plan.md`
+Original command source (historical provenance, not a runtime path): `sources/claude-code-plugins/rpi/commands/create_plan.md`
+
+Documentation-path adaptation: Apply [Documentation Paths](../SKILL.md#documentation-paths) before discovery or artifact creation, including loading `recording-dev-notes` when applicable. All `docs/` paths below use the selected documentation root; the implementation repository may be different.
 
 Environment adaptation note:
 - When the text says `Read tool`, read files fully with local shell tools
@@ -35,8 +37,8 @@ Please provide:
 
 I'll analyze this information and work with you to create a comprehensive plan.
 
-Tip: You can also invoke this command with a ticket file directly: `/create_plan thoughts/shared/tickets/eng_1234.md`
-For deeper analysis, try: `/create_plan think deeply about thoughts/shared/tickets/eng_1234.md`
+Tip: You can also invoke this command with a ticket file directly: `/create_plan docs/tickets/eng_1234.md`
+For deeper analysis, try: `/create_plan think deeply about docs/tickets/eng_1234.md`
 ```
 
 Then wait for the user's input.
@@ -46,13 +48,14 @@ Then wait for the user's input.
 ### Step 1: Context Gathering & Initial Analysis
 
 1. **Read all mentioned files immediately and FULLY**:
-   - Ticket files (e.g., `thoughts/shared/tickets/eng_1234.md`)
+   - Ticket files (e.g., `docs/tickets/eng_1234.md`)
    - Research documents
    - Related implementation plans
    - Any JSON/data files mentioned
    - **IMPORTANT**: Read entire files
    - **CRITICAL**: DO NOT spawn sub-tasks before reading these files yourself in the main context
    - **NEVER** read files partially - if a file is mentioned, read it completely
+   - Read explicit input paths as given; discover related documents in `docs/research/`, `docs/plans/`, and `docs/tickets/` under the selected documentation root and the implementation project's `docs/` if different
 
 2. **Spawn initial research tasks to gather context**:
    Before asking the user any questions, use specialized agents to research in parallel:
@@ -172,8 +175,9 @@ Once aligned on approach:
 
 After structure approval:
 
-1. **Write the plan** to `thoughts/shared/plans/YYYY-MM-DD-ENG-XXXX-description.md`
-   - Format: `YYYY-MM-DD-ENG-XXXX-description.md` where:
+1. **Write the plan** under `docs/plans/` in the selected documentation repository; create the directory if needed
+   - Follow the applicable project or `recording-dev-notes` naming convention
+   - Fallback format: `YYYY-MM-DD-ENG-XXXX-description.md` where:
      - YYYY-MM-DD is today's date
      - ENG-XXXX is the ticket number (omit if no ticket)
      - description is a brief kebab-case description
@@ -267,17 +271,19 @@ After structure approval:
 
 ## References
 
-- Original ticket: `thoughts/shared/tickets/eng_XXXX.md`
-- Related research: `thoughts/shared/research/[relevant].md`
+- Original ticket: [Ticket](../tickets/eng_XXXX.md)
+- Related research: [Research](../research/YYYY-MM-DD-<topic>/research.md)
 - Similar implementation: `[file:line]`
 ````
+
+Resolve these example links relative to the actual plan location; use repository URLs for documents stored in another repository and source links to the implementation repository.
 
 ### Step 5: Review
 
 1. **Present the draft plan location**:
    ```
    I've created the initial implementation plan at:
-   `thoughts/shared/plans/YYYY-MM-DD-ENG-XXXX-description.md`
+   `docs/plans/YYYY-MM-DD-ENG-XXXX-description.md`
 
    Please review it and let me know:
    - Are the phases properly scoped?
@@ -285,6 +291,7 @@ After structure approval:
    - Any technical details that need adjustment?
    - Missing edge cases or considerations?
    ```
+   Report the actual selected repository and plan path, using its naming convention rather than the fallback example when different.
 
 2. **Iterate based on feedback** - be ready to:
    - Add missing phases
@@ -292,7 +299,7 @@ After structure approval:
    - Clarify success criteria (prefer automated verification)
    - Add/remove scope items
 
-3. **Continue refining** until the user is satisfied
+3. **Continue refining** the same plan in its selected documentation repository until the user is satisfied
 
 ## Important Guidelines
 

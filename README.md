@@ -68,10 +68,11 @@ evidence, caveats, and follow-ups in `docs/devlog/`. Devlogs preserve session hi
 solutions preserve reusable knowledge. Use [`atomically-land`](lefant/atomically-land/SKILL.md)
 when closing out work that also needs plans, specs, ADRs, or changelog updates.
 
-Use `docs/research/`, `docs/plans/`, and `docs/devlog/` for new work, even where an
-older skill template still says `thoughts/shared/`. The [`rpi`](lefant/rpi/SKILL.md)
-skill remains available for explicitly requested legacy workflows; it is not the
-default process. Do not move historical files merely to follow the new convention.
+Use `docs/research/`, `docs/plans/`, and `docs/devlog/` for new work. The
+[`rpi`](lefant/rpi/SKILL.md) skill uses these documentation destinations while
+preserving its explicitly requested legacy workflows; it is not the default
+process. Historical documents may retain former `thoughts/shared/` paths as
+provenance. Do not move historical files merely to follow the new convention.
 
 ## Usage
 

@@ -2,7 +2,9 @@
 
 Preserve this workflow name when using this reference.
 
-Original command source: `sources/claude-code-plugins/rpi/commands/implement_plan.md`
+Original command source (historical provenance, not a runtime path): `sources/claude-code-plugins/rpi/commands/implement_plan.md`
+
+Documentation-path adaptation: Apply [Documentation Paths](../SKILL.md#documentation-paths) before discovery or artifact updates, including loading `recording-dev-notes` when applicable. All `docs/` paths below use the selected documentation root; the implementation repository may be different.
 
 Environment adaptation note:
 - When the text says `Read files fully`, do that with local shell tools
@@ -11,15 +13,17 @@ Environment adaptation note:
 
 ---
 
-Implement technical plans from `thoughts/shared/plans/` with verification.
+Implement technical plans from `docs/plans/` with verification.
 
-You are tasked with implementing an approved technical plan from `thoughts/shared/plans/`. These plans contain phases with specific changes and success criteria.
+You are tasked with implementing an approved technical plan from `docs/plans/` in the selected documentation repository. These plans contain phases with specific changes and success criteria.
 
 ## Getting Started
 
 When given a plan path:
+- Read explicit input paths as given; when locating plans, look under `docs/plans/` in the selected documentation repository and the implementation project's `docs/` if different
 - Read the plan completely and check for any existing checkmarks (- [x])
 - Read the original ticket and all files mentioned in the plan
+- Resolve related-document links from the plan's location (research uses `docs/research/YYYY-MM-DD-<topic>/research.md`); resolve source-code paths in the implementation repository
 - **Read files fully** - never use partial reads, you need complete context
 - Think deeply about how the pieces fit together
 - Create a todo list to track your progress
@@ -33,7 +37,7 @@ Plans are carefully designed, but reality can be messy. Your job is to:
 - Follow the plan's intent while adapting to what you find
 - Implement each phase fully before moving to the next
 - Verify your work makes sense in the broader codebase context
-- Update checkboxes in the plan as you complete sections
+- Update checkboxes in the same plan in its selected documentation repository as you complete sections; do not create a duplicate in the implementation checkout
 
 When things don't match the plan exactly, think about why and communicate clearly. The plan is your guide, but your judgment matters too.
 
@@ -77,9 +81,9 @@ After a phase passes verification (and manual confirmation if applicable):
 
 1. **Commit the changes**: Create a git commit with a clear message referencing the plan and phase, e.g. `"plan: <plan-name> - phase N: <brief description>"`. Commit all files changed in the phase.
 
-2. **Update plan status**: Check off all completed automated verification items in the plan file itself. Update any status metadata in the plan frontmatter if present.
+2. **Update plan status**: Check off all completed automated verification items in the original plan file in its documentation repository. Update any status metadata in the plan frontmatter if present.
 
-3. **Write a devlog entry** (if a devlog skill or workflow is available): After the final phase (or when pausing for manual verification on a significant milestone), write a devlog entry summarizing what was implemented, any deviations from plan, and learnings. Use `--wip` semantics if the plan is not fully complete yet.
+3. **Write a devlog entry** (if a devlog skill or workflow is available): After the final phase (or when pausing for manual verification on a significant milestone), write a devlog entry under `docs/devlog/` in the selected documentation repository summarizing what was implemented, any deviations from plan, and learnings. Use `--wip` semantics if the plan is not fully complete yet.
 
 ## If You Get Stuck
 

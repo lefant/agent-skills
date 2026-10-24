@@ -2,7 +2,9 @@
 
 Preserve this workflow name when using this reference.
 
-Original command source: `sources/claude-code-plugins/rpi/commands/research_codebase.md`
+Original command source (historical provenance, not a runtime path): `sources/claude-code-plugins/rpi/commands/research_codebase.md`
+
+Documentation-path adaptation: Apply [Documentation Paths](../SKILL.md#documentation-paths) before discovery or artifact creation, including loading `recording-dev-notes` when applicable. All `docs/` paths below use the selected documentation root; the researched repository may be different.
 
 Environment adaptation note:
 - When the text says `Read tool`, read files fully with local shell tools
@@ -41,6 +43,7 @@ Then wait for the user's research query.
    - **IMPORTANT**: Read entire files
    - **CRITICAL**: Read these files yourself in the main context before spawning any sub-tasks
    - This ensures you have full context before decomposing the research
+   - Discover related research in `docs/research/` under the selected documentation root and the researched project's `docs/` if different; read explicit input paths as given
 
 2. **Analyze and decompose the research question:**
    - Break down the user's query into composable research areas
@@ -86,18 +89,19 @@ Then wait for the user's research query.
    - Answer the user's specific questions with concrete evidence
 
 5. **Gather metadata for the research document**:
-   - Run shell tools to generate all relevant metadata
-   - Filename: `thoughts/shared/research/YYYY-MM-DD-ENG-XXXX-description.md`
-     - Format: `YYYY-MM-DD-ENG-XXXX-description.md` where:
+   - Run shell tools in the researched repository to generate all relevant source metadata, even when the document is stored in another repository
+   - Filename: `docs/research/YYYY-MM-DD-<topic>/research.md`
+     - Topic directory format: `YYYY-MM-DD-ENG-XXXX-description` where:
        - YYYY-MM-DD is today's date
        - ENG-XXXX is the ticket number (omit if no ticket)
        - description is a brief kebab-case description of the research topic
      - Examples:
-       - With ticket: `2025-01-08-ENG-1478-parent-child-tracking.md`
-       - Without ticket: `2025-01-08-authentication-flow.md`
+       - With ticket: `docs/research/2025-01-08-ENG-1478-parent-child-tracking/research.md`
+       - Without ticket: `docs/research/2025-01-08-authentication-flow/research.md`
+   - Create the topic directory under the selected documentation root before writing `research.md`
 
 6. **Generate research document**:
-   - Use the metadata gathered in step 4
+   - Use the metadata gathered in step 5; `repository`, `branch`, and `git_commit` identify the researched repository, not the documentation repository
    - Structure the document with YAML frontmatter followed by content:
      ```markdown
      ---
@@ -145,15 +149,15 @@ Then wait for the user's research query.
      [Current patterns, conventions, and design implementations found in the codebase]
 
      ## Related Research
-     [Links to other research documents in thoughts/shared/research/]
+     [Links to related docs/research/YYYY-MM-DD-<topic>/research.md documents, relative to this document or using repository URLs when stored elsewhere]
 
      ## Open Questions
      [Any areas that need further investigation]
      ```
 
 7. **Add GitHub permalinks (if applicable)**:
-   - Check if on main branch or if commit is pushed
-   - If on main/master or pushed, generate GitHub permalinks
+   - In the researched repository, check if on main branch or if commit is pushed
+   - If on main/master or pushed, generate GitHub permalinks using that repository's remote and source commit, not the documentation repository's
    - Replace local file references with permalinks in the document
 
 8. **Present findings**:
@@ -162,7 +166,7 @@ Then wait for the user's research query.
    - Ask if they have follow-up questions or need clarification
 
 9. **Handle follow-up questions**:
-   - If the user has follow-up questions, append to the same research document
+   - If the user has follow-up questions, append to the same `docs/research/YYYY-MM-DD-<topic>/research.md` in its selected documentation repository, even when working in another checkout
    - Update the frontmatter fields `last_updated` and `last_updated_by` to reflect the update
    - Add `last_updated_note: "Added follow-up research for [brief description]"` to frontmatter
    - Add a new section: `## Follow-up Research [timestamp]`
