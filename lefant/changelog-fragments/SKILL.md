@@ -27,9 +27,9 @@ When the user wants to record a completed change:
 5. Gather related references from local docs when available:
    - `docs/decisions/`
    - `docs/specs/`
-   - `thoughts/shared/devlog/`
-   - `thoughts/shared/plans/`
-   - `thoughts/shared/research/`
+   - `docs/devlog/`
+   - `docs/plans/`
+   - `docs/research/`
    - GitHub issues, PRs, or beads IDs
 6. Write the fragment using `template.md`
 
@@ -81,9 +81,9 @@ Fragments should link to related documentation. Use the frontmatter fields:
 |-------|----------|
 | `related_adr` | Architecture decision in `docs/decisions/` |
 | `related_spec` | Feature spec in `docs/specs/` |
-| `related_devlog` | Implementation devlog in `thoughts/shared/devlog/` |
-| `related_plan` | Implementation plan in `thoughts/shared/plans/` |
-| `related_research` | Research doc in `thoughts/shared/research/` |
+| `related_devlog` | Implementation devlog in `docs/devlog/` |
+| `related_plan` | Implementation plan in `docs/plans/` |
+| `related_research` | Research doc in `docs/research/YYYY-MM-DD-topic/research.md` |
 | `related_issues` | GitHub issues `[#123]` or beads `[BD-042]` |
 | `related_prs` | Pull requests `[#456]` |
 
@@ -94,7 +94,7 @@ date: 2025-11-20
 type: feature
 related_adr: docs/decisions/2025-11-18_use-inngest-for-workflows.md
 related_spec: docs/specs/sync-status-tracking.md
-related_devlog: thoughts/shared/devlog/2025-11-20_inngest-integration.md
+related_devlog: docs/devlog/2025-11-20_inngest-integration.md
 related_issues: [#49, BD-042]
 ---
 ```

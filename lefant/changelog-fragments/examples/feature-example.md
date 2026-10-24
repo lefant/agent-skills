@@ -3,7 +3,7 @@ date: 2025-11-05
 type: feature
 related_adr: docs/decisions/2025-11-02_notion-sync-database-tracking.md
 related_spec: docs/specs/document-sync.md
-related_devlog: thoughts/shared/devlog/2025-11-05_sync-database-tracking.md
+related_devlog: docs/devlog/2025-11-05_sync-database-tracking.md
 related_issues: [#49]
 related_prs: [#60]
 ---

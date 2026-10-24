@@ -3,9 +3,9 @@ date: YYYY-MM-DD
 type: feature|fix|chore|docs|refactor|test|perf
 related_adr: docs/decisions/YYYY-MM-DD_decision.md (optional)
 related_spec: docs/specs/feature.md (optional)
-related_devlog: thoughts/shared/devlog/YYYY-MM-DD_implementation.md (optional)
-related_plan: thoughts/shared/plans/YYYY-MM-DD_plan.md (optional)
-related_research: thoughts/shared/research/YYYY-MM-DD_research.md (optional)
+related_devlog: docs/devlog/YYYY-MM-DD_implementation.md (optional)
+related_plan: docs/plans/YYYY-MM-DD_plan.md (optional)
+related_research: docs/research/YYYY-MM-DD-topic/research.md (optional)
 related_issues: [] (GitHub #123 or beads BD-042)
 related_prs: []
 ---

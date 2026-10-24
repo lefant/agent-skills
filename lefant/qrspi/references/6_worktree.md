@@ -1,6 +1,6 @@
 ---
 description: Create an isolated git worktree for implementation
-argument-hint: "thoughts/qrspi/<id>/"
+argument-hint: "docs/qrspi/<id>/"
 ---
 
 # Worktree — Isolate the Implementation

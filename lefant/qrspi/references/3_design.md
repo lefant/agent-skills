@@ -1,7 +1,7 @@
 ---
 description: Design discussion — align on where we are going before planning how
 model: opus
-argument-hint: "thoughts/qrspi/<id>/"
+argument-hint: "docs/qrspi/<id>/"
 ---
 
 # Design — Where Are We Going?
@@ -69,8 +69,8 @@ Read `$ARGUMENTS/task.md`, `$ARGUMENTS/questions.md`, and `$ARGUMENTS/research.m
 
 ## Output
 
-- File written: `thoughts/qrspi/<id>/design.md`
-- Tell the user: "Next: run `/qrspi/4_structure thoughts/qrspi/<id>/`"
+- File written: `docs/qrspi/<id>/design.md`
+- Tell the user: "Next: run `/qrspi/4_structure docs/qrspi/<id>/`"
 
 ## Rules
 

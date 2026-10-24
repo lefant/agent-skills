@@ -19,7 +19,7 @@ Use this skill for requests like:
 
 ## Workflow
 
-1. Create `thoughts/shared/devlog/` if needed
+1. Create `docs/devlog/` if needed
 2. Choose a filename using the `Europe/Stockholm` calendar date
 3. Use a 3-5 word kebab-case session slug
 4. If the request is work-in-progress, append `_progress.md`
@@ -50,8 +50,8 @@ date: YYYY-MM-DD
 status: ✅ COMPLETED | 🔄 PARTIAL | ❌ BLOCKED
 related_spec: docs/specs/feature.md (optional)
 related_adr: docs/decisions/YYYY-MM-DD_decision.md (optional)
-related_plan: thoughts/shared/plans/YYYY-MM-DD_plan.md (optional)
-related_research: thoughts/shared/research/YYYY-MM-DD_research.md (optional)
+related_plan: docs/plans/YYYY-MM-DD_plan.md (optional)
+related_research: docs/research/YYYY-MM-DD-topic/research.md (optional)
 related_issues: [] (GitHub #123 or beads BD-042)
 ---
 

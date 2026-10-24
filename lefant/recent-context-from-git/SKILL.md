@@ -12,9 +12,9 @@ This skill is the replacement for the old `recent_context_from_git` command.
 ## Documentation Roots
 
 Prioritize these locations:
-1. `thoughts/shared/devlog/`
-2. `thoughts/shared/plans/`
-3. `thoughts/shared/research/`
+1. `docs/devlog/`
+2. `docs/plans/`
+3. `docs/research/`
 4. `docs/specs/`
 5. `docs/decisions/`
 6. `docs/changelog/`
@@ -33,9 +33,9 @@ Prefer commands equivalent to:
 
 ```bash
 git log --name-only --no-commit-id --pretty=format: \
-  -- 'thoughts/shared/research/*.md' \
-     'thoughts/shared/plans/*.md' \
-     'thoughts/shared/devlog/*.md' \
+  -- 'docs/research/*.md' \
+     'docs/plans/*.md' \
+     'docs/devlog/*.md' \
      'docs/specs/*.md' \
      'docs/decisions/*.md' \
      'docs/changelog/*.md'

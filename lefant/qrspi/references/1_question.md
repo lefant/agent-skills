@@ -30,10 +30,10 @@ The user provides a task description, ticket file path, or issue reference.
    Bad: "How should we add a new migration for the users table?"
 
 4. **Determine the artifact directory**:
-   - With ticket number: `thoughts/qrspi/PROJ-1234-brief-description/` (use the project's ticket prefix)
-   - Without ticket: `thoughts/qrspi/YYYY-MM-DD-brief-description/`
+   - With ticket number: `docs/qrspi/PROJ-1234-brief-description/` (use the project's ticket prefix)
+   - Without ticket: `docs/qrspi/YYYY-MM-DD-brief-description/`
 
-5. **Create the artifact directory** if it doesn't exist (e.g., `mkdir -p thoughts/qrspi/<id>/`).
+5. **Create the artifact directory** if it doesn't exist (e.g., `mkdir -p docs/qrspi/<id>/`).
 
 6. **Write `task.md`** — a clean 2-3 sentence description of what's being built and why. This file persists the task context for later phases so the user doesn't have to re-explain it.
 
@@ -56,9 +56,9 @@ The user provides a task description, ticket file path, or issue reference.
 
 ## Output
 
-- Directory created: `thoughts/qrspi/<id>/`
-- Files written: `thoughts/qrspi/<id>/task.md` and `thoughts/qrspi/<id>/questions.md`
-- Tell the user: "Next: run `/qrspi/2_research thoughts/qrspi/<id>/`"
+- Directory created: `docs/qrspi/<id>/`
+- Files written: `docs/qrspi/<id>/task.md` and `docs/qrspi/<id>/questions.md`
+- Tell the user: "Next: run `/qrspi/2_research docs/qrspi/<id>/`"
 
 ## Rules
 

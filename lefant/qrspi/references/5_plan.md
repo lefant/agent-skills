@@ -1,7 +1,7 @@
 ---
 description: Tactical implementation plan — the agent's working document
 model: opus
-argument-hint: "thoughts/qrspi/<id>/"
+argument-hint: "docs/qrspi/<id>/"
 ---
 
 # Plan — Tactical Implementation Details
@@ -68,8 +68,8 @@ Read `$ARGUMENTS/structure.md`, `$ARGUMENTS/design.md`, and `$ARGUMENTS/research
 
 ## Output
 
-- File written: `thoughts/qrspi/<id>/plan.md`
-- Tell the user: "Next: run `/qrspi/6_worktree thoughts/qrspi/<id>/` to set up an isolated worktree, or `/qrspi/7_implement thoughts/qrspi/<id>/` to implement in the current tree."
+- File written: `docs/qrspi/<id>/plan.md`
+- Tell the user: "Next: run `/qrspi/6_worktree docs/qrspi/<id>/` to set up an isolated worktree, or `/qrspi/7_implement docs/qrspi/<id>/` to implement in the current tree."
 
 ## Rules
 

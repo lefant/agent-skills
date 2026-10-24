@@ -1,6 +1,6 @@
 ---
 description: Execute the plan phase by phase with verification checkpoints
-argument-hint: "thoughts/qrspi/<id>/"
+argument-hint: "docs/qrspi/<id>/"
 ---
 
 # Implement — Execute the Plan
@@ -63,7 +63,7 @@ If you're starting fresh in a new context window:
 
 - Code changes implemented according to the plan
 - `plan.md` updated with checked verification items
-- Tell the user: "Next: run `/qrspi/8_pr thoughts/qrspi/<id>/`"
+- Tell the user: "Next: run `/qrspi/8_pr docs/qrspi/<id>/`"
 
 ## Rules
 

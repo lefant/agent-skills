@@ -1,7 +1,7 @@
 ---
 description: Structure outline — vertical slices with test checkpoints
 model: opus
-argument-hint: "thoughts/qrspi/<id>/"
+argument-hint: "docs/qrspi/<id>/"
 ---
 
 # Structure — How Do We Get There?
@@ -70,8 +70,8 @@ Read `$ARGUMENTS/design.md` and `$ARGUMENTS/research.md`.
 
 ## Output
 
-- File written: `thoughts/qrspi/<id>/structure.md`
-- Tell the user: "Next: run `/qrspi/5_plan thoughts/qrspi/<id>/`"
+- File written: `docs/qrspi/<id>/structure.md`
+- Tell the user: "Next: run `/qrspi/5_plan docs/qrspi/<id>/`"
 
 ## Rules
 

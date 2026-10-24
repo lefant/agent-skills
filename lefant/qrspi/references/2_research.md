@@ -1,7 +1,7 @@
 ---
 description: Objective codebase research driven by questions — facts only, no opinions
 model: opus
-argument-hint: "thoughts/qrspi/<id>/"
+argument-hint: "docs/qrspi/<id>/"
 ---
 
 # Research — Answer the Questions
@@ -57,8 +57,8 @@ Read `$ARGUMENTS/questions.md`. That file is your only input.
 
 ## Output
 
-- File written: `thoughts/qrspi/<id>/research.md`
-- Tell the user: "Next: run `/qrspi/3_design thoughts/qrspi/<id>/`"
+- File written: `docs/qrspi/<id>/research.md`
+- Tell the user: "Next: run `/qrspi/3_design docs/qrspi/<id>/`"
 
 ## Rules
 

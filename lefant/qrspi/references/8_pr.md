@@ -1,6 +1,6 @@
 ---
 description: Create a pull request with context from the design discussion
-argument-hint: "thoughts/qrspi/<id>/"
+argument-hint: "docs/qrspi/<id>/"
 ---
 
 # PR — Create the Pull Request

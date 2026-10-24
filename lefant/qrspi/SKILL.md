@@ -25,7 +25,7 @@ Read only the selected reference, resolving bundled paths relative to this skill
 | `7_implement` | `references/7_implement.md` | `plan.md`, then referenced source files | Code, verification checkboxes, phase commits |
 | `8_pr` | `references/8_pr.md` | `design.md`, actual diff and commits | PR |
 
-Task artifacts live under `thoughts/qrspi/<task-id>/` in the target repository. `$ARGUMENTS` in a phase reference means the user-supplied artifact directory, not a literal variable to execute. Question instead takes a task description, ticket, or file. Ask for missing required inputs; do not silently run prerequisite phases or read every artifact.
+Task artifacts live under `docs/qrspi/<task-id>/` in the target repository. `$ARGUMENTS` in a phase reference means the user-supplied artifact directory, not a literal variable to execute. Question instead takes a task description, ticket, or file. Ask for missing required inputs; do not silently run prerequisite phases or read every artifact.
 
 ## Context and Human Handoffs
 
@@ -33,7 +33,7 @@ Task artifacts live under `thoughts/qrspi/<task-id>/` in the target repository. 
 - **Research must not run in a context that already knows the task.** If the current context includes the task, design, or implementation goal, stop and give a fresh-session handoff. If the host supports a genuinely isolated worker with no inherited conversation, it may perform the entire Research phase with only the neutral questions, repository location, and required skill instructions. Do not pass the task, ticket, branch description, or a goal-bearing conversation summary. If isolation is unavailable or uncertain, use the manual fresh-session handoff; do not claim to forget context.
 - Research can read relevant source and tests, but must not open `task.md`, design/plan artifacts, or task tickets. Scope searches to code and relevant project documentation rather than searching the task artifact directory. Neutral questions reduce bias; they do not guarantee that the task cannot be inferred.
 - Preserve the phase's approval stops. Question waits for edits/approval; Design asks questions and waits **before writing**; Structure waits for feedback; Worktree confirms before creation. Without a blocking-question tool, ask in the response that ends the turn and wait. Do not interpret silence as approval.
-- At a phase boundary, report the artifact written and give a copyable instruction such as `Use qrspi phase 3_design with thoughts/qrspi/<task-id>/ in a fresh session.` Retain the upstream `/qrspi/...` spelling as a recognized workflow name, but do not claim this skill installs that slash command.
+- At a phase boundary, report the artifact written and give a copyable instruction such as `Use qrspi phase 3_design with docs/qrspi/<task-id>/ in a fresh session.` Retain the upstream `/qrspi/...` spelling as a recognized workflow name, but do not claim this skill installs that slash command.
 
 ## Portability Notes
 

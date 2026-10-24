@@ -26,8 +26,8 @@ HANDOVER PROMPT
 [Short description of current work and state]
 
 Context:
-- Devlog: thoughts/shared/devlog/YYYY-MM-DD_session_progress.md
-- Plan: thoughts/shared/plans/YYYY-MM-DD_plan.md
+- Devlog: docs/devlog/YYYY-MM-DD_session_progress.md
+- Plan: docs/plans/YYYY-MM-DD_plan.md
 - Spec: docs/specs/feature.md
 - ADR: docs/decisions/YYYY-MM-DD_decision.md
 - Issues: BD-042, #123

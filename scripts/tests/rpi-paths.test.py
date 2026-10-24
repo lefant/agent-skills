@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Guard the documentation paths shipped with the portable RPI commands."""
+"""Guard documentation paths in skill packages and the portable RPI commands."""
 
 from pathlib import Path
 import re
@@ -11,6 +11,13 @@ SKILL = ROOT / "lefant/rpi"
 
 
 class RpiDocumentationPaths(unittest.TestCase):
+    def test_skill_packages_use_docs(self):
+        for directory in (ROOT / "lefant", ROOT / "vendor"):
+            for pattern in ("*.md", "*.json"):
+                for path in directory.rglob(pattern):
+                    with self.subTest(path=path.relative_to(ROOT)):
+                        self.assertNotIn("thoughts/", path.read_text())
+
     def test_bundled_instructions_use_docs(self):
         for path in SKILL.rglob("*.md"):
             with self.subTest(path=path.relative_to(ROOT)):
