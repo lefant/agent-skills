@@ -4,7 +4,7 @@ Preserve this workflow name when using this reference.
 
 Original command source (historical provenance, not a runtime path): `sources/claude-code-plugins/rpi/commands/research_codebase.md`
 
-Documentation-path adaptation: Apply [Documentation Paths](../SKILL.md#documentation-paths) before discovery or artifact creation, including loading `recording-dev-notes` when applicable. All `docs/` paths below use the selected documentation root; the researched repository may be different.
+Documentation-path adaptation: Apply [Documentation Paths](../SKILL.md#documentation-paths) before discovery or artifact creation, including loading `record-dev-notes` when applicable. All `docs/` paths below use the selected documentation root; the researched repository may be different.
 
 Environment adaptation note:
 - When the text says `Read tool`, read files fully with local shell tools

@@ -4,7 +4,7 @@ Preserve this workflow name when using this reference.
 
 Original command source (historical provenance, not a runtime path): `sources/claude-code-plugins/rpi/commands/create_plan.md`
 
-Documentation-path adaptation: Apply [Documentation Paths](../SKILL.md#documentation-paths) before discovery or artifact creation, including loading `recording-dev-notes` when applicable. All `docs/` paths below use the selected documentation root; the implementation repository may be different.
+Documentation-path adaptation: Apply [Documentation Paths](../SKILL.md#documentation-paths) before discovery or artifact creation, including loading `record-dev-notes` when applicable. All `docs/` paths below use the selected documentation root; the implementation repository may be different.
 
 Environment adaptation note:
 - When the text says `Read tool`, read files fully with local shell tools
@@ -176,7 +176,7 @@ Once aligned on approach:
 After structure approval:
 
 1. **Write the plan** under `docs/plans/` in the selected documentation repository; create the directory if needed
-   - Follow the applicable project or `recording-dev-notes` naming convention
+   - Follow the applicable project or `record-dev-notes` naming convention
    - Fallback format: `YYYY-MM-DD-ENG-XXXX-description.md` where:
      - YYYY-MM-DD is today's date
      - ENG-XXXX is the ticket number (omit if no ticket)

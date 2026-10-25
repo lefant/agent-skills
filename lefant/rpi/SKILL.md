@@ -22,10 +22,10 @@ The goal of this skill is compatibility. Preserve the original command names and
 
 Apply these path rules to all three workflows without changing their steps or document structure:
 
-- Before writing durable research or a plan, load `recording-dev-notes` when available and applicable. Explicit per-task destination instructions take precedence. Otherwise, when that skill applies, use `skyqraft/dev-notebooks/docs` as the default documentation root, even when researching another repository. Without it, use the project's `docs/` root.
+- Before writing durable research or a plan, load `record-dev-notes` when available and applicable. Explicit per-task destination instructions take precedence. Otherwise, when that skill applies, use `skyqraft/dev-notebooks/docs` as the default documentation root, even when researching another repository. Without it, use the project's `docs/` root.
 - In the paths below and in the command references, the leading `docs/` denotes that selected root, not an extra directory beneath it.
 - Research goes in `docs/research/YYYY-MM-DD-<topic>/research.md`. Use a brief kebab-case topic, prefixed with the ticket identifier when relevant (for example, `2025-01-08-ENG-1478-parent-child-tracking/research.md`).
-- Plans go in `docs/plans/`, with the applicable project or `recording-dev-notes` naming convention. The fallback is `YYYY-MM-DD-ENG-XXXX-description.md`, omitting the ticket identifier when absent.
+- Plans go in `docs/plans/`, with the applicable project or `record-dev-notes` naming convention. The fallback is `YYYY-MM-DD-ENG-XXXX-description.md`, omitting the ticket identifier when absent.
 - Keep other durable documentation under `docs/` too, such as ticket notes in `docs/tickets/` and devlogs in `docs/devlog/`.
 - Discover existing research and plans under the selected documentation root, as well as the researched project's `docs/` when different. Read explicit input paths as given. Resolve related-document links relative to the document storing them, or use repository URLs for cross-repository links; example paths are relative to the selected documentation repository.
 - Update the same research or plan artifact for follow-ups, review revisions, status changes, and implementation checkmarks. Do not create a second copy in the implementation checkout when documentation lives elsewhere.
