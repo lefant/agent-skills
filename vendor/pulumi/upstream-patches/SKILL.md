@@ -1,7 +1,12 @@
 ---
 name: upstream-patches
-description: Create, amend, remove, and rebase patches for Terraform provider submodules using `./scripts/upstream.sh`. Use when `upgrade-provider` or manual patch work needs owning-patch lookup, patch conflict fixes, patch/hunk removal, or upstream rebase.
+description: >-
+  Manage Terraform provider submodule patches with scripts/upstream.sh.
+  Use only when explicitly requested by name or enabled in repository instructions.
+disable-model-invocation: true
 ---
+
+> **Local opt-in policy:** Use this skill only when the user explicitly requests it or repository instructions explicitly enable it. Installation alone does not enable it. This scope applies to all guidance below, including sibling-skill references. Enabling one skill does not enable its siblings or authorize external changes.
 
 # Upstream Patches
 

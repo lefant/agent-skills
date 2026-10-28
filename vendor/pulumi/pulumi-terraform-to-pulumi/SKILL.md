@@ -1,7 +1,12 @@
 ---
 name: pulumi-terraform-to-pulumi
-description: Migrate Terraform/OpenTofu projects to Pulumi, including translating HCL source code and/or importing Terraform state into a Pulumi stack. Use when a user wants to convert Terraform to Pulumi, migrate from HCL, or import tfstate into Pulumi. Do NOT trigger for general Terraform-vs-Pulumi comparisons or questions about using both tools side-by-side.
+description: >-
+  Translate Terraform/OpenTofu to Pulumi or import Terraform state.
+  Use only when explicitly requested by name or enabled in repository instructions.
+disable-model-invocation: true
 ---
+
+> **Local opt-in policy:** Use this skill only when the user explicitly requests it or repository instructions explicitly enable it. Installation alone does not enable it. This scope applies to all guidance below, including sibling-skill references. Enabling one skill does not enable its siblings or authorize external changes.
 
 # Migrating from Terraform to Pulumi
 

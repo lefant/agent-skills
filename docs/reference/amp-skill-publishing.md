@@ -59,8 +59,9 @@ Before copying anything:
 4. Inventory names across both `lefant/` and `vendor/`, not only within each tree.
 5. Require names to be unique across the complete inventory; `./scripts/check-vendor-layout.sh` enforces this repository-wide rule.
 6. If a duplicate exists, stop and ask for a decision. Do not silently choose one or rename a vendored skill.
-7. Exclude an entire skill containing binary files. Amp's global repositories serve text resources only, and a skill containing a binary resource will not load. Do not publish an incomplete copy with the binary silently removed; report the excluded skill and files instead. At the time this recipe was written, `vendor/remotion-dev/remotion-best-practices` is excluded because it bundles PNG icons.
+7. Exclude an entire skill containing binary files. Amp's global repositories serve text resources only, and a skill containing a binary resource will not load. Do not publish an incomplete copy with the binary silently removed; report the excluded skill and files instead.
 8. Review bundled scripts and any `mcpServers` frontmatter or `mcp.json` as executable code. Preserve explicit MCP `includeTools` filters and stop for review if an MCP server exposes an unfiltered tool set.
+9. Exclude Caveman, ZFC, and all Pulumi skills from the default global selection. They are opt-in / repository-optional; see [vendor scope policy](../../vendor/README.md#opt-in--repository-optional-skills). Preserve their opt-in metadata and body notice if the user explicitly selects them for publication. Do not assume every host enforces `disable-model-invocation`.
 
 Build from a clean, committed source revision so the publication is reproducible. Record `git rev-parse HEAD` as the source revision. Do not accidentally publish untracked files, local credentials, generated output, or ignored files.
 
@@ -92,7 +93,7 @@ This produces two text files totaling approximately 116 KB while preserving the 
 
 ### Current Personal Skills profile
 
-The user selected an in-house-first Personal Skills profile: publish all skills under `lefant/` plus these 24 vendored skills:
+The in-house-first Personal Skills profile selects all skills under `lefant/` plus these 18 vendored skills. On 2026-10-28, the user retired PDF and Remotion and made Caveman, ZFC, and Pulumi optional rather than global defaults:
 
 ```text
 agent-browser
@@ -109,19 +110,15 @@ librarian
 marimo-notebook
 marimo-pair
 markdown-converter
-pdf
-provider-upgrade
-pulumi-best-practices
-pulumi-overview
-pulumi-terraform-to-pulumi
 show-me
 skill-creator
 ste-writing
 vercel-react-best-practices
-zfc
 ```
 
-Apply this profile on later Personal Skills synchronizations unless the user asks to change it. Record every valid but unselected skill in `excludedSkills` with the reason `Not selected for the Personal Skills profile.` This makes profile exclusions visible without granting sync ownership over a destination directory that is not present. The profile intentionally leaves three of the observed 50 slots unused rather than adding unrequested skills.
+Apply this profile on later Personal Skills synchronizations unless the user asks to change it. Record optional-group exclusions in `excludedSkills` with the reason `Opt-in / repository-optional; not selected for global publication.` For other valid but unselected skills, use `Not selected for the Personal Skills profile.` These records do not grant sync ownership over destination directories. Recount capacity for the chosen source revision; do not fill unused slots with unrequested skills.
+
+Existing hosted installations are unchanged until an authorized synchronization is published. At that time, remove retired or deselected skills only if the ownership manifest says this recipe manages them. Do not rewrite Git history or delete unrelated destination skills.
 
 ## Track sync ownership
 

@@ -1,7 +1,12 @@
 ---
 name: pulumi-cdk-to-pulumi
-description: Load this skill when a user wants to migrate, convert, port, translate, or move an AWS CDK application (including CDK stacks, constructs, or CloudFormation-synthesized templates) to Pulumi. Phrases such as "convert CDK to Pulumi", "migrate CDK app", "port CDK stacks", "replace CDK with Pulumi", "stop using CDK". Do NOT load for general CDK questions, CDK-only help, or CDK vs Pulumi comparisons where no migration is requested.
+description: >-
+  Migrate AWS CDK applications to Pulumi.
+  Use only when explicitly requested by name or enabled in repository instructions.
+disable-model-invocation: true
 ---
+
+> **Local opt-in policy:** Use this skill only when the user explicitly requests it or repository instructions explicitly enable it. Installation alone does not enable it. This scope applies to all guidance below, including sibling-skill references. Enabling one skill does not enable its siblings or authorize external changes.
 
 # CRITICAL SUCCESS REQUIREMENTS
 

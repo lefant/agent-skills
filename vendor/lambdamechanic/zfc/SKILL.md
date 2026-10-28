@@ -1,11 +1,16 @@
 ---
 name: zfc
-description: Zero Framework Cognition Principles
+description: >-
+  Zero Framework Cognition principles for projects that explicitly adopt ZFC.
+  Use only when explicitly requested by name or enabled in repository instructions.
+disable-model-invocation: true
 ---
+
+> **Local opt-in policy:** Use this skill only when the user explicitly requests it or repository instructions explicitly enable it. Installation alone does not enable it. This scope applies to all guidance below, including sibling-skill references. Enabling one skill does not enable its siblings or authorize external changes.
 
 # ZFC (Zero Framework Cognition) Principles
 
-Core Architecture Principle: This application is pure orchestration that delegates ALL reasoning to external AI. We build a “thin, safe, deterministic shell” around AI reasoning with strong guardrails and observability.
+For projects that explicitly adopt ZFC, the architecture principle is pure orchestration that delegates ALL reasoning to external AI. We build a “thin, safe, deterministic shell” around AI reasoning with strong guardrails and observability.
 
 # ✅ ZFC-Compliant (Allowed)
 

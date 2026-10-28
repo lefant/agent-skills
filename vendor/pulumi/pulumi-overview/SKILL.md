@@ -1,7 +1,12 @@
 ---
 name: pulumi-overview
-description: Use this skill for any task that creates, modifies, inspects, or destroys cloud infrastructure or SaaS configuration, from one-off CLI operations to full multi-resource projects, across providers in the Pulumi ecosystem. A typical project spans many providers (AWS or Azure or GCP, Kubernetes, Cloudflare, Auth0, Datadog, Vercel, and others), and Pulumi drives them through one CLI, one state model, and one credential layer. Trigger even when the user does not name Pulumi; phrasings like "deploy this app," "provision a database," "stand up a VPC," "configure Auth0," "set up Datadog monitoring," or "tear down staging" qualify. Also trigger for tasks that migrate, port, or convert existing infrastructure code (Terraform, CloudFormation, CDK, Bicep, ARM) to Pulumi. Do not trigger for application runtime code that reads or writes data via cloud SDKs; that is application code, not infrastructure.
+description: >-
+  Pulumi CLI, infrastructure-as-code, and operations guidance.
+  Use only when explicitly requested by name or enabled in repository instructions.
+disable-model-invocation: true
 ---
+
+> **Local opt-in policy:** Use this skill only when the user explicitly requests it or repository instructions explicitly enable it. Installation alone does not enable it. This scope applies to all guidance below, including sibling-skill references. Enabling one skill does not enable its siblings or authorize external changes.
 
 # Pulumi
 

@@ -1,8 +1,13 @@
 ---
 name: pulumi-automation-api
 version: 1.0.0
-description: Load this skill when a user asks how to run Pulumi programmatically, embed Pulumi in an application, orchestrate multiple stacks in code, build a self-service infrastructure portal, replace pulumi CLI shell scripts with code, or use the Pulumi Automation API (LocalWorkspace, createOrSelectStack, inline programs). Also load for questions about multi-stack sequencing, parallel deployments, or passing outputs between stacks via code.
+description: >-
+  Embed Pulumi and orchestrate stacks with Automation API.
+  Use only when explicitly requested by name or enabled in repository instructions.
+disable-model-invocation: true
 ---
+
+> **Local opt-in policy:** Use this skill only when the user explicitly requests it or repository instructions explicitly enable it. Installation alone does not enable it. This scope applies to all guidance below, including sibling-skill references. Enabling one skill does not enable its siblings or authorize external changes.
 
 # Pulumi Automation API
 

@@ -1,15 +1,12 @@
 ---
 name: provider-upgrade
-description: >
-  Upgrade any Pulumi provider to a newer version and reconcile the resulting diff. Use when
-  users want to upgrade or update a provider (including editing package.json, requirements.txt,
-  pyproject.toml, go.mod, or Pulumi.yaml to bump a provider SDK), check for breaking changes
-  before or during an upgrade, fix resources that broke after a provider upgrade, or resolve
-  unexpected replacements, creates, or deletes in a post-upgrade preview. Applies to all
-  providers (aws, azure-native, gcp, kubernetes, aws-native, cloudflare, datadog, etc.) — not
-  just Tier 1. Do NOT use for querying which stacks use what package versions; use skill
-  `package-usage` for cross-stack audits. Do NOT use for general infrastructure tasks.
+description: >-
+  Upgrade provider SDK dependencies in a Pulumi project and reconcile preview diffs.
+  Use only when explicitly requested by name or enabled in repository instructions.
+disable-model-invocation: true
 ---
+
+> **Local opt-in policy:** Use this skill only when the user explicitly requests it or repository instructions explicitly enable it. Installation alone does not enable it. This scope applies to all guidance below, including sibling-skill references. Enabling one skill does not enable its siblings or authorize external changes.
 
 # Upgrading Pulumi Providers
 

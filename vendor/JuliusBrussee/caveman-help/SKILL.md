@@ -1,10 +1,12 @@
 ---
 name: caveman-help
-description: >
-  Quick-reference card for all caveman modes, skills, and commands.
-  One-shot display, not a persistent mode. Trigger: /caveman-help,
-  "caveman help", "what caveman commands", "how do I use caveman".
+description: >-
+  Quick reference for Caveman modes and commands; does not activate them.
+  Use only when explicitly requested by name or enabled in repository instructions.
+disable-model-invocation: true
 ---
+
+> **Local opt-in policy:** Use this skill only when the user explicitly requests it or repository instructions explicitly enable it. Installation alone does not enable it. This scope applies to all guidance below, including sibling-skill references. Enabling one skill does not enable its siblings or authorize external changes.
 
 # Caveman Help
 
@@ -54,7 +56,7 @@ export CAVEMAN_DEFAULT_MODE=ultra
 { "defaultMode": "lite" }
 ```
 
-Set `"off"` to disable auto-activation on session start. User can still activate manually with `/caveman`.
+These settings belong to the upstream plugin; this vendored bundle includes no session-start hooks or config loader. Here, choose a mode explicitly with `/caveman <mode>`; installing the skills does not activate them.
 
 Resolution: env var > config file > `lite`.
 

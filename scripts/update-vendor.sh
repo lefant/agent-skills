@@ -116,16 +116,12 @@ from pathlib import Path
 repo_root = Path(sys.argv[1])
 
 replacements = [
+    (Path('vendor/hegeldev/hegel/SKILL.md'), 'Java, and OCaml projects.', 'Java, OCaml, and Python projects.'),
+    (Path('vendor/hegeldev/hegel/SKILL.md'), 'Java, and OCaml, all integrating with the standard test runner.', 'Java, OCaml, and Python (`hegeltest`), all integrating with the standard test runner.\n\nFor Python 3.11+, install `hegeltest` and import `hegel`; see the [official Python documentation](https://hegel.readthedocs.io/). Keep existing Hypothesis suites unless migration is part of the task: upstream recommends Hypothesis for ordinary CI and Hegel for Antithesis workloads. Python support does not require an Antithesis account or hosted run.'),
     (Path('vendor/googlecolab/operating-colab/SKILL.md'), 'name: colab-operator', 'name: operating-colab'),
     (Path('vendor/googlecolab/operating-colab/SKILL.md'), '# Skill: Colab Session Operator', '# Operating Google Colab\n\nModified for lefant/agent-skills: renamed the skill and added the following operating boundaries.\n\n## Operating boundaries\n\n- Ask before allocating billable compute unless the user already authorized it; do not silently switch hardware tiers. Prefer `colab run` without `--keep` for one-shot jobs.\n- Stop only sessions created for this task unless the user explicitly asks to stop an existing session. Download required outputs before stopping, then verify release with `colab sessions`.\n- Keep credentials, session tokens, and raw auth/debug logs private. Let the user complete browser consent, ADC login, and interactive Drive/GCP authentication.\n- Use Linux or macOS. Check `colab version` and command `--help` against this guidance before running; CLI behavior can change.\n- Report execution outcome, downloaded artifact paths, and whether the task session was released or intentionally retained.'),
     (Path('vendor/dz0ny/devenv/SKILL.md'), 'name: devenv-migration', 'name: devenv'),
-    (Path('vendor/anthropics/pdf/SKILL.md'), 'see REFERENCE.md. If you need to fill out a PDF form, read FORMS.md and follow its instructions.', 'see reference.md. If you need to fill out a PDF form, read forms.md and follow its instructions.'),
-    (Path('vendor/anthropics/pdf/SKILL.md'), '| Fill PDF forms | pdf-lib or pypdf (see FORMS.md) | See FORMS.md |', '| Fill PDF forms | pdf-lib or pypdf (see forms.md) | See forms.md |'),
-    (Path('vendor/anthropics/pdf/SKILL.md'), '- For advanced pypdfium2 usage, see REFERENCE.md\n- For JavaScript libraries (pdf-lib), see REFERENCE.md\n- If you need to fill out a PDF form, follow the instructions in FORMS.md\n- For troubleshooting guides, see REFERENCE.md', '- For advanced pypdfium2 usage, see reference.md\n- For JavaScript libraries (pdf-lib), see reference.md\n- If you need to fill out a PDF form, follow the instructions in forms.md\n- For troubleshooting guides, see reference.md'),
     (Path('vendor/dz0ny/devenv/README.md'), 'devenv-migration/', 'devenv/'),
-    (Path('vendor/remotion-dev/remotion-best-practices/SKILL.md'), './rules/sound-effects.md', './rules/sfx.md'),
-    (Path('vendor/remotion-dev/remotion-best-practices/rules/voiceover.md'), './calculate-metadata)', './calculate-metadata.md)'),
-    (Path('vendor/remotion-dev/remotion-best-practices/SKILL.md'), 'You can render a single frame with the CLI to sanity-check layout, colors, or timing.  ', 'You can render a single frame with the CLI to sanity-check layout, colors, or timing.'),
     (Path('vendor/marimo-team/marimo-notebook/SKILL.md'), 'For marimo notebooks that run in width=columns [SQL.md](references/COLUMNS.md)', 'For marimo notebooks that use columns, see [COLUMNS.md](references/COLUMNS.md)'),
     (Path('vendor/marimo-team/marimo-notebook/references/COLUMNS.md'), '    # This cell is in column 2 \n', '    # This cell is in column 2\n'),
     (Path('vendor/marimo-team/marimo-pair/SKILL.md'), '`edit_cell` change notebook structure only. Use `run_cell` to execute. \n', '`edit_cell` change notebook structure only. Use `run_cell` to execute.\n'),
@@ -138,22 +134,27 @@ replacements = [
     (Path('vendor/vercel-labs/vercel-react-best-practices/AGENTS.md'), './async-cheap-condition-before-await.md', './rules/async-cheap-condition-before-await.md'),
     (Path('vendor/andrewyng/get-api-docs/SKILL.md'), 'If this results in an error showing that chub does not exist, then install it first, and run it\nagain. If the environment has node, npm, network access, and package-manager permission,\ninstall it as follows:', 'If this shows that chub is unavailable, ask the user before installing it globally. After approval, and only if the environment has Node.js, npm, network access, and package-manager permission, install it as follows:'),
     (Path('vendor/andrewyng/get-api-docs/SKILL.md'), 'Additionally, to help all developers, give feedback on the documentation using chub feedback, following\nthe instructions in chub --help . Do not include secrets, source code, private architecture details,\nor other sensitive information in feedback comments.', 'Additionally, ask the user before sending documentation feedback. After approval, use `chub feedback` according to `chub --help`. Do not include secrets, source code, private architecture details, or other sensitive information in feedback comments.'),
-    (Path('vendor/JuliusBrussee/caveman/SKILL.md'), 'Supports intensity levels: lite, full (default), ultra,\n  wenyan-lite, wenyan-full, wenyan-ultra.', 'Supports intensity levels: lite (default in the lefant bundle), full, ultra,\n  wenyan-lite, wenyan-full, wenyan-ultra.'),
     (Path('vendor/JuliusBrussee/caveman/SKILL.md'), 'Default: **full**. Switch: `/caveman lite|full|ultra|wenyan-lite|wenyan-full|wenyan-ultra|off`.', 'Default: **lite**. Switch: `/caveman lite|full|ultra|wenyan-lite|wenyan-full|wenyan-ultra|off`.'),
+    (Path('vendor/JuliusBrussee/caveman/SKILL.md'), 'ACTIVE EVERY RESPONSE.', 'Once explicitly enabled, active every response until changed or session end.'),
     (Path('vendor/JuliusBrussee/caveman/README.md'), '| `lite` | Drop filler/hedging. Sentences stay full. Professional but tight. |\n| `full` | Default. Drop articles, fragments OK, short synonyms. |', '| `lite` | Default in the lefant bundle. Drop filler/hedging. Sentences stay full. Professional but tight. |\n| `full` | Drop articles, fragments OK, short synonyms. |'),
     (Path('vendor/JuliusBrussee/caveman/README.md'), '/caveman              # full mode (default)', '/caveman              # lite mode (default in the lefant bundle)'),
     (Path('vendor/JuliusBrussee/caveman-help/SKILL.md'), '| **Lite** | `/caveman lite` | Drop filler. Keep sentence structure. |', '| **Lite** | `/caveman` or `/caveman lite` | Drop filler. Keep sentence structure. Default in lefant bundle. |'),
     (Path('vendor/JuliusBrussee/caveman-help/SKILL.md'), '| **Full** | `/caveman` | Drop articles, filler, pleasantries, hedging. Fragments OK. Default. |', '| **Full** | `/caveman full` | Drop articles, filler, pleasantries, hedging. Fragments OK. Classic caveman. |'),
     (Path('vendor/JuliusBrussee/caveman-help/SKILL.md'), 'Default mode = `full`. Change it:', 'Default mode = `lite`. Change it:'),
     (Path('vendor/JuliusBrussee/caveman-help/SKILL.md'), 'Resolution: env var > config file > `full`.', 'Resolution: env var > config file > `lite`.'),
+    (Path('vendor/JuliusBrussee/caveman-help/SKILL.md'), 'Set `"off"` to disable auto-activation on session start. User can still activate manually with `/caveman`.', 'These settings belong to the upstream plugin; this vendored bundle includes no session-start hooks or config loader. Here, choose a mode explicitly with `/caveman <mode>`; installing the skills does not activate them.'),
     (Path('vendor/JuliusBrussee/caveman-help/README.md'), '  /caveman              full (default)\n  /caveman lite         lighter', '  /caveman              lite (default in the lefant bundle)\n  /caveman full         classic caveman\n  /caveman lite         lighter'),
+    (Path('vendor/JuliusBrussee/caveman-commit/README.md'), 'Also triggers on phrases like "write a commit", "commit message", "generate commit".', 'Opt-in only: explicitly request caveman-commit or enable it in repository instructions. Ordinary commit requests do not activate it.'),
+    (Path('vendor/JuliusBrussee/caveman-review/README.md'), 'Also triggers on "review this PR", "code review", "review the diff".', 'Opt-in only: explicitly request caveman-review or enable it in repository instructions. Ordinary review requests do not activate it.'),
     (Path('vendor/JuliusBrussee/caveman-commit/README.md'), 'No AI attribution, no "this commit does X", no emoji unless the project uses them.', 'No AI attribution unless the project requires it, no "this commit does X", no emoji unless the project uses them.'),
     (Path('vendor/JuliusBrussee/caveman/README.md'), '\n- [Caveman README](../../README.md): repo overview, install, benchmarks', ''),
     (Path('vendor/JuliusBrussee/caveman-commit/README.md'), '\n- [Caveman README](../../README.md) — repo overview', ''),
     (Path('vendor/JuliusBrussee/caveman-help/README.md'), '\n- [Caveman README](../../README.md) — repo overview', ''),
     (Path('vendor/JuliusBrussee/caveman-review/README.md'), '\n- [Caveman README](../../README.md) — repo overview', ''),
+    (Path('vendor/JuliusBrussee/caveman-compress/SKILL.md'), '`/caveman-compress <filepath>` or when user asks to compress a memory file.', '`/caveman-compress <filepath>` or an explicit request to use caveman-compress. A generic request to shorten a file does not activate this skill.'),
     (Path('vendor/JuliusBrussee/caveman-compress/SKILL.md'), '1. The compression scripts live in `scripts/` (adjacent to this SKILL.md). If the path is not immediately available, search for `scripts/__main__.py` next to this SKILL.md.', '1. The compression scripts live in `scripts/` (adjacent to this SKILL.md). If the path is not immediately available, search for `{baseDir}/scripts/__main__.py`.'),
-    (Path('vendor/JuliusBrussee/caveman-compress/SKILL.md'), 'python3 -m scripts <absolute_filepath>', 'cd {baseDir} && python3 -m scripts <absolute_filepath>'),
+    (Path('vendor/JuliusBrussee/caveman-compress/SKILL.md'), '\npython3 -m scripts <absolute_filepath>\n', '\ncd {baseDir} && python3 -m scripts <absolute_filepath>\n'),
+    (Path('vendor/lambdamechanic/zfc/SKILL.md'), 'Core Architecture Principle: This application is pure orchestration', 'For projects that explicitly adopt ZFC, the architecture principle is pure orchestration'),
     (Path('vendor/woosal1337/ste-writing/SKILL.md'), 'python3 ste-lint.py draft.md            # flavored target: under 2.5 per 100 words\npython3 ste-lint.py --strict draft.md   # strict target: under 1.5 per 100 words', 'python3 {baseDir}/ste-lint.py draft.md            # flavored target: under 2.5 per 100 words\npython3 {baseDir}/ste-lint.py --strict draft.md   # strict target: under 1.5 per 100 words'),
     (Path('vendor/woosal1337/ste-writing/ste-lint.py'), '    longs = [(wc(s), s) for s in sents if wc(s) > 20]\n    v["long_sentence(>20w)"] = len(longs)', '    sentence_limit = 20 if strict else 25\n    longs = [(wc(s), s) for s in sents if wc(s) > sentence_limit]\n    v[f"long_sentence(>{sentence_limit}w)"] = len(longs)'),
     (Path('vendor/woosal1337/ste-writing/ste-lint.py'), '    v["contraction"] = len(re.findall(r"\\b\\w+[\'’](?:t|re|ve|ll|d|s|m)\\b", text))', '    v["contraction"] = len(re.findall(\n        r"\\b(?:\\w+[\'’](?:t|re|ve|ll|d|m)|(?:he|here|how|it|let|she|that|there|what|when|where|who|why)[\'’]s)\\b",\n        text, re.I))'),
@@ -170,17 +171,79 @@ for path, old, new in replacements:
     if old in text:
         path.write_text(text.replace(old, new))
 
+# Local scope policy replaces upstream auto-triggers, including on hosts that
+# ignore disable-model-invocation. Keep this list explicit for reviewed skills.
+opt_in_skills = {
+    'JuliusBrussee/caveman': 'Caveman-style responses, lite by default, with full, ultra, and wenyan modes.',
+    'JuliusBrussee/caveman-help': 'Quick reference for Caveman modes and commands; does not activate them.',
+    'JuliusBrussee/caveman-commit': 'Terse Conventional Commit messages; does not stage or commit.',
+    'JuliusBrussee/caveman-review': 'Terse code review comments; does not post or approve reviews.',
+    'JuliusBrussee/caveman-compress': 'Compress prose memory files into Caveman style with backups.',
+    'lambdamechanic/zfc': 'Zero Framework Cognition principles for projects that explicitly adopt ZFC.',
+    'pulumi/pulumi-overview': 'Pulumi CLI, infrastructure-as-code, and operations guidance.',
+    'pulumi/pulumi-best-practices': 'Pulumi TypeScript/Python resource, Output, configuration, and CI practices.',
+    'pulumi/pulumi-component': 'Author and distribute Pulumi ComponentResource classes.',
+    'pulumi/pulumi-automation-api': 'Embed Pulumi and orchestrate stacks with Automation API.',
+    'pulumi/pulumi-esc': 'Manage environments, secrets, and configuration with Pulumi ESC.',
+    'pulumi/provider-upgrade': 'Upgrade provider SDK dependencies in a Pulumi project and reconcile preview diffs.',
+    'pulumi/package-usage': 'Audit package versions across stacks in a Pulumi organization.',
+    'pulumi/pulumi-terraform-to-pulumi': 'Translate Terraform/OpenTofu to Pulumi or import Terraform state.',
+    'pulumi/pulumi-cdk-to-pulumi': 'Migrate AWS CDK applications to Pulumi.',
+    'pulumi/cloudformation-to-pulumi': 'Migrate AWS CloudFormation templates or stacks to Pulumi.',
+    'pulumi/pulumi-arm-to-pulumi': 'Migrate Azure ARM or Bicep templates to Pulumi.',
+    'pulumi/pulumi-upgrade-provider': 'Maintain Pulumi provider repositories with the upgrade-provider tool.',
+    'pulumi/upstream-patches': 'Manage Terraform provider submodule patches with scripts/upstream.sh.',
+    'pulumi/pulumi-neo-handoff': 'Transfer work to Pulumi Neo only with explicit user handoff authorization.',
+}
+opt_in_notice = (
+    '> **Local opt-in policy:** Use this skill only when the user explicitly requests it '
+    'or repository instructions explicitly enable it. Installation alone does not enable it. '
+    'This scope applies to all guidance below, including sibling-skill references. '
+    'Enabling one skill does not enable its siblings or authorize external changes.'
+)
+for skill, summary in opt_in_skills.items():
+    path = repo_root / 'vendor' / skill / 'SKILL.md'
+    text = path.read_text()
+    opening, frontmatter, body = text.split('---\n', 2)
+    if opening or f'name: {path.parent.name}\n' not in frontmatter:
+        raise SystemExit(f'Opt-in patch failed: unexpected frontmatter in {path}')
+    description = (
+        f'description: >-\n  {summary}\n'
+        '  Use only when explicitly requested by name or enabled in repository instructions.'
+    )
+    frontmatter, count = re.subn(
+        r'^description:[^\n]*(?:\n[ \t]+[^\n]*)*', description, frontmatter, flags=re.MULTILINE,
+    )
+    if count != 1:
+        raise SystemExit(f'Opt-in patch failed: expected one description in {path}')
+    frontmatter = re.sub(r'^disable-model-invocation:[^\n]*\n', '', frontmatter, flags=re.MULTILINE)
+    frontmatter += 'disable-model-invocation: true\n'
+    if opt_in_notice not in body:
+        body = f'\n{opt_in_notice}\n\n{body.lstrip()}'
+    path.write_text(f'---\n{frontmatter}---\n{body}')
+
 required_local_snippets = {
+    Path('vendor/hegeldev/hegel/SKILL.md'): (
+        'Java, OCaml, and Python projects.',
+        'Python (`hegeltest`)',
+        'For Python 3.11+, install `hegeltest` and import `hegel`',
+        'Keep existing Hypothesis suites unless migration is part of the task',
+    ),
     Path('vendor/JuliusBrussee/caveman/SKILL.md'): (
-        'lite (default in the lefant bundle)',
         'Default: **lite**.',
+        'Once explicitly enabled, active every response until changed or session end.',
     ),
     Path('vendor/JuliusBrussee/caveman-help/SKILL.md'): (
         'Default mode = `lite`.',
         'Resolution: env var > config file > `lite`.',
+        'this vendored bundle includes no session-start hooks or config loader',
     ),
     Path('vendor/JuliusBrussee/caveman-compress/SKILL.md'): (
         'cd {baseDir} && python3 -m scripts <absolute_filepath>',
+        'A generic request to shorten a file does not activate this skill.',
+    ),
+    Path('vendor/lambdamechanic/zfc/SKILL.md'): (
+        'For projects that explicitly adopt ZFC, the architecture principle',
     ),
     Path('vendor/andrewyng/get-api-docs/SKILL.md'): (
         'ask the user before installing it globally',
@@ -213,15 +276,6 @@ for relative_path, snippets in required_local_snippets.items():
             f'Post-fetch fix failed: {path} is missing required local snippet(s): '
             + ', '.join(missing)
         )
-
-remotion_root = repo_root / 'vendor/remotion-dev/remotion-best-practices'
-if remotion_root.is_dir():
-    for path in remotion_root.rglob('*.md'):
-        text = path.read_text()
-        normalized = re.sub(r'[ \t]+$', '', text, flags=re.MULTILINE)
-        normalized = re.sub(r'^ +(?=\t)', '', normalized, flags=re.MULTILINE)
-        if normalized != text:
-            path.write_text(normalized)
 
 zfc_path = repo_root / 'vendor/lambdamechanic/zfc/SKILL.md'
 if zfc_path.exists():
@@ -282,13 +336,9 @@ fetch_skill "vercel-labs/agent-browser" "skills/agent-browser" "$VENDOR_DIR/verc
 # Vercel - AI SDK
 fetch_skill "vercel/ai" "skills/use-ai-sdk" "$VENDOR_DIR/vercel/ai-sdk" || true
 
-# Anthropic
+# Anthropic (PDF retired; its license restricts redistribution)
 fetch_skill "anthropics/skills" "skills/frontend-design" "$VENDOR_DIR/anthropics/frontend-design" || true
-fetch_skill "anthropics/skills" "skills/pdf" "$VENDOR_DIR/anthropics/pdf" || true
 fetch_skill "anthropics/skills" "skills/skill-creator" "$VENDOR_DIR/anthropics/skill-creator" || true
-
-# Remotion
-fetch_skill "remotion-dev/skills" "skills/remotion-best-practices" "$VENDOR_DIR/remotion-dev/remotion-best-practices" || true
 
 # HumanLayer - show-me
 fetch_skill "humanlayer/skills" "plugins/show-me/skills/show-me" "$VENDOR_DIR/humanlayer/show-me" || true

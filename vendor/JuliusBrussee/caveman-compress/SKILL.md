@@ -1,11 +1,12 @@
 ---
 name: caveman-compress
-description: >
-  Compress natural language memory files (CLAUDE.md, todos, preferences) into caveman format
-  to save input tokens. Preserves all technical substance, code, URLs, and structure.
-  Compressed version overwrites the original file. Human-readable backup saved as FILE.original.md.
-  Trigger: /caveman-compress FILEPATH or "compress memory file"
+description: >-
+  Compress prose memory files into Caveman style with backups.
+  Use only when explicitly requested by name or enabled in repository instructions.
+disable-model-invocation: true
 ---
+
+> **Local opt-in policy:** Use this skill only when the user explicitly requests it or repository instructions explicitly enable it. Installation alone does not enable it. This scope applies to all guidance below, including sibling-skill references. Enabling one skill does not enable its siblings or authorize external changes.
 
 # Caveman Compress
 
@@ -15,7 +16,7 @@ Compress natural language files (CLAUDE.md, todos, preferences) into caveman-spe
 
 ## Trigger
 
-`/caveman-compress <filepath>` or when user asks to compress a memory file.
+`/caveman-compress <filepath>` or an explicit request to use caveman-compress. A generic request to shorten a file does not activate this skill.
 
 ## Process
 

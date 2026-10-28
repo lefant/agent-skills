@@ -1,7 +1,12 @@
 ---
 name: pulumi-esc
-description: Guidance for working with Pulumi ESC (Environments, Secrets, and Configuration). Use when users ask about managing secrets, configuration, environments, short-term credentials, configuring OIDC for AWS, Azure, GCP, integrating with secret stores (AWS Secrets Manager, Azure Key Vault, HashiCorp Vault, 1Password), or using ESC with Pulumi stacks.
+description: >-
+  Manage environments, secrets, and configuration with Pulumi ESC.
+  Use only when explicitly requested by name or enabled in repository instructions.
+disable-model-invocation: true
 ---
+
+> **Local opt-in policy:** Use this skill only when the user explicitly requests it or repository instructions explicitly enable it. Installation alone does not enable it. This scope applies to all guidance below, including sibling-skill references. Enabling one skill does not enable its siblings or authorize external changes.
 
 # Pulumi ESC (Environments, Secrets, and Configuration)
 

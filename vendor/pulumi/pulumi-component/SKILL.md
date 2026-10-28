@@ -1,8 +1,13 @@
 ---
 name: pulumi-component
 version: 1.0.0
-description: Guide for authoring Pulumi ComponentResource classes. Use when creating reusable infrastructure components, designing component interfaces, setting up multi-language support, or distributing component packages.
+description: >-
+  Author and distribute Pulumi ComponentResource classes.
+  Use only when explicitly requested by name or enabled in repository instructions.
+disable-model-invocation: true
 ---
+
+> **Local opt-in policy:** Use this skill only when the user explicitly requests it or repository instructions explicitly enable it. Installation alone does not enable it. This scope applies to all guidance below, including sibling-skill references. Enabling one skill does not enable its siblings or authorize external changes.
 
 # Authoring Pulumi Components
 

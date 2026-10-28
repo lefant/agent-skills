@@ -16,7 +16,7 @@ Output only — does not approve, request changes, or run linters.
 /caveman-review
 ```
 
-Also triggers on "review this PR", "code review", "review the diff".
+Opt-in only: explicitly request caveman-review or enable it in repository instructions. Ordinary review requests do not activate it.
 
 ## Example output
 

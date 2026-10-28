@@ -1,7 +1,12 @@
 ---
 name: package-usage
-description: Track which stacks across a Pulumi organization use a specific package and at what versions. Use for cross-stack audits, identifying outdated or unmaintained package versions across many stacks, finding affected stacks before publishing breaking changes to a component package, or planning coordinated upgrade rollouts. Do NOT use for upgrading a cloud provider package (pulumi-aws, pulumi-azure-native, pulumi-gcp, pulumi-kubernetes, etc.) in a single project — use skill `provider-upgrade` instead. Do NOT use for general infrastructure creation, resource provisioning, or how-to questions about a package.
+description: >-
+  Audit package versions across stacks in a Pulumi organization.
+  Use only when explicitly requested by name or enabled in repository instructions.
+disable-model-invocation: true
 ---
+
+> **Local opt-in policy:** Use this skill only when the user explicitly requests it or repository instructions explicitly enable it. Installation alone does not enable it. This scope applies to all guidance below, including sibling-skill references. Enabling one skill does not enable its siblings or authorize external changes.
 
 ## API Reference
 

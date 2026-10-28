@@ -1,7 +1,12 @@
 ---
 name: pulumi-neo-handoff
-description: Hand off the current thread to a new Pulumi Neo task as a one-way transfer. Use when the user explicitly asks to hand off, send, transfer, or continue current work in Pulumi Neo (e.g. "hand this to Neo", "continue in Neo", "/neo-handoff"). Do not load when the user only mentions Neo, asks what Neo can do, asks for an AI-written PR or preview explanation, or hands off to a different agent.
+description: >-
+  Transfer work to Pulumi Neo only with explicit user handoff authorization.
+  Use only when explicitly requested by name or enabled in repository instructions.
+disable-model-invocation: true
 ---
+
+> **Local opt-in policy:** Use this skill only when the user explicitly requests it or repository instructions explicitly enable it. Installation alone does not enable it. This scope applies to all guidance below, including sibling-skill references. Enabling one skill does not enable its siblings or authorize external changes.
 
 # Pulumi Neo Handoff
 

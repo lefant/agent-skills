@@ -14,7 +14,7 @@ Outputs only the message. Does not stage, commit, or amend.
 /caveman-commit
 ```
 
-Also triggers on phrases like "write a commit", "commit message", "generate commit".
+Opt-in only: explicitly request caveman-commit or enable it in repository instructions. Ordinary commit requests do not activate it.
 
 ## Example output
 

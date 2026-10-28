@@ -81,6 +81,10 @@ provenance. Do not move historical files merely to follow the new convention.
 skills add /path/to/agent-skills --skill '*' -g -y -a claude-code -a codex -a opencode
 ```
 
+Wildcard installs include optional packages. Caveman, ZFC, and Pulumi are
+[explicit opt-in / repository-optional](vendor/README.md#opt-in--repository-optional-skills),
+not global defaults; select individual skills instead of `'*'` to omit them.
+
 ### In Docker
 Cloned to `/opt/lefant-agent-skills` and symlinked via entrypoint.
 

@@ -16,6 +16,8 @@ Then review changes before committing:
 git diff vendor/
 ```
 
+Before a broad refresh or export, read the [2026-10-28 maintenance review](../docs/devlog/2026-10-28_hegel-refresh-vendor-review.md). It records missing upstream paths, destructive updater failure modes, and retirement decisions. A passing layout check does not resolve the remaining issues.
+
 ## Layout
 
 Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when the upstream repository stores them under a `skills/` subdirectory. This keeps wildcard installs from missing nested skills. Use `scripts/update-vendor.sh` as the source-path registry instead of symlinks.
@@ -27,8 +29,7 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `vercel-labs/` | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | web-design-guidelines, vercel-react-best-practices |
 | `vercel-labs/` | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | agent-browser |
 | `vercel/` | [vercel/ai](https://github.com/vercel/ai) | ai-sdk |
-| `anthropics/` | [anthropics/skills](https://github.com/anthropics/skills) | frontend-design, pdf, skill-creator |
-| `remotion-dev/` | [remotion-dev/skills](https://github.com/remotion-dev/skills) | remotion-best-practices |
+| `anthropics/` | [anthropics/skills](https://github.com/anthropics/skills) | frontend-design, skill-creator |
 | `humanlayer/` | [humanlayer/skills](https://github.com/humanlayer/skills) | show-me |
 | `giuseppe-trisciuoglio/` | [giuseppe-trisciuoglio/developer-kit](https://github.com/giuseppe-trisciuoglio/developer-kit) | shadcn-ui |
 | `intellectronica/` | [intellectronica/agent-skills](https://github.com/intellectronica/agent-skills) | context7 |
@@ -52,6 +53,43 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `hegeldev/` | [hegeldev/hegel-skill](https://github.com/hegeldev/hegel-skill) | hegel, hegel-review |
 | `DietrichGebert/` | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | ponytail |
 | `quint-co/` | [quint-co/quint-llm-kit](https://github.com/quint-co/quint-llm-kit) | quint-lang, quint-modeling, quint-execute-spec; see [snapshot and review](quint-co/SOURCE.md) |
+
+### Opt-in / repository-optional skills
+
+The five Caveman skills, ZFC, and all fourteen Pulumi skills remain vendored but
+are not general defaults. Their descriptions require an explicit request by name
+or repository instructions enabling the skill. Each carries a local scope notice
+and `disable-model-invocation: true`; `scripts/update-vendor.sh` reapplies this
+policy after refreshes. Enabling one skill does not enable sibling skills or
+authorize external changes.
+
+Prefer selected project-local installs. A project can explicitly enable named
+skills in its `AGENTS.md` and, if the host requires it for automatic invocation,
+remove `disable-model-invocation` from those project-local copies. Keep the
+vendored defaults manual-only. Hosts differ in whether they honor this metadata;
+the description and body also state the boundary. Wildcard installers still copy
+these packages, so use a selected skill list to omit them entirely.
+
+The [Amp publication profile](../docs/reference/amp-skill-publishing.md) excludes
+these optional groups by default. This repository does not change installed
+skills or separately published plugins; those require their own synchronization.
+Caveman defaults to `lite` only after opt-in. Its compression helper still has the
+failure-restoration issue recorded in the maintenance review; narrowing its
+trigger does not fix that implementation.
+
+### Retired skills
+
+Removed from the tree and updater on 2026-10-28:
+
+- **Anthropic PDF:** its packaged proprietary license prohibits external copying,
+  derivatives, and redistribution. Do not reintroduce it without establishing
+  redistribution permission. The other Anthropic skills remain included.
+- **Remotion:** removed by user choice after review found binary assets unsuitable
+  for Amp global skills and redundant packaging. Install separately in a project
+  if needed; it is no longer part of this bundle.
+
+Historical Git commits and import logs are unchanged. Removing a package here
+does not uninstall existing copies elsewhere.
 
 ### Matt Pocock skills
 
@@ -151,14 +189,25 @@ Vendoring does not authorize authentication, remote debug commands, uploads,
 cluster operations, or billable runs. No Antithesis service was exercised during
 the import; local helper tests are not end-to-end platform validation.
 
-Note: `vendor/hegeldev` preserves both instruction-only skills and all six Hegel
-technique guides unchanged from [upstream revision a60b282](https://github.com/hegeldev/hegel-skill/commit/a60b28243199b24aeebb2c90aece34082ee4997c).
+Note: `vendor/hegeldev` contains both instruction-only skills and all seven Hegel
+technique guides from [upstream revision 6fd049a](https://github.com/hegeldev/hegel-skill/commit/6fd049a4a1912588c8a6be238d3654ed66a80646)
+(plugin v2.1.0), reviewed on 2026-10-28. `hegel-review` and the technique guides
+are unchanged. The local `hegel` correction adds Python to the language lists,
+documents Python 3.11+ with package `hegeltest` / import `hegel`, and preserves
+upstream Python's advice to keep existing Hypothesis suites for ordinary CI.
+`scripts/update-vendor.sh` reapplies and checks that correction because the
+upstream skill still omits Python. Evidence comes from the
+[official Python README](https://github.com/hegeldev/hegel/blob/e356c01953cf7377a8f4463fb2c910fca99b53b3/frontends/python/README.md)
+and a local generation/shrinking smoke test with `hegeltest==0.2.1` on Python 3.11.6.
 Each skill carries the upstream MIT license for standalone distribution. The
 review found no scripts, MCP servers, hooks, binaries, or credential access.
 `hegel` references `hegel-review`, so install both. They remain separate from the
 Antithesis plugin: these are local property-testing workflows, not hosted test
 runs. The broad upstream testing triggers and high-case-count/scale-probe guidance
-are preserved; installation does not install a Hegel library or run tests.
+are preserved, as are v2.1.0's stronger value oracles and mandatory adversarial
+subagent review. Host delegation and approval rules still take precedence;
+installation does not install a Hegel library or run tests. Updating this vendor
+snapshot does not update the separately published Amp User Skills.
 
 Note: `vendor/DietrichGebert/ponytail` preserves the instruction-only core skill
 and MIT license unchanged from [upstream revision 16352ac](https://github.com/DietrichGebert/ponytail/commit/16352ac229eb08a9598dcae48fe9f2b342567d86)
