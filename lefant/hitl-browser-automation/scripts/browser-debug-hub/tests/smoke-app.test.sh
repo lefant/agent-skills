@@ -29,8 +29,9 @@ PY
 )"
 
 echo "smoke url: $URL"
-curl -fsS "$URL" | grep -q 'Browser Debug Hub Smoke App'
-curl -fsS "$URL" | grep -q 'Objective demo buttons'
+# Read each response to EOF so an early match cannot break curl's pipe.
+curl -fsS "$URL" | grep 'Browser Debug Hub Smoke App' >/dev/null
+curl -fsS "$URL" | grep 'Objective demo buttons' >/dev/null
 curl -fsS "${URL}api/state" | jq -e '.ok == true and .state == "ready" and .sequence == []' >/dev/null
 curl -fsS -X POST "${URL}api/click" -H 'content-type: application/json' --data '{"choice":"red"}' | jq -e '.ok == true and .sequence == ["red"] and .finalChoice == "red"' >/dev/null
 curl -fsS -X POST "${URL}api/click" -H 'content-type: application/json' --data '{"choice":"blue"}' | jq -e '.ok == true and .sequence == ["red", "blue"] and .finalChoice == "blue"' >/dev/null
