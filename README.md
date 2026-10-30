@@ -137,6 +137,7 @@ Rules:
 | `qrspi` | Portable adaptation of matanshavit/qrspi's eight-phase workflow; upstream provenance and local changes documented in `lefant/qrspi/SOURCE.md` |
 | `recent-context-from-git` | Summarize recent local docs and work context from git history |
 | `test-analyzer` | Analyze CTRF test reports with jq |
+| `expect-testing` | Create and review expect tests, inline snapshots, approval tests, and golden files |
 | `youtube-transcript` | Fetch YouTube video transcripts |
 | `tasknotes` | Manage Obsidian tasks through maintained TaskNotes interfaces or a safe Markdown fallback |
 | `untis-access` | Access WebUntis data, compare repo implementations, and run proven message/timetable scripts |
