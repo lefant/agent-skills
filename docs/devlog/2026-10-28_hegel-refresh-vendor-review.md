@@ -7,9 +7,13 @@ status: ✅ COMPLETED
 
 The targeted Hegel refresh and general review are complete locally. Following
 the user's decisions, Anthropic PDF and Remotion were retired, and Caveman, ZFC,
-and all Pulumi skills became opt-in / repository-optional. No other vendor
-packages were refreshed. Nothing was committed, pushed, or published to Amp.
-Unresolved findings below remain follow-up work.
+and all Pulumi skills became opt-in / repository-optional. That initial checkpoint
+was committed as `3c0d81c` at the user's request. The subsequent authorized pass
+fixed updater/cache safety and refreshed Antithesis, TypeSafe, marimo-pair,
+frontend-design, and Matt Pocock. At the user's request, the follow-up is split
+into seven local commits: safety fixes, one per upstream group, and these
+maintenance notes. Nothing was pushed or published to Amp. Unresolved findings
+below remain follow-up work.
 
 ## Hegel: Python support is real; the upstream skill is stale
 
@@ -69,7 +73,7 @@ entrypoint, with focused inspection of referenced helpers and resources. Layout
 and name uniqueness passed. This was not an exhaustive script security review,
 usage analysis, or runtime validation of all 97 skills.
 
-### Upstream migrations to handle deliberately
+### Upstream migrations identified in the initial review
 
 - **Antithesis:** upstream
   [84b188a](https://github.com/antithesishq/antithesis-skills/commit/84b188af8cde10a5babd0fdb15094910a425e36a)
@@ -89,7 +93,7 @@ usage analysis, or runtime validation of all 97 skills.
 - **Other review priorities:** substantial body changes in TypeSafe, marimo-pair,
   and frontend-design; eleven Matt Pocock entrypoints differ. Agent-browser's
   entrypoint change only adds a protected-Vercel-deployment guide. These packages
-  were not modified in this pass.
+  were not modified in the initial pass; completed refreshes are recorded below.
 
 ### Safety and packaging findings
 
@@ -102,15 +106,15 @@ usage analysis, or runtime validation of all 97 skills.
    Separate contractual permissions were not investigated. Sixteen of the other
    26 source directories reviewed contain no LICENSE/COPYING file; that proves
    missing packaged notices, not absence of upstream licensing permission.
-2. **Updater loses snapshots:** `fetch_skillset` deletes each target before
-   checking that the source exists. The Pulumi block deletes its whole directory
-   before any successful fetch. Calls swallow failures with `|| true`, and the
-   layout checker does not enforce the expected inventory. The two removed
-   Antithesis paths make this a current risk, not a hypothetical one. Stage and
-   validate replacements before deleting existing snapshots.
-3. **Librarian traversal, reproduced:**
-   [`checkout.sh`](../../vendor/mitsuhiko/librarian/checkout.sh) accepts `..`
-   components, constructs a path outside its cache, and rewrites a preexisting
+2. **Updater loses snapshots — fixed in follow-up:** `fetch_skillset` deleted each
+   target before checking that the source existed. The Pulumi block deleted its
+   whole directory before any successful fetch. Calls swallowed failures with
+   `|| true`, and the layout checker did not enforce expected inventory. Removed
+   Antithesis paths made this a concrete risk. The staged updater below now
+   preserves the previous tree until the complete candidate passes checks.
+3. **Librarian traversal — reproduced and fixed in follow-up:**
+   [`checkout.sh`](../../vendor/mitsuhiko/librarian/checkout.sh) accepted `..`
+   components, constructed a path outside its cache, and rewrote a preexisting
    checkout's `origin`. A disposable Git repository plus
    `LIBRARIAN_CACHE_ROOT=<temp>/cache` and input
    `https://github.com/../../victim` demonstrated the origin rewrite outside the
@@ -147,7 +151,7 @@ usage analysis, or runtime validation of all 97 skills.
 | Candidate | Disposition |
 | --- | --- |
 | Anthropic PDF | Retired locally at the user's request; updater mapping removed. |
-| Antithesis browser and query-logs | Retire with the coordinated Snouty-based collection refresh. |
+| Antithesis browser and query-logs | Retired with the coordinated Snouty-based collection refresh. |
 | Caveman family | All five skills are now opt-in; ordinary brevity, commit, review, and compression requests no longer activate them. Compression still needs repair. |
 | ZFC | Now opt-in and scoped to projects explicitly adopting its architecture. |
 | Pulumi | All fourteen skills are now opt-in / repository-optional, following the user's broader Pulumi decision. |
@@ -188,7 +192,65 @@ and `ce:*` plugins were not audited or updated here. Context7/get-api-docs and
 agent-browser/Chrome DevTools overlap calls for a default and explicit fallback,
 not automatic deletion without usage evidence.
 
-Recommended follow-up order: repair updater/cache write safety; migrate Antithesis
-together; decide STE v2; then refresh remaining retained packages in reviewable
-groups. GitHub publication, Amp User Skills activation, and plugin updates remain
-separate actions.
+## Authorized follow-up: safety repairs and five upstream groups
+
+The updater now stages a complete vendor tree, fetches selected upstream
+repositories, reapplies local policies, and runs checks before replacing the live
+tree. Failed clones, missing skills or license files, patch drift, invalid layout,
+and unknown repository selections return nonzero without changing the previous
+snapshot. The previous tree is retained until replacement succeeds; the exit trap
+restores it if replacement fails. Run one updater at a time. This is not crash-
+consistent storage against SIGKILL/power loss or concurrent edits.
+
+Librarian rejects traversal/path injection and symlinked cache descendants before
+Git operations, propagates parser failure, and checks existing origin identity.
+It preserves equivalent SSH/HTTPS origins and refuses missing or mismatched ones
+instead of adding or rewriting them. `scripts/patches/librarian-cache-safety.patch`
+preserves the change across upstream refreshes and fails closed on patch drift.
+It assumes a user-owned cache, not a hostile concurrent writer.
+
+Reviewed snapshots:
+
+| Source | Revision | Result |
+| --- | --- | --- |
+| Antithesis | [ca4b8fb](https://github.com/antithesishq/antithesis-skills/commit/ca4b8fba0991dbaf4b1b57bea9a4b9605725025f) | 12 packages / 88 files; browser/query-logs removed, CLI search/exec adopted, launcher and Go instrumentation guidance updated. |
+| TypeSafe | [302eea6](https://github.com/typesafe-ai/skills/commit/302eea662c54bca6730873fe245bec1d69ebc23d) | Expanded question/state design, Box/image support, live-probe consent and budget guidance. |
+| marimo-pair | [2f1d7ff](https://github.com/marimo-team/marimo-pair/commit/2f1d7fffa50607dc9d8660cb931f4470707f8697) | Mandatory separate `help(cm)` inspection, resource resolution, and cell/dataflow guidance; scripts unchanged. |
+| frontend-design | [ca45fc4](https://github.com/anthropics/skills/commit/ca45fc496a3436251f191354091d557da31c15b5) | Typography, motion, copy, and brief-driven design refinements; skill-creator fetched but unchanged. |
+| Matt Pocock | [59db609](https://github.com/mattpocock/skills/commit/59db609eb1e18aaf59b63284d0e52255aff0c63c) | Same 27 published packages / 79 files. Tracker recipes, workflow guidance, and wizard helper updates. Manifest still says v1.3.1; former local invocation fixes now match upstream. |
+
+The targeted update command was:
+
+```sh
+./scripts/update-vendor.sh antithesishq/antithesis-skills typesafe-ai/skills marimo-team/marimo-pair anthropics/skills mattpocock/skills
+```
+
+Verification:
+
+- `python3 scripts/tests/vendor-safety.test.py -v`: six CLI regression tests
+  pass, including several failure-mode subcases. The initial suite failed against
+  the old updater and Librarian in a disposable copy. Tests use real local Git
+  repositories; clone transport is redirected locally and remote protocols are
+  disabled. They check bytes and modes, not only exit status.
+- The tests cover failed fetches and final replacement, missing sources/licenses, invalid layout,
+  safety-patch drift, targeted replacement, reapplication and idempotence, plus
+  traversal, symlink, origin-mismatch, and valid-reuse cases.
+- Selected package inventories, bytes, and executable bits match the reviewed
+  caches. Exceptions: the existing marimo whitespace patch and four stripped
+  trailing spaces plus a modification notice in the Antithesis debug entrypoint.
+- Layout check: **93 skills**. Layout regression tests, show-me checks, STE
+  checks, shell syntax checks, and whitespace checks pass.
+- A disposable wizard-helper smoke test verified single-quote/dollar/backslash
+  value round-tripping, mode 0600 for a new `.env`, reuse of a default on Enter,
+  and rejection of empty EOF. It did not run the example wizard or write GitHub
+  secrets/variables.
+
+No live Antithesis run, remote debug session, TypeSafe API probe, marimo notebook,
+or model-driven skill evaluation was performed. Installed Amp skills and plugins
+are unchanged. The independently hosted `mp:*` and `antithesis:*` plugins still
+require their own authorized update.
+
+Remaining: decide STE v2 (its old fetch paths still fail; use targeted updates),
+address the Caveman compression, Devenv, tmux, Pulumi migration, Quint export,
+and license-notice findings, and review other retained upstream deltas. GitHub
+publication, Amp User Skills activation, and plugin updates remain separate actions.

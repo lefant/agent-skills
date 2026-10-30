@@ -10,13 +10,26 @@ To update vendored skills:
 ./scripts/update-vendor.sh
 ```
 
+Pass upstream repository names to limit a refresh, for example
+`./scripts/update-vendor.sh antithesishq/antithesis-skills typesafe-ai/skills`.
+The updater copies the existing tree into a temporary staging directory, fetches
+selected packages, applies local patches, and runs the vendor checks there. Only
+a successful run replaces `vendor/`; fetch, patch, and validation failures return
+nonzero and preserve the existing snapshot. Unknown selections fail too. Run one
+updater at a time and avoid editing `vendor/` while it runs.
+
+**STE is held pending a scope decision.** Its old upstream paths no longer exist;
+the replacement adds always-on styling and ADHD assumptions. Until that decision,
+use targeted updates that exclude `woosal1337/blog`. An unfiltered refresh will
+fail safely rather than silently replace STE or report partial success.
+
 Then review changes before committing:
 
 ```bash
 git diff vendor/
 ```
 
-Before a broad refresh or export, read the [2026-10-28 maintenance review](../docs/devlog/2026-10-28_hegel-refresh-vendor-review.md). It records missing upstream paths, destructive updater failure modes, and retirement decisions. A passing layout check does not resolve the remaining issues.
+Before a broad refresh or export, read the [2026-10-28 maintenance review](../docs/devlog/2026-10-28_hegel-refresh-vendor-review.md). It records resolved updater/cache safety defects, remaining findings, and retirement decisions. A passing layout check does not resolve the remaining issues.
 
 ## Layout
 
@@ -49,7 +62,7 @@ Vendored skills are flattened to `vendor/<source>/<skill>/SKILL.md` even when th
 | `woosal1337/` | [woosal1337/blog](https://github.com/woosal1337/blog) | ste-writing |
 | `pulumi/` | [pulumi/agent-skills](https://github.com/pulumi/agent-skills) | pulumi-overview, pulumi-best-practices, pulumi-component, pulumi-automation-api, pulumi-esc, provider-upgrade, package-usage, pulumi-terraform-to-pulumi, pulumi-cdk-to-pulumi, cloudformation-to-pulumi, pulumi-arm-to-pulumi, pulumi-upgrade-provider, upstream-patches, pulumi-neo-handoff |
 | `mattpocock/` | [mattpocock/skills](https://github.com/mattpocock/skills) | 27 published engineering and productivity skills; see below |
-| `antithesishq/` | [antithesishq/antithesis-skills](https://github.com/antithesishq/antithesis-skills) | 14 Antithesis research, harness, launch, and investigation skills; see [snapshot and review](antithesishq/SOURCE.md) |
+| `antithesishq/` | [antithesishq/antithesis-skills](https://github.com/antithesishq/antithesis-skills) | 12 Antithesis research, harness, launch, and investigation skills; see [snapshot and review](antithesishq/SOURCE.md) |
 | `hegeldev/` | [hegeldev/hegel-skill](https://github.com/hegeldev/hegel-skill) | hegel, hegel-review |
 | `DietrichGebert/` | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | ponytail |
 | `quint-co/` | [quint-co/quint-llm-kit](https://github.com/quint-co/quint-llm-kit) | quint-lang, quint-modeling, quint-execute-spec; see [snapshot and review](quint-co/SOURCE.md) |
@@ -87,6 +100,9 @@ Removed from the tree and updater on 2026-10-28:
 - **Remotion:** removed by user choice after review found binary assets unsuitable
   for Amp global skills and redundant packaging. Install separately in a project
   if needed; it is no longer part of this bundle.
+- **Antithesis browser and query-logs:** retired upstream. Their replacements are
+  `snouty runs exec` in debug and `snouty runs search` in triage; the collection
+  was refreshed together so no retained skill depends on the removed packages.
 
 Historical Git commits and import logs are unchanged. Removing a package here
 does not uninstall existing copies elsewhere.
@@ -94,9 +110,10 @@ does not uninstall existing copies elsewhere.
 ### Matt Pocock skills
 
 The import matches the 27 skills listed in upstream's plugin manifest at
-[v1.3.1 (0b6cee1)](https://github.com/mattpocock/skills/commit/0b6cee10f260a2e048279cf737bfd3e37b1fce0b).
-Skill contents and supporting files match upstream except for the two
-`implement` inter-skill calls made harness-neutral in `scripts/update-vendor.sh`.
+[revision 59db609](https://github.com/mattpocock/skills/commit/59db609eb1e18aaf59b63284d0e52255aff0c63c)
+(manifest version remains v1.3.1), reviewed on 2026-10-28. All 79 skill files
+match upstream. Upstream now includes the two harness-neutral `implement`
+invocations that previously needed local patches; the updater still checks them.
 The upstream MIT license is at `mattpocock/LICENSE`. The explicit update lists in
 `scripts/update-vendor.sh` exclude unpublished skills, `misc/`, and `in-progress/`;
 new upstream skills require review before inclusion. The Claude plugin manifest
@@ -169,6 +186,32 @@ Note: `vendor/googlecolab/operating-colab` is a self-contained instruction-only 
 
 Note: `vendor/typesafe-ai/typesafe-ai` preserves the official instruction-only skill and MIT license unchanged. It links to live TypeSafe documentation and has no bundled scripts, MCP servers, or credentials. Initial import: [upstream revision](https://github.com/typesafe-ai/skills/commit/65a39f393687675ce170e6094757de20370365b9).
 
+The 2026-10-28 refresh uses [TypeSafe revision 302eea6](https://github.com/typesafe-ai/skills/commit/302eea662c54bca6730873fe245bec1d69ebc23d).
+It adds Box/image guidance, more explicit judgment-vs-code boundaries, calibrated
+probability guidance, and user consent/data disclosure before live API probes.
+No API calls were made as part of the import.
+
+Note: `vendor/anthropics/frontend-design` matches
+[revision ca45fc4](https://github.com/anthropics/skills/commit/ca45fc496a3436251f191354091d557da31c15b5).
+It refines typography, motion restraint, copy, and brief-driven design choices.
+Its Apache-2.0 license is unchanged; `skill-creator` was fetched in the same
+targeted repository update but had no changes.
+
+Note: `vendor/marimo-team/marimo-pair` uses
+[revision 2f1d7ff](https://github.com/marimo-team/marimo-pair/commit/2f1d7fffa50607dc9d8660cb931f4470707f8697),
+with the existing one-line whitespace correction. The update requires a separate
+successful `help(cm)` call before other code-mode commands and clarifies resource
+paths and cell boundaries. Both shell helpers are unchanged; no live notebook
+session was exercised during this refresh.
+
+Note: `vendor/mitsuhiko/librarian` has a local safety patch rejecting traversal
+components, symlinked cache descendants, and mismatched/missing existing origins.
+Matching SSH/HTTPS origins are preserved. The updater applies the patch from
+`scripts/patches/librarian-cache-safety.patch` or recognizes an already-patched
+copy; unexpected drift fails the staged update. Offline CLI regression tests use
+disposable Git repositories. The cache must remain owned by the current user;
+these checks are not isolation from concurrent hostile filesystem changes.
+
 Note: `vendor/mattpocock` was statically reviewed across all 79 bundled files.
 It contains no bundled MCP servers, hooks, symlinks, or binaries. Two Bash templates
 are included: `diagnosing-bugs/scripts/hitl-loop.template.sh` echoes observations
@@ -181,8 +224,9 @@ tracker items. Generated architecture reports use third-party CDN scripts.
 Importing these files executes none of those actions; this review is not runtime
 validation or blanket authorization to run them.
 
-Note: `vendor/antithesishq` preserves 14 skills and their executable helpers
-unchanged, with the Apache-2.0 license at the collection root. The
+Note: `vendor/antithesishq` preserves 12 skills and their remaining executable
+helpers, with only debug-entrypoint whitespace normalization and its notice.
+The Apache-2.0 license is at the collection root. The
 [snapshot review](antithesishq/SOURCE.md) records provenance, prerequisites,
 credential and mutation-harness risks, and downstream exporter requirements.
 Vendoring does not authorize authentication, remote debug commands, uploads,
