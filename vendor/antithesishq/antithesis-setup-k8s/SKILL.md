@@ -4,12 +4,12 @@ description: >
   Scaffold the Antithesis harness for customers running Kubernetes:  Convert helm charts, kustomize templates, or raw Kubernetes manifests into a minimized set of manifests for Antithesis. Verify the Kubernetes manifests are in the correct shape with snouty validate and a local cluster deploy. Hands it off to antithesis-launch if the user wants to submit a run. At the end, the user is ready to run antithesis-workload to build tests. If the desired setup is docker-compose, defer to the antithesis-setup skill.
 compatibility: Requires snouty (https://github.com/antithesishq/snouty).
 metadata:
-  version: "2026-09-23 a8fe900"
+  version: "2026-10-21 4f8d80b"
 ---
 
 # Antithesis K8s Setup
 
-**Skill version:** `2026-09-23 a8fe900`
+**Skill version:** `2026-10-21 4f8d80b`
 
 ## Purpose and Goal
 
@@ -32,6 +32,7 @@ Success means:
 - The user must have already pushed up images to the antithesis registry or is using public images. The images that should be pushed up are all the images that are required to run the templatized helm chart. There are instructions for this in `references/manifests.md` 
 
 - DO NOT PROCEED if `snouty` is not installed. See `https://raw.githubusercontent.com/antithesishq/snouty/refs/heads/main/README.md` for installation options.
+- DO NOT PROCEED if `snouty` is older than 0.8.0. Use `snouty --version` to find the version. Use `snouty update` to update.
 
 - This skill runs `kubectl`, `kind`, `k3s`, `kapp` to touch an active Kubernetes cluster to validate that the manifests are able to come up in a Kubernetes environment. Ask the user before running any of these commands. The skill should only touch Kubernetes resources that it has created and should clean up all resources it creates before exiting.
 

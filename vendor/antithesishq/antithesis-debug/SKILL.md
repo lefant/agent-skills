@@ -1,303 +1,289 @@
 ---
 name: antithesis-debug
 description: >
-  Interactively debug an Antithesis test run in the multiverse debugger
-  (MVD): launch a session from a run, open a debugging-session URL, and
-  inspect container filesystem and runtime state from inside the run.
-compatibility: Requires agent-browser v0.23.4+ (https://github.com/vercel-labs/agent-browser).
+  Run a bash script inside an Antithesis run at a chosen moment with
+  `snouty runs exec`, from the terminal and without a browser. Use it for
+  scripted forensics on a run: process and container inspection, on-disk
+  evidence, gdb attach, and general debugging. Covers command usage, the live-session requirement, common workflows and errors, and how virtual time and perturbation limit what a debugger can see.
+compatibility: Requires snouty 0.8.0 or newer (https://github.com/antithesishq/snouty), and an Antithesis tenant on release 64.0 or newer.
 metadata:
-  version: "2026-09-23 a8fe900"
+  version: "2026-10-21 4f8d80b"
 ---
 
-# Antithesis Multiverse Debugger
+<!-- Local packaging change: trailing whitespace normalized by lefant/agent-skills. -->
 
-**Skill version:** `2026-09-23 a8fe900`
+# Antithesis Debug
 
-Use the `agent-browser` skill to interact with the Antithesis multiverse
-debugger.
+**Skill version:** `2026-10-21 4f8d80b`
 
-Every debugging session should use:
-
-- a fresh, unique `SESSION` value such as `antithesis-debug-$(date +%s)-$$`
-
-Use `--session-name antithesis` so `agent-browser` manages shared
-authentication state automatically, while `--session "$SESSION"` keeps each
-debugging run isolated from other concurrent agents. Close the unique live
-session when debugging is complete.
+Execute a bash script at a moment in a run. Each call branches the multiverse and repeated calls from the same moment reproduce. Can use a currently running run or an active MVD session.
 
 ## When to use this skill
 
-Use this when:
+- The user gives you Antithesis debugging-session run ID or URL
+- The user asks you to debug or investigate a failing property, bug, or any result from a past run
+- The user makes a request to inspect container filesystem, runtime state, or events inside Antithesis
+- Triage suggested this skill because logs alone haven't explained a failure
 
-- the user gives an Antithesis debugging-session URL
-- the user makes a request to inspect container filesystem, runtime state, or events inside Antithesis
-- the triage skill has launched an MVD session when investigating the results of a run
+## Failed property warning
 
-For auth and report navigation, use the `antithesis-agent-browser` skill. It
-owns the `agent-browser` session and authentication flow. This skill handles
-the debugger itself.
+Commands run with `runs exec` on a live run can trigger a run's assertions, which will result in a failing property that looks exactly like a real bug.
+
+Use a debugging session if you want to avoid these kinds of false positives.
+Preference using a currently running run for speed, ease of use, and less core hours for commands you do not think will cause this problem.
 
 ## Prerequisites
 
-- DO NOT PROCEED if `agent-browser` is not installed. See `https://raw.githubusercontent.com/vercel-labs/agent-browser/refs/heads/main/README.md` for installation options.
-- DO NOT PROCEED if `agent-browser` is older than version `v0.23.4`. You can upgrade with `agent-browser upgrade`.
+- DO NOT PROCEED if `snouty` is not installed. See `https://raw.githubusercontent.com/antithesishq/snouty/refs/heads/main/README.md` for installation options.
+- DO NOT PROCEED if `snouty` is older than 0.8.0, the first release where `runs exec` is stable. Use `snouty --version` to find the version. Use `snouty update` to update.
+- You must have a session from a live run or MVD session to use this command. See get a live session first for more info.
+- You must be logged into an Antithesis tenant from snouty. Run `snouty doctor` to confirm. Ask your user to log you in or use an API key if you are not logged in.
 
-## Gathering user input
+## Get a live session first
 
-Before starting, collect the following from the user:
+- `exec` needs a live session. A session can either be tied to a run or MVD  session. In snouty both runs and debugging sessions show as runs.
+- A run holds one while it runs, and for a short
+  time after it ends. It will work a few minutes after completion but not hours.
+- To see if a run has an active session use:
 
-1. **Debugger URL** (required) — A debugging-session URL like `https://TENANT.antithesis.com/debugging-session/...`.
-2. **What to investigate** — Are we checking filesystem contents? Runtime state? Specific artifacts?
-3. **Container name** (if known) — The name of the container to target. If not provided, the log view or container dropdown will show available containers.
+  ```bash
+  snouty --json runs show <run> | jq -r '[.status, .sub_status // empty] | join(":") | ascii_downcase'
+  ```
 
-## Simplified vs. advanced mode
+   This prints the status and the sub-status together. `in_progress:ready` means you can run commands against the run. `in_progress` with any other sub-status, such as `in_progress:loading`, means the session is still loading.
+   `snouty runs wait <run> --until ready` returns once the run is ready to use, or once it has already finished. It prints the status it stopped at, so check that it is `in_progress:ready` before you exec.
+- If the user gives a debugging-session URL, that session may already be
+  running. Find its run ID among the sessions, matching on title, description
+  or creation time. `runs list` shows only the status, so pick an `in_progress`
+  session, then check that `runs show` reports it `in_progress:ready`:
 
-The debugger has two modes. **Prefer simplified mode** — it is sufficient for
-most tasks.
+  ```bash
+  snouty --json runs list --launcher debugging \
+    | jq -c '{run_id, status, created_at, title: .parameters["antithesis.test_name"],
+              source_run: .parameters["antithesis.debugging.run_id"]}'
+  ```
 
-| Mode           | Best for                                                                                         | How it works                                                            |
-| -------------- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
-| **Simplified** | Running shell commands, reading files, listing directories, extracting artifacts                 | Click log lines to set moment/container, type bash commands, press Send |
-| **Advanced**   | Programmatic inspection, branching, event sets, custom JavaScript, multi-step notebook workflows | Monaco editor with JavaScript cells, action authorization, runtime API  |
+  `source_run` is the value to pass to `--source-run-id`.
+- For an older run, make a debugging session first:
 
-### Detecting which mode is active
+  ```bash
+  snouty debug --run-id <run> --input-hash <hash> --vtime <vtime> \
+    --title "Counter property failure 2026-10-13"
+  ```
 
-Different tenants may open the debugger in either mode by default. After
-injecting the runtime (see `references/setup-session.md`), check which mode is
-active:
+  - Always pass a `--title` that is unique and easy to find later, for example the property name plus a date or ticket id. It is the name `snouty runs list` shows for the session. Add `--description` only if the reason won't fit in the title. `--recipients` takes semicolon-separated emails to notify.
+  - This returns a **new** run ID. Wait with `snouty runs wait <new run ID> --until ready`, then `exec` against it.
+  - Use `--source-run-id <run>` for the first command because the moment isn't warm yet. With the source, the call blocks and prints rewarming moment: N% until the moment is ready.
+  - Expect 2 to 20 minutes from snouty debug to the first successful exec: a few minutes of 404s while the session loads, then a rewarm that takes longer the later the moment's vtime. After that, the moment is warm and later commands on that moment don't need the source.
+  - If exec answers 404 or "Moment not warm", the session is still loading. Retry. Look at get a moment to find the right input-hash and vtime for your users request.
 
-```bash
-agent-browser --session "$SESSION" eval \
-  "window.__antithesisDebug.getMode()"
-```
+## Get a moment (input hash and vtime)
 
-Returns `"simplified"` or `"advanced"`. To switch:
+`input-hash` and `vtime` pin the single moment to debug. Extract the input hash and vtime from context and pass them to the command.
 
-```bash
-agent-browser --session "$SESSION" eval \
-  'window.__antithesisDebug.switchMode("simplified")'
-```
+If the user didn't give you a moment, read `references/moments.md` for where to find one.
 
-### When to escalate to advanced mode
+If you can't pin down both an input hash and a vtime from a clear source, ask
+the user rather than guessing.
 
-Switch to advanced mode only when you need:
+To find a moment (input hash + vtime) from a failing or passing property, or
+from a log line, query for it with `snouty runs search` (see step 3 of the
+example workflow).
 
-- **A target container that had crashed (or otherwise wasn't running) at the MVD recreate moment.** The simplified container dropdown only lists containers running at that point. To inspect a container while it was alive, you must time-travel back via `moment.rewind_to(...)` and target it by name via `bash...run({container: "<name>"})`. This is the one container-targeting case where advanced is strictly required.
-- Branching (`moment.branch()`) and advancing time (`branch.wait`, `branch.wait_until`)
-- Exploring multiple random histories from the same moment (`branch.send_input`)
-- Event set queries (`environment.events.up_to(moment)`, `.contains({source})`)
-- Fault injector state inspection or control (`environment.fault_injector.pause/unpause`)
-- Background processes and process-exit awaiting (`run_in_background`, `p.exits`)
-- Complex multi-cell notebook workflows with grouped authorization
-- The full JavaScript notebook API
-- As an escape hatch when something in simplified mode isn't working
+## Required input
 
-To switch programmatically, call `window.__antithesisDebug.switchMode("advanced")`.
-This is what `getMode()` reports. **Note:** there is a separate "Simple
-mode" / "Advanced mode" tab strip in the right pane (`.display_area__tabs`)
-that `switchMode()` does NOT click; the two can disagree. The right-pane
-tab strip controls the help / pop-out panel content. To read the on-page
-advanced-mode help (a canonical ~5KB reference for the notebook API), click
-the "Advanced mode" tab in that strip and read
-`document.querySelector(".display_area__layout").innerText`. See
-`references/advanced-debugger.md`.
+- `RUN_ID` is a live run, or a debugging session's run id.
+- `INPUT_HASH` and `VTIME` are a moment from that run, taken together as a pair from one event that `snouty runs search` returns.
+- `INPUT_HASH` is often negative, for example `-1520695250096255483`. Pass it as-is: snouty reads it as the hash, not as a flag, so you don't need `--`. Adding `--` turns every flag after it into a positional argument and breaks the command.
 
-## Reference files
+  ```bash
+  snouty runs exec "$RUN_ID" -1520695250096255483 67.7622960046865 'uptime'
+  ```
+- `SCRIPT` is the bash to run. Pass it as the last argument, or omit it and pipe it in, for example < script.sh.
 
-Each reference file covers a specific interaction mode or task. Read the
-relevant file before performing that task.
+## Optional flags
 
-### Simplified mode (default — start here)
+- `--timeout DURATION` is how long the server waits for the script to exit. It takes units: `90s`, `5m`, `1h`. A bare number means seconds. The default is 10m (as of release 64.0). Rewarming a cold moment does not count against it.
+- `--container NAME` runs the script inside that container. Without it, the script runs on the host.
+- `--source-run-id ID` names the run a cold moment comes from. When the target is a debugging session, this is the run you opened the session from, not the session id. Use this flag on your first command after starting a debugging session.
+- `--source-session-id ID` is the session alternative to `--source-run-id`. You can't use both.
+- `--events` streams every event on the timeline while the script runs, not just the script's output.
+- `--json` prints machine-readable json output.
 
-| Page                                | When to read                                                        |
-| ----------------------------------- | ------------------------------------------------------------------- |
-| `references/setup-session.md`       | Always — read first to set up the browser session                   |
-| `references/simplified-debugger.md` | Running commands, extracting files, reading logs in simplified mode |
+### Execution Tips
 
-### Advanced mode (using a notebook)
+- Use `--container` over podman exec inside the script to run a command on a single container.
+- `--container` needs a container name, and works only on Docker Compose tests (see Kubernetes tests below). If you've already run `snouty runs search` or `snouty runs logs`, take the name from any container log event's `source.container`. Otherwise, list them by running this once without `--container`, so it runs on the host:
 
-| Page                                | When to read                                                                              |
-| ----------------------------------- | ----------------------------------------------------------------------------------------- |
-| `references/setup-session.md`       | Always — read first to set up the browser session                                          |
-| `references/advanced-debugger.md`   | **Read this BEFORE other advanced refs** — mental model, mode-switching, authorization, branches, time advancement, fault injector, host commands, common errors |
-| `references/notebook.md`            | Reading or writing notebook source, injecting cells                                       |
-| `references/actions.md`             | Authorizing shell actions, reading action output                                          |
-| `references/common-inspections.md`  | Ready-to-use debug cell snippets for common tasks                                         |
+  ```bash
+  snouty runs exec "$TARGET" "$HASH" "$VTIME" 'podman ps -a --format "{{.Names}} {{.Status}}"'
+  ```
 
-## Recommended workflows
+  On a Docker Compose test, names are the same at every moment of a run, so list them once.
+- `--container` works only on a container that is running at your moment. If it crashed or exited earlier, `podman ps -a` shows it as `Exited`, and `--container` fails. Exec from an earlier moment when it was still up. Find one with `snouty runs search` on that container's last log lines.
+- Don't use `--container` and run on host, if you need a snapshot across multiple containers.
+- To get a file out of the run, print it to stdout and redirect locally:
 
-### Simplified: Run a command in a container
+  ```bash
+  # text
+  snouty runs exec "$TARGET" "$HASH" "$VTIME" --container app 'cat /var/log/app.log' > app.log
 
-1. Read `references/setup-session.md` — open the debugger URL
-2. Read `references/simplified-debugger.md` — click a log line to set the
-   moment and container, enter a bash command, press Send, read the output
-3. Report findings with concrete evidence
+  # binary or a directory: tar + base64, then decode locally
+  snouty runs exec "$TARGET" "$HASH" "$VTIME" --container app \
+    'tar czf - /data/db | base64' | base64 -d > db.tgz
+  ```
 
-### Simplified: Extract a file
+### Kubernetes tests
 
-1. Read `references/setup-session.md` — open the debugger URL
-2. Read `references/simplified-debugger.md` — click a log line, toggle
-   "Extract file", enter the file path, press Send
-3. Read the download link from the output
+`--container` doesn't work on a Kubernetes test (the launcher in `snouty runs show`
+contains "Kubernetes" or "k8s"). Leave it out and read `references/kubernetes.md`.
 
-### Advanced: Programmatic investigation
+## Run a Script from a File
 
-1. Read `references/setup-session.md` — open the debugger URL and inject runtime
-2. Switch to advanced mode: `window.__antithesisDebug.switchMode("advanced")`,
-   then `notebook.waitForReady()`
-3. Read `references/advanced-debugger.md` — internalize moments, branches,
-   reactive-vs-effectful, action grouping, and common errors
-4. Read `references/notebook.md` — mechanics of writing cells
-5. Read `references/common-inspections.md` — ready-to-use snippets
-6. Read `references/actions.md` — authorizing and reading action results
-7. Report findings with evidence chain
+- For anything longer than one line, write the script to a file and redirect it in:
 
-### Download the events log for offline analysis
+  ```sh
+  cat > script.sh <<'EOF'
+  echo "host: $(hostname)"
+  ps aux
+  EOF
 
-1. Read `references/setup-session.md` — launch / open the debugger URL
-2. Read `references/download-log.md` — run `assets/download-mvd-log.sh`
-   to capture and (for JSON) annotate the events log. The annotation step
-   uses this skill's own `assets/process-logs.py`.
-3. Analyze the local file with `jq` (event shape matches the triage
-   skill's logs reference)
+  snouty runs exec "$RUN_ID" "$INPUT_HASH" "$VTIME" < script.sh
+  ```
 
-## Runtime injection
+  The quotes around `'EOF'` keep `$(hostname)` from running on your machine on accident.
 
-The JS runtime is required for **both** simplified and advanced modes. It
-provides the `window.__antithesisDebug` API with three namespaces:
-`simplified`, `notebook`, and `actions`.
+- Reuse one script across moments. Run the same file at several moments and compare the outputs.
+- Save output to a file named after the moment.
+- Always save --events output to a file. The stream is long, so grep the file afterwards:
 
-Use the browser-side runtime file:
+  ```sh
+  snouty runs exec --events $RUN $HASH $VTIME < oracle.sh > out.txt
+  grep -E "FAIL|HIT|exit" out.txt
+  ```
 
-- `assets/antithesis-debug.js`
+## Picking a Timeout and Timing
 
-Inject it into the current page with:
+- Size `--timeout` to the script alone. A cold moment is rewarmed first, which can take minutes (longer the later the moment's vtime), but that time doesn't count against `--timeout`. Raise it only for slow scripts, for example `--timeout 30m`.
+- A timeout doesn't mean the script didn't run. Search the run for its output (`snouty runs search`) before re-running anything that changes state.
+- Your script advances virtual time. Keep snapshots short. Take one query at the right moment rather than polling, because polling can change the timing you're trying to observe.
+- The same command from the same moment gives the same branch. Repeating it doesn't sample new timings.
+- After one exec with a source succeeds, that moment stays warm in the session. Later commands there need no source and return quickly.
+- Earlier moments on the session's own timeline are warm too, so they need no rewarm.
 
-```bash
-cat assets/antithesis-debug.js \
-  | agent-browser --session "$SESSION" eval --stdin
-```
+## Rewarm progress
 
-Injecting the file registers methods on `window.__antithesisDebug`. Call those
-methods with `agent-browser eval`.
+A cold moment shows progress while it rewarms. By default the command prints `rewarming moment: N%` lines on stderr. With `--json`, it prints `{"status":"rewarming","percent_complete":N}` frames on stdout, ahead of the script's output.
 
-Method call examples:
+- A rising percentage means the rewarm is working. Don't retry or cancel while it climbs.
+- The percentage can stay at 0% for several minutes and then jump to near 100%. A stall at 0% is not a failure. Leave the call running.
 
-```bash
-# Simplified mode
-agent-browser --session "$SESSION" eval \
-  'window.__antithesisDebug.simplified.runCommand("ls -la /")'
+## Cancel when done
 
-# Advanced mode
-agent-browser --session "$SESSION" eval \
-  "window.__antithesisDebug.notebook.getSource()"
-```
-
-`agent-browser eval` awaits Promises automatically, so async and sync methods
-use the same call pattern.
-
-If `window.__antithesisDebug` is missing, inject `assets/antithesis-debug.js` and retry the method call.
-
-Do not run method calls in parallel with `agent-browser open`, navigation, or
-any other command that can replace the page. Wait until the target page is
-settled before starting `eval` calls. Run queries sequentially; mutations will
-interfere with each other if launched in parallel.
-
-After every `open` call or any interaction that may navigate or replace the
-page, first confirm the browser has landed on the debugger page, then inject
-`assets/antithesis-debug.js` and call the appropriate `waitForReady()` before
-running other methods.
-
-## Page loading checks
-
-After navigation, inject the runtime, then call the appropriate `waitForReady`:
+Runs and debugging sessions use core hours until they end. A debugging session doesn't end when you stop using it: by default it expires only after 6 hours. Cancel any session you opened as soon as you no longer need it, or won't need it soon:
 
 ```bash
-# Simplified mode
-agent-browser --session "$SESSION" eval \
-  "window.__antithesisDebug.simplified.waitForReady()"
-
-# Advanced mode
-agent-browser --session "$SESSION" eval \
-  "window.__antithesisDebug.notebook.waitForReady()"
+snouty runs cancel "$TARGET"
 ```
 
-Both poll for up to 60 seconds and return `{ ok, ready, attempts, waitedMs }`.
-On timeout, the result also includes `details`.
+- Ask a user before canceling a session. They may want to continue to use it for another debugging session when you are done.
+- Make sure you are completely done with a run or debugging session before canceling, as if you want to run more commands you will have to wait for a new session to get setup.
+- Don't cancel a run you didn't open unless the user asks.
 
-One-shot probes:
+# Example Workflow
+
+### 1. Prerequisites
 
 ```bash
-agent-browser --session "$SESSION" eval \
-  "window.__antithesisDebug.simplified.loadingFinished()"
-
-agent-browser --session "$SESSION" eval \
-  "window.__antithesisDebug.notebook.loadingFinished()"
+snouty --version   # 0.8.0 or newer
 ```
 
-Diagnostics:
+### 2. Get a session
 
 ```bash
-agent-browser --session "$SESSION" eval \
-  "window.__antithesisDebug.simplified.loadingStatus()"
-
-agent-browser --session "$SESSION" eval \
-  "window.__antithesisDebug.notebook.loadingStatus()"
+RUN=<run_id>
+snouty --json runs show "$RUN" | jq -r '[.status, .sub_status // empty] | join(":") | ascii_downcase'
 ```
 
-## General guidance
+- `in_progress:ready`: use the run itself. `TARGET="$RUN"`.
+- `starting`, or `in_progress` with another sub-status: wait with `snouty runs wait "$RUN" --until ready`, then use the run if the status it prints is `in_progress:ready`.
+- Otherwise: pick a moment (step 3), then open a session at it and wait for it. Retry exec on 404 or "Moment not warm" while it loads.
 
-- **Start in simplified mode.** The simplified debugger handles most debugging
-  tasks. Only switch to advanced mode when you specifically need the notebook
-  API.
-- **Defer to antithesis-agent-browser for auth.** If the debugger URL
-  requires authentication, use the `antithesis-agent-browser` skill's
-  `references/setup-auth.md` for the interactive login flow. Use the same
-  `--session-name antithesis` so auth state is shared.
-- **Use disposable sessions.** Generate a unique `SESSION` for each debugging
-  run, pair it with the shared `--session-name antithesis`, and
-  `agent-browser --session "$SESSION" close` when you finish or abort.
-- **Run commands sequentially.** In both modes, wait for each command to
-  complete before sending the next one.
-- **Do not fabricate container names.** Use the container dropdown (simplified)
-  or `environment.containers.list({moment})` (advanced) to determine valid
-  container names.
-- **Present results clearly.** When reporting filesystem contents, include the
-  full path and listing. When reporting artifact searches, include what was
-  found and what was not.
+  ```bash
+  snouty debug --run-id "$RUN" --input-hash "$HASH" --vtime "$VTIME" --title "<property> <date>"
+  TARGET=<runId from the output>
+  snouty runs wait "$TARGET" --until ready
+  ```
 
-### Advanced mode only
+### 3. Pick a moment
 
-- **Inject the runtime after navigation.** After every `open` call or page
-  reload, inject `assets/antithesis-debug.js` and call
-  `notebook.waitForReady()` before the next method call.
-- **Retry missing-runtime errors by reinjecting.** If a command fails because
-  `window.__antithesisDebug` is undefined or missing, inject the runtime and
-  rerun the same method.
-- **Group effects with `action()` + `required_by`.** Don't authorize cells
-  one at a time when a single click can fire a chain — see
-  `references/advanced-debugger.md` for the `tethered_authorization`
-  pattern.
-- **Don't edit a command that has already been authorized.** Make a new
-  branch (and new action) for the new attempt. Editing an authorized cell
-  re-runs it without re-authorization (a known bug).
-- **A nonzero exit code terminates the branch.** Subsequent commands on
-  the same branch will fail with `CAMPAIGN SAW TERMINAL EVENT`. Fork a
-  fresh branch from the same or an earlier moment.
-- **Trust `cell.text`/`innerText` over `actionCompleted`.** The runtime's
-  completion-detection misses real DONE states; read the cell text directly.
+Find moments with `snouty runs search`, and query for exactly the events you want. For example, the failing evaluations of one property:
+
+```bash
+snouty --json runs search "$RUN" \
+  'filter(ev => ev.antithesis_assert?.hit
+    && ev.antithesis_assert.id == "<property name>"
+    && !ev.antithesis_assert.condition)' \
+  | jq -r '.moment | "\(.input_hash) \(.vtime)"'
+```
+
+Drop the `!` for passing evaluations. To find a log line, use `contains({output_text: "<error text>"})`. To find an assertion by its message, use `filter(ev => ev.antithesis_assert?.message?.includes("<message text>"))`. Assertions have no `output_text`, so the log-line query won't find them. See `references/moments.md`.
+
+`runs search` returns at most 50 results by default. Add `--limit 999` if you need more than a few.
+
+### 4. Exec
+Use `--source-run-id` for the first command after starting a session because the moment is still warming up. After that, the moment is warm and later commands don't need the source unless you change the moment.
+
+```bash
+cat > probe.sh <<'EOF'
+hostname
+ps aux | head -20
+EOF
+
+snouty runs exec "$TARGET" "$HASH" "$VTIME" --source-run-id "$RUN" < probe.sh > out.txt
+```
+
+### 5. Use the results
+
+Apply the output to the user's goal, usually finding the cause of a bug. If the
+output doesn't answer the question, exec again at an earlier moment, or from the
+`end moment` line to continue forward.
+
+If necessary give the user the moment, the script, and the relevant output, so they can rerun it.
+
+### 6. Cancel
+
+If you opened a session, ask a user if they want you to cancel the run once you are done running commands. Otherwise it keeps using core hours until it expires after 6 hours:
+
+```bash
+snouty runs cancel "$TARGET"
+```
+
+## gdb
+
+To inspect a process with gdb, read `references/gdb.md`.
+
+## Virtual time
+
+Before choosing a moment or probing a transient event, read
+`references/virtual-time.md`.
+
+If the earlier moment isn't warm, add --source-run-id.
+
+## Common Errors
+
+If `exec` returns an error, read `references/errors.md`.
 
 ## Self-Review
 
-Before declaring this skill complete, review your work against the criteria
-below. This skill's output is conversational (summaries, evidence, analysis),
-so the review should happen in your current context. Re-read the guidance in
-this file, then systematically check each item below against the answers and
-analysis you produced.
+Before reporting back, check your work against these criteria:
 
-Review criteria:
+- Every finding comes from actual `exec` output, not inferred or assumed.
+- The evidence chain is clear: the moment (input hash and vtime), the script, what it returned, and what follows from it.
+- The summary separates what the output shows from what you interpret or recommend.
+- You've asked the user if you should cancel any debugging session you opened, or the user knows it is still running.
 
-- Every filesystem listing or artifact search was extracted from actual debugger output, not inferred or assumed
-- The evidence chain is clear: which commands were run, what they returned, and what conclusions follow
-- The summary distinguishes between what the debugger shows and what you interpret or recommend
-- The browser session was closed at the end of the debugging run
+## Known issues
+
+- `exec` can still return 404 for several minutes after `snouty runs wait --until ready` returns. Keep retrying; the session is still loading.
+- After `snouty runs cancel`, the run's status may show `completed` instead of `cancelled`. The cancel worked.

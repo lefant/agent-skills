@@ -215,6 +215,13 @@ for path, old, new in replacements:
     if old in text:
         path.write_text(text.replace(old, new))
 
+debug_path = repo_root / 'vendor/antithesishq/antithesis-debug/SKILL.md'
+debug_text = debug_path.read_text()
+debug_notice = '<!-- Local packaging change: trailing whitespace normalized by lefant/agent-skills. -->'
+if debug_notice not in debug_text:
+    debug_text = debug_text.replace('\n# Antithesis Debug\n', f'\n{debug_notice}\n\n# Antithesis Debug\n')
+debug_path.write_text(re.sub(r'(?m)[ \t]+$', '', debug_text))
+
 # Local scope policy replaces upstream auto-triggers, including on hosts that
 # ignore disable-model-invocation. Keep this list explicit for reviewed skills.
 opt_in_skills = {
@@ -497,12 +504,16 @@ fetch_file "mattpocock/skills" "LICENSE" "$VENDOR_DIR/mattpocock/LICENSE" || tru
 
 # Antithesis - reviewed root-level skills; exclude internal tests and plugin/CI files
 fetch_skillset "antithesishq/antithesis-skills" "." "$VENDOR_DIR/antithesishq" \
-    antithesis-agent-browser antithesis-debug antithesis-documentation \
+    antithesis-debug antithesis-documentation \
     antithesis-feature-workload antithesis-launch antithesis-mutation-testing \
-    antithesis-query-logs antithesis-research antithesis-review-inputs \
+    antithesis-research antithesis-review-inputs \
     antithesis-setup antithesis-setup-k8s antithesis-skills-feedback \
     antithesis-triage antithesis-workload || true
 fetch_file "antithesishq/antithesis-skills" "LICENSE" "$VENDOR_DIR/antithesishq/LICENSE" || true
+if [[ "$FETCHED_REPOS" == *" antithesishq/antithesis-skills "* && "$FAILED" == 0 ]]; then
+    # Retired upstream; their replacements ship in debug and triage together.
+    rm -rf "$VENDOR_DIR/antithesishq/antithesis-agent-browser" "$VENDOR_DIR/antithesishq/antithesis-query-logs"
+fi
 
 # Hegel - property-based testing and its companion review checklist
 fetch_skillset "hegeldev/hegel-skill" "skills" "$VENDOR_DIR/hegeldev" \

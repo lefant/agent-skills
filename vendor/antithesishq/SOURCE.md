@@ -2,15 +2,27 @@
 
 - Source: <https://github.com/antithesishq/antithesis-skills>
 - Initial import revision: [`1fd8470d36a9629a75bda4619a5589d679a40d7c`](https://github.com/antithesishq/antithesis-skills/commit/1fd8470d36a9629a75bda4619a5589d679a40d7c)
-- Reviewed: 2026-10-02
+- Current revision: [`ca4b8fba0991dbaf4b1b57bea9a4b9605725025f`](https://github.com/antithesishq/antithesis-skills/commit/ca4b8fba0991dbaf4b1b57bea9a4b9605725025f)
+- Reviewed: 2026-10-28
 - License: Apache-2.0, preserved verbatim in [LICENSE](LICENSE).
-- Selection: all 14 root-level `antithesis-*/SKILL.md` packages listed in the
+- Selection: all 12 root-level `antithesis-*/SKILL.md` packages listed in the
   upstream README. The upstream plugin manifest uses `"skills": "./"`, not an
   explicit allowlist. Our updater uses an explicit list so additions need review.
-- Local changes to skill packages: none. All 107 bundled files, their relative
-  paths, and executable bits are preserved. The license is an additional file.
-- Excluded: `.claude/skills/test-triage`, root browser integration test suites,
+- Local changes: `antithesis-debug/SKILL.md` has trailing whitespace removed and
+  a modification notice. All other content across the 88 packaged files, relative
+  paths, and executable bits matches upstream. The license is an additional file.
+- Excluded: internal test skills, repository test suites,
   CI, install scripts, plugin manifests, and the getting-started website assets.
+
+## CLI migration
+
+Upstream retired `antithesis-agent-browser` and `antithesis-query-logs`. They are
+removed with this coordinated refresh, not retained as stale entrypoints.
+`antithesis-triage` uses `snouty runs search` for cross-timeline queries;
+`antithesis-debug` uses `snouty runs exec` for scripted inspection. Browser
+JavaScript, log-processing helpers, and notebook automation are no longer bundled.
+Launch examples now use `--launcher`, and Go guidance uses
+`antithesis-go-toolexec` instead of the source-transform instrumentor.
 
 ## Inventory
 
@@ -18,13 +30,11 @@ Each entry is both the upstream root directory and the local directory under
 `vendor/antithesishq/`:
 
 ```text
-antithesis-agent-browser
 antithesis-debug
 antithesis-documentation
 antithesis-feature-workload
 antithesis-launch
 antithesis-mutation-testing
-antithesis-query-logs
 antithesis-research
 antithesis-review-inputs
 antithesis-setup
@@ -36,7 +46,7 @@ antithesis-workload
 
 `scripts/update-vendor.sh` maps these root directories to the flat vendor layout.
 As with other collections, it fetches latest upstream for review; it does not
-reproduce this initial revision. Record a new reviewed revision here when updating.
+reproduce this revision. Record a new reviewed revision here when updating.
 
 ## Static safety review and operating boundaries
 
@@ -46,17 +56,17 @@ or permission to run the workflows. No bundled MCP configuration, hooks,
 symlinks, binaries, or automatic installation entrypoints are present. Importing
 the collection executes none of its helpers.
 
-- Browser JavaScript reads and interacts with the authenticated Antithesis DOM.
-  Debug helpers also submit shell commands, extract files, edit notebooks, and
-  click action authorization buttons, including `authorizeAll`. Inspect the
-  commands and their target before authorizing; do not treat that API as human
-  approval. Upstream warns that editing an already-authorized cell can re-run it.
-- Browser downloads reuse persisted `antithesis` authentication, accept a URL
-  and output path, and can replace an existing output. Their page checks match
-  URL paths, not trusted origins. Validate the exact HTTPS tenant origin before
-  opening a URL or injecting a runtime. Keep cookies, signed report URLs, raw
-  logs, extracted files, and notebook output private. Complete login/MFA through
-  the user's browser, not by asking for credentials in chat.
+- Snouty uses configured tenant credentials. Keep API keys, signed report URLs,
+  raw logs, and extracted files private. Use the host's private credential flow;
+  never ask for API keys in chat. Triage needs a successful `snouty doctor` check.
+- `runs exec` executes shell commands inside a live run or debugging session.
+  Confirm the target, moment, and authorized inspection before executing. It can
+  perturb the system or trigger assertions; prefer a separate debugging session
+  for probes that could contaminate a live run. Each call branches from its
+  moment; continue from its returned end moment when state must carry forward.
+  A timeout does not prove the script did not run: inspect output before retrying
+  state-changing commands. New debugging sessions use core hours; obtain launch
+  authorization and ask before cancellation. Do not cancel someone else's run.
 - Setup and launch build images and can upload proprietary images/configuration
   and spend run budget. Kubernetes setup applies and deletes resources. Require
   authorization for these effects, use a disposable test cluster, and restrict
@@ -80,22 +90,17 @@ the collection executes none of its helpers.
 
 - Requires macOS/Linux tooling: Bash, Git, rsync, Python 3, jq, Docker Compose v2
   and a container engine as appropriate. Platform calls need configured Snouty;
-  triage requests Snouty 0.6.0+, browser/debug helpers agent-browser 0.23.4+.
+  this snapshot requires Snouty 0.8.0+ and debug needs tenant release 64.0+.
   Mutation scripts specifically prefer the standalone `docker-compose` binary.
   Inspect installed CLI help instead of assuming every example matches it.
-- Authentication needs an interactive browser when stored state is unavailable.
-  A remote orb needs a human-visible browser workflow; a headed local command
-  alone does not make a window accessible to the user. The query-logs example
-  includes `--no-sandbox`; prefer the host's normal sandboxed browser setup and
-  do not copy that flag without an environment-specific reason.
+- Browser automation is no longer required for triage or debugging. If login
+  needs interactive consent, use the host's human-visible browser workflow.
 - Keep every `assets/` and `references/` subtree intact and resolve relative
   commands against the loaded skill directory. Preserve executable bits: the
   mutation scripts invoke sibling scripts directly. Embedded `AGENTS.md` files
   are templates for generated harnesses, not collection-wide instructions.
-- This is an interdependent collection: some references explicitly belong to
-  another Antithesis skill (for example, browser log annotation uses debug's
-  `assets/process-logs.py`). Resolve those against the named skill, not the
-  current directory; a single-skill export may need companion skills installed.
+- This is an interdependent collection: a single-skill export may need companion
+  skills installed. Resolve sibling-skill references against the named package.
 - Bare Antithesis skill names refer to this family. A namespaced Amp exporter
   must qualify invocation references consistently, including bundled references
   and templates, without rewriting filesystem paths, CLI flags, or URLs. Avoid
@@ -105,22 +110,21 @@ the collection executes none of its helpers.
   exported skills; retain upstream notices and mark modified files prominently.
   No upstream `NOTICE` file exists at this revision. Export this provenance too.
   No plugin activation, account configuration, or publication is done here.
-- Browser selectors and the reverse-engineered Logs Explorer URL format may
-  drift. Local helper tests do not validate the current authenticated platform.
+- Search results are capped samples, not an exhaustive proof that an event never
+  happened. Local checks do not validate the current authenticated platform.
 
 ## Verification commands
 
 ```sh
 ./scripts/check-vendor-layout.sh
 bash scripts/tests/check-vendor-layout.test.sh
+python3 scripts/tests/vendor-safety.test.py -v
 bash -n scripts/update-vendor.sh
 find vendor/antithesishq -name '*.sh' -exec bash -n {} \;
-find vendor/antithesishq -name '*.js' -exec node --check {} \;
-python3 vendor/antithesishq/antithesis-query-logs/assets/build-url.py --test
-python3 vendor/antithesishq/antithesis-debug/assets/process-logs.py --test
 ```
 
 For snapshot verification, compare every selected package path, file byte, and
-executable bit plus `LICENSE` to a checkout of the revision above. Do not run the
-multi-vendor updater just to verify this import. The import does not validate
+executable bit plus `LICENSE` to a checkout of the revision above, accounting for
+the documented formatting-only patch. Do not run the multi-vendor updater just
+to verify this import. The import does not validate
 live Snouty, Docker/Kubernetes, authentication, or Antithesis runs.

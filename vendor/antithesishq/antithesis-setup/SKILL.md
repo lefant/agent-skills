@@ -6,12 +6,12 @@ description: >
   to submit your first Antithesis test run. If the desired setup is Kubernetes, defer to the antithesis-setup-k8s skill.
 compatibility: Requires Docker Compose v2, a container engine (docker or podman), and snouty (https://github.com/antithesishq/snouty).
 metadata:
-  version: "2026-09-23 a8fe900"
+  version: "2026-10-21 4f8d80b"
 ---
 
 # Antithesis Setup
 
-**Skill version:** `2026-09-23 a8fe900`
+**Skill version:** `2026-10-21 4f8d80b`
 
 ## Purpose and Goal
 
@@ -51,6 +51,7 @@ Success means:
   The user-facing commit display uses the short hash (first 12 characters) for readability; the frontmatter still stores the full SHA.
 
 - DO NOT PROCEED if `snouty` is not installed. See `https://raw.githubusercontent.com/antithesishq/snouty/refs/heads/main/README.md` for installation options.
+- DO NOT PROCEED if `snouty` is older than 0.8.0. Use `snouty --version` to find the version. Use `snouty update` to update.
 
 ## Documentation Grounding
 

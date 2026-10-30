@@ -3,12 +3,12 @@ name: antithesis-documentation
 description: Use Antithesis documentation efficiently for product, workflow, and integration questions. Prefer the snouty docs CLI when available, and otherwise request markdown versions of documentation pages directly.
 compatibility: Requires snouty (https://github.com/antithesishq/snouty).
 metadata:
-  version: "2026-09-23 a8fe900"
+  version: "2026-10-21 4f8d80b"
 ---
 
 # Antithesis Documentation
 
-**Skill version:** `2026-09-23 a8fe900`
+**Skill version:** `2026-10-21 4f8d80b`
 
 ## Antithesis Overview
 
@@ -30,6 +30,8 @@ Run `snouty docs --help` to get started.
 2. Point them to the install source: `https://github.com/antithesishq/snouty`
 3. Ask whether they want you to install it. If yes, follow instructions in `https://raw.githubusercontent.com/antithesishq/snouty/refs/heads/main/README.md`.
 4. After installation, re-run `snouty --help`.
+
+If `snouty --version` is older than 0.8.0, run `snouty update` first.
 
 ## Using `snouty docs`
 

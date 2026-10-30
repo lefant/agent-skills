@@ -6,7 +6,7 @@ description: >-
   that runs locally and in Antithesis, and iterate until the feature's
   behaviors are exercised and its invariants are checked.
 metadata:
-  version: "2026-09-23 a8fe900"
+  version: "2026-10-21 4f8d80b"
   model_guidance:
     - model: all
       level: required
@@ -22,7 +22,7 @@ metadata:
 
 # Build a feature workload for Antithesis
 
-**Skill version:** `2026-09-23 a8fe900`
+**Skill version:** `2026-10-21 4f8d80b`
 
 ## Purpose and Goal
 
@@ -62,8 +62,8 @@ assertions pass on the first run.
 - A feature to test — source code, a spec, a description, or a combination
 - Access to the SUT source code
 - Docker Compose v2 and a container engine (Docker or Podman) for local runs
-- `snouty` CLI installed when moving to Antithesis runs (not needed for
-  local-only work)
+- `snouty` CLI 0.8.0 or newer installed when moving to Antithesis runs (not
+  needed for local-only work)
 
 ## Relationship to Other Skills
 
