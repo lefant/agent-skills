@@ -24,22 +24,49 @@ the active kernel or user, and the kernel may overwrite them on save. Use
 `marimo._code_mode` (`cm`) for notebook changes. Reading disk is fine, but
 prefer `ctx.cells[...].code` for current cell code.
 
+The harness reports the absolute path to this `SKILL.md`. Resolve bundled
+`scripts/...` and `reference/...` paths from its parent directory, even when
+the current working directory is a notebook workspace. In command examples,
+replace `/absolute/path/to/marimo-pair` with that directory.
+
+## Required first kernel command
+
+Start every code-mode session with this dedicated command:
+
+```bash
+bash /absolute/path/to/marimo-pair/scripts/execute-code.sh \
+  --url http://localhost:2718 \
+  -c "import marimo._code_mode as cm; help(cm)"
+```
+
+Follow this order for each kernel, including read-only tasks:
+
+1. Run the inspection command once.
+2. Wait for successful `help(cm)` output.
+3. Then use `cm.get_context()` or another `cm` API in a later call.
+
+Do not run task-specific `cm` code before the inspection command succeeds.
+
 ## Connect to a Notebook
 
-Use the bundled script (`bash scripts/execute-code.sh`) or MCP
+Use the bundled `execute-code.sh` from the reported skill directory or MCP
 (`execute_code(...)`) to run Python in a live marimo kernel.
 
 `execute-code.sh` always takes `--url`. If the user provides a notebook URL,
-target it directly:
+run the required inspection against it directly:
 
 ```bash
-bash scripts/execute-code.sh --url http://localhost:2718 -c "print('connected')"
+bash /absolute/path/to/marimo-pair/scripts/execute-code.sh \
+  --url http://localhost:2718 \
+  -c "import marimo._code_mode as cm; help(cm)"
 ```
 
-Pass code with `-c CODE`, `-` for stdin, or a file path:
+After that command succeeds, pass task code with `-c CODE`, `-` for stdin, or
+a file path:
 
 ```bash
-bash scripts/execute-code.sh --url http://localhost:2718 - <<'PY'
+bash /absolute/path/to/marimo-pair/scripts/execute-code.sh \
+  --url http://localhost:2718 - <<'PY'
 import marimo._code_mode as cm
 
 async with cm.get_context() as ctx:
@@ -49,10 +76,10 @@ PY
 ```
 
 If the user gives no URL, find or start a notebook. Look for a running server
-with `bash scripts/discover-servers.sh`, MCP `list_sessions()`, or local
-process context, and pass the `url` it reports to `--url`. With one notebook
-open, the script targets it automatically; with several, pass `--file` with
-the notebook's file key.
+with `bash /absolute/path/to/marimo-pair/scripts/discover-servers.sh`, MCP
+`list_sessions()`, or local process context, and pass the `url` it reports to
+`--url`. With one notebook open, the script targets it automatically; with
+several, pass `--file` with the notebook's file key.
 
 If no server is running and the user wants a notebook, start marimo with
 `--no-token` (and without `--headless`) so it auto-registers for discovery. The
@@ -104,14 +131,6 @@ anything a user would run — methods can change or disappear across marimo
 versions and kernels. Treat every `import marimo._code_mode as cm` as
 scratchpad-only.
 
-At session start, inspect what `cm` exposes in the active kernel:
-
-```python
-import marimo._code_mode as cm
-
-help(cm)
-```
-
 Open a code-mode context to queue notebook changes.
 
 ```python
@@ -158,32 +177,10 @@ a directed acyclic graph (DAG):
 These rules keep the kernel, UI, and saved artifact consistent.
 
 When `cm` submits a cell body, marimo parses its top-level definitions and
-references. A top-level name enters the graph unless it is private with a
-leading underscore.
-
-```python
-# Public definitions: values, total, i, value, mean
-values = np.array([1, 2, 3])
-total = 0
-for i, value in enumerate(values):
-    total += value
-mean = total / len(values)
-mean
-```
-
-```python
-# Public definition: mean
-_values = np.array([1, 2, 3])
-_total = 0
-for _i, _value in enumerate(_values):
-    _total += _value
-mean = _total / len(_values)
-mean
-```
-
-Use private names for intermediates that no other cell should read. Public
-names define the notebook-level dataflow. If a `cm` edit violates the contract,
-marimo rejects the structural change and returns the validation error.
+references. Public names enter the graph. Names that start with `_` are local
+to their cell and unavailable to other cells. If a `cm` edit violates the
+contract, marimo rejects the structural change and returns the validation
+error.
 
 ## The Notebook's Shape
 
@@ -242,15 +239,21 @@ Submit the code that belongs in the cell.
   `ctx.cells[...]` and submit the full replacement.
 - **Reuse notebook imports** - if `np` already exists, use it or edit the owning
   import cell. DO NOT add `import numpy as _np` just to bypass the graph.
-- **Define public names intentionally** - use public names for values later
-  cells should reference. Use private `_name` bindings or function locals for
-  same-cell intermediates.
 - **Define each public name once** - a public name has one owning cell.
   Reassigning it in another cell fails with `Multiply-defined names`; edit the
   owning cell or give the result a new name. See
   [gotchas.md](reference/gotchas.md).
 - **Run cells deliberately** - `create_cell` and `edit_cell` change structure
   only. Queue `ctx.run_cell(...)` when the cell should execute.
+
+### Cell Boundaries
+
+A cell is also a rerun boundary. Put expensive or reusable computation
+upstream of presentation so UI edits stay cheap. Keep cheap,
+presentation-specific work with the view when that is easier to read.
+
+Use `mo.vstack` and `mo.hstack` only when the composition is part of the UI.
+Narrative often reads better in an adjacent markdown cell.
 
 ### Prefer `cm`-Managed Changes
 
