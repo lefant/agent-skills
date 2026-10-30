@@ -63,3 +63,7 @@ Prefer not to edit directly in the shared cache. Create a separate worktree or c
 ## Notes
 
 - `owner/repo` defaults to `github.com`.
+- Local safety changes in lefant/agent-skills reject traversal components and
+  symlinks below the cache root. Existing repositories must have a matching
+  origin; equivalent SSH/HTTPS URLs are preserved, never rewritten. On a mismatch,
+  inspect the existing checkout rather than changing its remote automatically.

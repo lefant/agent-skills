@@ -5,37 +5,71 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SOURCE_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+# Stage the entire update on the same filesystem. Failed fetches, patches, and
+# checks must leave the checked-in snapshot intact.
+TEMP_DIR=$(mktemp -d "$SOURCE_ROOT/.vendor-update.XXXXXX")
+cleanup() {
+    if [[ -d "$TEMP_DIR/previous-vendor" && ! -e "$SOURCE_ROOT/vendor" ]]; then
+        mv "$TEMP_DIR/previous-vendor" "$SOURCE_ROOT/vendor"
+    fi
+    rm -rf "$TEMP_DIR"
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+REPO_ROOT="$TEMP_DIR/staged"
+mkdir -p "$REPO_ROOT"
+cp -a "$SOURCE_ROOT/vendor" "$SOURCE_ROOT/lefant" "$SCRIPT_DIR" "$REPO_ROOT/"
+SCRIPT_DIR="$REPO_ROOT/scripts"
 VENDOR_DIR="$REPO_ROOT/vendor"
-TEMP_DIR=$(mktemp -d)
-trap "rm -rf $TEMP_DIR" EXIT
+FAILED=0
+SELECTED_REPOS=("$@")
+FETCHED_REPOS=" "
+
+# Optional positional repository names support reviewed, targeted updates.
+should_fetch() {
+    local selected
+    if [[ ${#SELECTED_REPOS[@]} -gt 0 ]]; then
+        for selected in "${SELECTED_REPOS[@]}"; do
+            [[ "$selected" != "$1" ]] || break
+        done
+        [[ "$selected" == "$1" ]] || return 1
+    fi
+    FETCHED_REPOS+="$1 "
+    rm -rf "$TEMP_DIR/repo"
+}
 
 fetch_skill() {
     local repo=$1
     local skill_path=$2
     local target_dir=$3
+    should_fetch "$repo" || return 0
 
     echo "Fetching $repo -> $skill_path"
     if ! git clone --depth 1 --filter=blob:none --sparse "https://github.com/$repo.git" "$TEMP_DIR/repo" 2>/dev/null; then
         echo "  Warning: Failed to clone $repo, skipping..."
+        FAILED=1
         return 1
     fi
 
     if ! git -C "$TEMP_DIR/repo" sparse-checkout set "$skill_path" 2>/dev/null; then
         echo "  Warning: Path $skill_path not found in $repo, skipping..."
         rm -rf "$TEMP_DIR/repo"
+        FAILED=1
         return 1
     fi
 
-    if [[ ! -d "$TEMP_DIR/repo/$skill_path" ]]; then
+    if [[ ! -f "$TEMP_DIR/repo/$skill_path/SKILL.md" ]]; then
         echo "  Warning: Path $skill_path not found in $repo, skipping..."
         rm -rf "$TEMP_DIR/repo"
+        FAILED=1
         return 1
     fi
 
     rm -rf "$target_dir"
     mkdir -p "$(dirname "$target_dir")"
-    cp -r "$TEMP_DIR/repo/$skill_path" "$target_dir"
+    cp -a "$TEMP_DIR/repo/$skill_path" "$target_dir" || { FAILED=1; return 1; }
     rm -rf "$TEMP_DIR/repo"
     echo "  -> $target_dir"
 }
@@ -44,27 +78,31 @@ fetch_file() {
     local repo=$1
     local file_path=$2
     local target_file=$3
+    should_fetch "$repo" || return 0
 
     echo "Fetching $repo -> $file_path"
     if ! git clone --depth 1 --filter=blob:none --sparse "https://github.com/$repo.git" "$TEMP_DIR/repo" 2>/dev/null; then
         echo "  Warning: Failed to clone $repo, skipping..."
+        FAILED=1
         return 1
     fi
 
     if ! git -C "$TEMP_DIR/repo" sparse-checkout set --no-cone "$file_path" 2>/dev/null; then
         echo "  Warning: Path $file_path not found in $repo, skipping..."
         rm -rf "$TEMP_DIR/repo"
+        FAILED=1
         return 1
     fi
 
     if [[ ! -f "$TEMP_DIR/repo/$file_path" ]]; then
         echo "  Warning: Path $file_path not found in $repo, skipping..."
         rm -rf "$TEMP_DIR/repo"
+        FAILED=1
         return 1
     fi
 
     mkdir -p "$(dirname "$target_file")"
-    cp "$TEMP_DIR/repo/$file_path" "$target_file"
+    cp "$TEMP_DIR/repo/$file_path" "$target_file" || { FAILED=1; return 1; }
     rm -rf "$TEMP_DIR/repo"
     echo "  -> $target_file"
 }
@@ -76,10 +114,12 @@ fetch_skillset() {
     shift 3
     local names=("$@")
     local sparse_paths=()
+    should_fetch "$repo" || return 0
 
     echo "Fetching $repo -> $source_base/{${names[*]}}"
     if ! git clone --depth 1 --filter=blob:none --sparse "https://github.com/$repo.git" "$TEMP_DIR/repo" 2>/dev/null; then
         echo "  Warning: Failed to clone $repo, skipping..."
+        FAILED=1
         return 1
     fi
 
@@ -90,17 +130,21 @@ fetch_skillset() {
     if ! git -C "$TEMP_DIR/repo" sparse-checkout set "${sparse_paths[@]}" 2>/dev/null; then
         echo "  Warning: One or more paths not found in $repo, skipping..."
         rm -rf "$TEMP_DIR/repo"
+        FAILED=1
         return 1
     fi
 
+    for name in "${names[@]}"; do
+        if [[ ! -f "$TEMP_DIR/repo/$source_base/$name/SKILL.md" ]]; then
+            echo "  Error: Missing skill $source_base/$name in $repo" >&2
+            FAILED=1
+            return 1
+        fi
+    done
     mkdir -p "$target_base"
     for name in "${names[@]}"; do
         rm -rf "$target_base/$name"
-        if [[ ! -d "$TEMP_DIR/repo/$source_base/$name" ]]; then
-            echo "  Warning: Path $source_base/$name not found in $repo, skipping..."
-            continue
-        fi
-        cp -r "$TEMP_DIR/repo/$source_base/$name" "$target_base/$name"
+        cp -a "$TEMP_DIR/repo/$source_base/$name" "$target_base/$name" || { FAILED=1; return 1; }
         echo "  -> $target_base/$name"
     done
 
@@ -321,6 +365,14 @@ if missing_snippets:
         + ', '.join(missing_snippets)
     )
 PY
+
+    local safety_patch="$SCRIPT_DIR/patches/librarian-cache-safety.patch"
+    if patch -d "$REPO_ROOT" -p1 --batch --fuzz=0 --forward --dry-run < "$safety_patch" >/dev/null 2>&1; then
+        patch -d "$REPO_ROOT" -p1 --batch --fuzz=0 --forward --no-backup-if-mismatch < "$safety_patch"
+    elif ! patch -d "$REPO_ROOT" -p1 --batch --fuzz=0 --reverse --dry-run < "$safety_patch" >/dev/null 2>&1; then
+        echo "Error: Librarian safety patch no longer applies; review upstream drift." >&2
+        return 1
+    fi
 }
 
 echo "Updating vendored skills..."
@@ -405,7 +457,6 @@ fetch_file "woosal1337/blog" "videos/ep01-the-cure-for-ai-slop/ste-lint.py" "$VE
 fetch_file "woosal1337/blog" "LICENSE" "$VENDOR_DIR/woosal1337/LICENSE" || true
 
 # Pulumi - agent-skills
-rm -rf "$VENDOR_DIR/pulumi"
 fetch_skillset "pulumi/agent-skills" "migration/skills" "$VENDOR_DIR/pulumi" \
     pulumi-terraform-to-pulumi \
     pulumi-cdk-to-pulumi \
@@ -426,7 +477,6 @@ fetch_skillset "pulumi/agent-skills" "delegation/skills" "$VENDOR_DIR/pulumi" \
     pulumi-neo-handoff || true
 
 # Kepano - Obsidian skills
-rm -rf "$VENDOR_DIR/kepano/obsidian-skills"
 fetch_skillset "kepano/obsidian-skills" "skills" "$VENDOR_DIR/kepano" \
     defuddle \
     json-canvas \
@@ -472,11 +522,25 @@ for skill in quint-lang quint-modeling quint-execute-spec; do
     fetch_file "quint-co/quint-llm-kit" "LICENSE" "$VENDOR_DIR/quint-co/$skill/LICENSE" || true
 done
 
+for selected in "${SELECTED_REPOS[@]}"; do
+    if [[ "$FETCHED_REPOS" != *" $selected "* ]]; then
+        echo "Error: Unknown upstream repository: $selected" >&2
+        FAILED=1
+    fi
+done
+if [[ "$FAILED" != 0 ]]; then
+    echo "Update failed; existing vendor snapshot is unchanged." >&2
+    exit 1
+fi
+
 apply_post_fetch_fixes
 
 "$SCRIPT_DIR/check-show-me-vendor.py"
 "$SCRIPT_DIR/check-ste-lint.sh"
 "$SCRIPT_DIR/check-vendor-layout.sh"
+
+mv "$SOURCE_ROOT/vendor" "$TEMP_DIR/previous-vendor"
+mv "$VENDOR_DIR" "$SOURCE_ROOT/vendor"
 
 echo ""
 echo "Done. Review changes with: git diff vendor/"

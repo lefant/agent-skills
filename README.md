@@ -95,12 +95,23 @@ Cloned to `/opt/lefant-agent-skills` and symlinked via entrypoint.
 ```
 Then review changes before committing.
 
+For a targeted refresh, pass upstream repository names, for example:
+
+```bash
+./scripts/update-vendor.sh antithesishq/antithesis-skills typesafe-ai/skills
+```
+
+The updater stages fetches, local patches, and checks before replacing `vendor/`.
+Failures leave the existing snapshot unchanged. See the
+[vendor maintenance notes](vendor/README.md#update-process) for held updates.
+
 ### Vendor Quality Checks
 
 Before committing vendor changes, verify skill discoverability:
 
 ```bash
 ./scripts/check-vendor-layout.sh
+python3 scripts/tests/vendor-safety.test.py -v
 ```
 
 For quick manual inspection:

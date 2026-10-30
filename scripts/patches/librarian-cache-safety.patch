@@ -1,0 +1,115 @@
+diff --git a/vendor/mitsuhiko/librarian/SKILL.md b/vendor/mitsuhiko/librarian/SKILL.md
+index 4df0cee..fa13ce5 100644
+--- a/vendor/mitsuhiko/librarian/SKILL.md
++++ b/vendor/mitsuhiko/librarian/SKILL.md
+@@ -63,3 +63,7 @@ Prefer not to edit directly in the shared cache. Create a separate worktree or c
+ ## Notes
+
+ - `owner/repo` defaults to `github.com`.
++- Local safety changes in lefant/agent-skills reject traversal components and
++  symlinks below the cache root. Existing repositories must have a matching
++  origin; equivalent SSH/HTTPS URLs are preserved, never rewritten. On a mismatch,
++  inspect the existing checkout rather than changing its remote automatically.
+diff --git a/vendor/mitsuhiko/librarian/checkout.sh b/vendor/mitsuhiko/librarian/checkout.sh
+index 6876d91..029427c 100755
+--- a/vendor/mitsuhiko/librarian/checkout.sh
++++ b/vendor/mitsuhiko/librarian/checkout.sh
+@@ -1,4 +1,5 @@
+ #!/usr/bin/env bash
++# Modified for lefant/agent-skills: constrain cache paths and verify existing origins.
+ set -euo pipefail
+
+ usage() {
+@@ -89,7 +90,8 @@ trim_repo_input() {
+ }
+
+ parse_repo() {
+-  local input host path first rest
++  local input host path first rest part
++  local -a parts
+   input="$(trim_repo_input "$1")"
+
+   # Strip query/fragment for URL-like inputs.
+@@ -163,9 +165,21 @@ parse_repo() {
+     return 1
+   fi
+
++  if ! [[ "$host" =~ ^[[:alnum:]][[:alnum:].-]*(:[0-9]+)?$ ]]; then
++    echo "error: invalid repository host" >&2
++    return 1
++  fi
++  for part in "${parts[@]}"; do
++    if ! [[ "$part" =~ ^[[:alnum:]_][[:alnum:]_.-]*$ ]]; then
++      echo "error: invalid repository path component" >&2
++      return 1
++    fi
++  done
++
+   printf '%s\n%s\n%s\n' "$host" "$org" "$repo"
+ }
+
++parsed="$(parse_repo "$repo_input")" || exit 2
+ parsed_host=""
+ parsed_org=""
+ parsed_repo=""
+@@ -177,19 +191,38 @@ while IFS= read -r line; do
+     2) parsed_repo="$line" ;;
+   esac
+   parsed_index=$((parsed_index + 1))
+-done < <(parse_repo "$repo_input")
++done <<< "$parsed"
+
+ host="$parsed_host"
+ org="$parsed_org"
+ repo="$parsed_repo"
+
+ cache_root="${LIBRARIAN_CACHE_ROOT:-$HOME/.cache/checkouts}"
+-checkout_path="$cache_root/$host/$org/$repo"
+ origin_url="https://$host/$org/$repo.git"
+
+-mkdir -p "$(dirname "$checkout_path")"
++# Resolve the user-selected root, then reject symlinks below it before writes.
++mkdir -p "$cache_root"
++cache_root="$(cd "$cache_root" && pwd -P)"
++checkout_path="$cache_root"
++IFS='/' read -r -a components <<< "$host/$org/$repo"
++for component in "${components[@]}"; do
++  checkout_path="$checkout_path/$component"
++  if [[ -L "$checkout_path" ]]; then
++    echo "error: symlink in checkout path: $checkout_path" >&2
++    exit 3
++  fi
++done
++if [[ -L "$checkout_path/.git" ]]; then
++  echo "error: symlinked git directory: $checkout_path" >&2
++  exit 3
++fi
+
+ if [[ ! -d "$checkout_path/.git" ]]; then
++  if [[ -e "$checkout_path" ]]; then
++    echo "error: existing path is not a cached git repository: $checkout_path" >&2
++    exit 3
++  fi
++  mkdir -p "$(dirname "$checkout_path")"
+   git clone --filter=blob:none "$origin_url" "$checkout_path" >/dev/null
+   clone_state="cloned"
+ else
+@@ -201,14 +234,11 @@ if [[ ! -d "$checkout_path/.git" ]]; then
+   exit 3
+ fi
+
+-if ! git -C "$checkout_path" remote get-url origin >/dev/null 2>&1; then
+-  git -C "$checkout_path" remote add origin "$origin_url"
+-fi
+-
+-# If remote URL changed (e.g. host shorthand), normalize to canonical HTTPS URL.
++# Accept equivalent SSH/HTTPS origins, but never retarget an existing checkout.
+ current_origin="$(git -C "$checkout_path" remote get-url origin 2>/dev/null || true)"
+-if [[ "$current_origin" != "$origin_url" ]]; then
+-  git -C "$checkout_path" remote set-url origin "$origin_url"
++if ! parsed_origin="$(parse_repo "$current_origin")" || [[ "$parsed_origin" != "$parsed" ]]; then
++  echo "error: existing origin does not match requested repository: $checkout_path" >&2
++  exit 3
+ fi
+
+ last_fetch_file="$checkout_path/.git/librarian-last-fetch"
